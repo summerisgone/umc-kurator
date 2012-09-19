@@ -1,0 +1,7 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+    {% for department in object_list %}
+        <a href="{% url department_detail department.pk %}">Филиал {{ department.name }}</a>
+    {% endfor %}
+{% endblock content %}
