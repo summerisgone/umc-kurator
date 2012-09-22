@@ -12,7 +12,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'schedule.sqlite',
+        'NAME': os.path.join(PROJECT_DIR, 'schedule.sqlite'),
         'USER': 'sadiki3',
         'PASSWORD': 'password',
         'HOST': 'localhost',

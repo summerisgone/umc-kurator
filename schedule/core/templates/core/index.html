@@ -2,6 +2,6 @@
 
 {% block content %}
     {% for department in object_list %}
-        <a href="{% url department_detail department.pk %}">Филиал {{ department.name }}</a>
+        <a href="{{ department.get_absolute_url }}">Филиал {{ department.name }}</a>
     {% endfor %}
 {% endblock content %}

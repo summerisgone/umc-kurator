@@ -1,0 +1,15 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+    Страница курса {{ object.name }}
+
+    <hr />
+
+    Cлушатели
+
+    {% for user in object.students.all %}
+        {{ user }}
+    {% endfor %}
+
+    <a href="{% url add_listener object.pk %}">Добавить слушателя</a>
+{% endblock content %}
