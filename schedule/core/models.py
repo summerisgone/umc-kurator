@@ -10,6 +10,7 @@ class Course(models.Model):
     hours = models.IntegerField(verbose_name=u'Количество часов')
     subject = models.ForeignKey('Subject')
     students = models.ManyToManyField('auth.User', through='Vizit', related_name='courses')
+    department = models.ForeignKey('Department', related_name='courses')
 
     def get_absolute_url(self):
         return reverse('course_detail', args=(self.pk,))
@@ -26,16 +27,21 @@ class Vizit(models.Model):
 class Department(models.Model):
     name = models.CharField(verbose_name=u'Название', max_length=255)
     address = models.CharField(verbose_name=u'Адрес', max_length=255)
-    courses = models.ManyToManyField('Course')
+#    courses = models.ManyToManyField('Course')
 
     def get_absolute_url(self):
         return reverse('department_detail', args=(self.pk,))
+
+    def __unicode__(self):
+        return u'Филиал %s' % self.name
 
 
 class Organization(models.Model):
     name = models.CharField(verbose_name=u'Название', max_length=255)
     address = models.CharField(verbose_name=u'Адрес', max_length=255)
 
+    def __unicode__(self):
+        return self.name
 
 class Subject(models.Model):
     name = models.CharField(verbose_name=u'Название', max_length=255)
@@ -49,3 +55,6 @@ class Certificate(models.Model):
     name = models.CharField(verbose_name=u'Название', max_length=255)
     required_hours = models.IntegerField(verbose_name=u'Количество часов')
     course = models.ForeignKey('Course')
+
+    def __unicode__(self):
+        return self.name

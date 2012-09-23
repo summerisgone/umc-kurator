@@ -8,4 +8,5 @@
     {% for course in object.courses.all %}
         <a href="{{ course.get_absolute_url }}">{{ course }}</a>
     {% endfor %}
+    <a href="{% url course_add %}">Добавить</a>
 {% endblock content %}
