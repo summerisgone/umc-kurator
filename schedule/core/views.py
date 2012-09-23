@@ -8,7 +8,6 @@ from schedule.core.models import Department, Course
 
 
 class DepartmentList(ListView):
-    template_name = 'core/index.html'
     model = Department
 
 

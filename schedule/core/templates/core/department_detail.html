@@ -1,12 +1,41 @@
 {% extends "core/base.html" %}
 
+{% block breadcrumbs %}
+    <ul class="breadcrumb">
+      <li><a href="{% url department_list %}">Список филиалов</a> <span class="divider">/</span></li>
+      <li class="active">{{ object }}</li>
+    </ul>
+{% endblock %}
+
+{% block title %}Страница филиала {{ object.name }}{% endblock %}
+
 {% block content %}
-    Страница филиала {{ object.name }}
+    <div class="row">
+        <div class="span12">
+    <h2>Текущие курсы</h2>
 
-    Текущие курсы
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Предмет</th>
+                <th>Дата начала</th>
+                <th>Дата завершения</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in object.courses.all %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><a href="{{ course.get_absolute_url }}">{{ course }}</a></td>
+                <td>{{ course.start }}</td>
+                <td>{{ course.end }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-    {% for course in object.courses.all %}
-        <a href="{{ course.get_absolute_url }}">{{ course }}</a>
-    {% endfor %}
-    <a href="{% url course_add %}">Добавить</a>
+        <a class="btn" href="{% url course_add %}"><i class="icon-plus"></i> Добавить</a>
+        </div>
+    </div>
 {% endblock content %}

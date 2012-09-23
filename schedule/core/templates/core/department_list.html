@@ -1,0 +1,29 @@
+{% extends "core/base.html" %}
+
+{% block title %}Список филиалов{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="span12">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Название</th>
+                    <th>Адрес</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for department in object_list %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="{{ department.get_absolute_url }}">Филиал {{ department.name }}</a></td>
+                        <td>{{ department.address }}</td>
+                    </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,7 +1,0 @@
-{% extends "core/base.html" %}
-
-{% block content %}
-    {% for department in object_list %}
-        <a href="{{ department.get_absolute_url }}">Филиал {{ department.name }}</a>
-    {% endfor %}
-{% endblock content %}
