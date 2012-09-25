@@ -1,0 +1,11 @@
+{% extends "crud/base.html" %}
+
+{% block title %}{{ object }}{% endblock %}
+
+{% block content %}
+    Удалить {{ object }}?
+    <form action="." method="POST">
+        {% csrf_token %}
+        <input class="submit" type="submit">
+    </form>
+{% endblock content %}
