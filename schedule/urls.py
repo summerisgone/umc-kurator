@@ -3,11 +3,17 @@ from django.conf.urls.defaults import *
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from schedule.crud.models import crud
+
+crud.register('core.Course')
+crud.register('core.Vizit')
+crud.register('core.Subject')
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'^', include('schedule.core.urls')),
+    (r'^crud/', include('schedule.crud.urls')),
     (r'^admin/', include(admin.site.urls)),
 )
 

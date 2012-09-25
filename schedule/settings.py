@@ -85,6 +85,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'schedule.core',
     'schedule.auth',
+    'schedule.crud',
 ]
 
 TEMPLATE_LOADERS = (
