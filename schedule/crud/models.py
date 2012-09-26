@@ -49,6 +49,12 @@ class Crud(object):
                 success_url = '../'
             template_name = 'crud/object_%s.html' % action
 
+            def get_template_names(self):
+                names = super(ViewClass, self).get_template_names()
+                # push crud template down to last default
+                names[0], names[-1] = names[-1], names[0]
+                return names
+
         return ViewClass
 
     def register(self, model_str, action=None, view=None):
@@ -70,12 +76,13 @@ class Crud(object):
 
                     # TODO: сделать поддержку обычных вьюх
                     url_patterns += patterns('',
-                        url(regexp, model_registry[action].as_view(), kwargs=url_kwargs, name=url_name),
+                        url(regexp, model_registry[action].as_view(),
+                            kwargs=url_kwargs, name=url_name),
                     )
                 else:
                     url_patterns += patterns('',
-                        url(regexp, self.get_action_view(model_str, action).as_view(), kwargs=url_kwargs,
-                            name=url_name),
+                        url(regexp, self.get_action_view(model_str, action).as_view(),
+                            kwargs=url_kwargs, name=url_name),
                     )
         return url_patterns
 

@@ -6,8 +6,8 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from schedule.crud.models import crud
 
 crud.register('core.Course')
-crud.register('core.Vizit')
 crud.register('core.Subject')
+crud.register('core.Department')
 
 admin.autodiscover()
 

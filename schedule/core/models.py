@@ -13,7 +13,7 @@ class Course(models.Model):
     department = models.ForeignKey('Department', related_name='courses')
 
     def get_absolute_url(self):
-        return reverse('course_detail', args=(self.pk,))
+        return reverse('core.course.read', args=(self.pk,))
 
     def __unicode__(self):
         return u'%s (%s ч.)' % (self.subject, self.hours)
@@ -30,7 +30,7 @@ class Department(models.Model):
 #    courses = models.ManyToManyField('Course')
 
     def get_absolute_url(self):
-        return reverse('department_detail', args=(self.pk,))
+        return reverse('core.department.read', args=(self.pk,))
 
     def __unicode__(self):
         return u'Филиал %s' % self.name

@@ -1,5 +1,16 @@
 {% extends "core/base.html" %}
 
+{% block js %}
+    {{  block.super }}
+    {{ form.media }}
+{#    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>#}
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/south-street/jquery-ui.css" />
+    {{ block.super }}
+{% endblock %}
+
 {% block content %}
     Форма:
     <form action="." method="post">

@@ -2,7 +2,7 @@
 
 {% block breadcrumbs %}
     <ul class="breadcrumb">
-      <li><a href="{% url department_list %}">Список филиалов</a> <span class="divider">/</span></li>
+      <li><a href="{% url core.department.list %}">Список филиалов</a> <span class="divider">/</span></li>
       <li class="active">{{ object }}</li>
     </ul>
 {% endblock %}
@@ -35,7 +35,7 @@
         </tbody>
     </table>
 
-        <a class="btn" href="{% url course_add %}"><i class="icon-plus"></i> Добавить</a>
+        <a class="btn" href="{% url course_add department.pk %}"><i class="icon-plus"></i> Добавить</a>
         </div>
     </div>
 {% endblock content %}

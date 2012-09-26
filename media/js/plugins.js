@@ -12,3 +12,10 @@ if (!(window.console && console.log)) {
 }
 
 // Place any jQuery/helper plugins in here.
+$(function(){
+    if ($.fn.datepicker) {
+        $('[data-datepicker=datepicker]').datepicker({
+            dateFormat: "yy-mm-dd"
+        });
+    }
+})

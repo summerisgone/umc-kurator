@@ -1,9 +1,29 @@
 # -*- coding: utf-8 -*-
 from django import forms
+from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.auth.models import User
-import random
 from schedule.auth.models import Profile
-from schedule.core.models import Organization, Vizit
+from schedule.core.models import Organization, Vizit, Course
+import random
+
+
+class CourseAddForm(forms.ModelForm):
+    class Meta:
+        model = Course
+        fields = ('subject', 'start', 'end', 'hours')
+
+    class Media:
+        js = ('//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js',)
+
+    def __init__(self, department, *args, **kwds):
+        super(CourseAddForm, self).__init__(*args, **kwds)
+        self.department = department
+        self.fields['start'].widget = forms.TextInput(attrs={'data-datepicker': 'datepicker'})
+        self.fields['end'].widget = forms.TextInput(attrs={'data-datepicker': 'datepicker'})
+
+    def save(self, **kwds):
+        self.instance.department = self.department
+        super(CourseAddForm, self).save(**kwds)
 
 
 class AddListenerForm(forms.Form):

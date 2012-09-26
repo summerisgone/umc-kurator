@@ -1,10 +1,15 @@
 {% extends "core/base.html" %}
 
+{% block breadcrumbs %}
+    <ul class="breadcrumb">
+      <li><a href="{% url core.department.list %}">Список филиалов</a> <span class="divider">/</span></li>
+        <li><a href="{% url core.department.read object.department.pk %}">{{  object.department }}</a> <span class="divider">/</span></li>
+      <li class="active">{{ object }}</li>
+    </ul>
+{% endblock %}
+
 {% block content %}
-    Страница курса {{ object }} ({{ object.department }})
-
-    <hr />
-
+    <h2 class="page-header">{{ object }}</h2>
     Cлушатели
 
     {% for user in object.students.all %}
