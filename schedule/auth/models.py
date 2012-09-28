@@ -24,3 +24,21 @@ class Listener(ExtendedUser):
     first_name_inflated = models.CharField(verbose_name=u'Имя (дат. падеж)', max_length=50)
     last_name_inflated = models.CharField(verbose_name=u'Фамилия (дат. падеж)', max_length=50)
     patronymic_inflated = models.CharField(verbose_name=u'Отчество (дат. падеж)', max_length=50)
+
+    def normalize_name(self, morph):
+        from pymorphy.contrib import lastnames_ru
+        # фамилия
+        if not self.last_name:
+            last_name = lastnames_ru.normalize(morph, self.last_name_inflated.upper(), u'жр')
+            self.last_name = last_name[0].upper() + last_name[1:].lower()
+
+        # имя
+        if not self.first_name:
+            first_name = morph.normalize(self.first_name_inflated.upper()).pop()
+            self.first_name = first_name[0].upper() + first_name[1:].lower()
+        # отчество
+        if not self.patronymic:
+            patronymic = morph.normalize(self.patronymic_inflated.upper()).pop()
+            self.patronymic = patronymic[0].upper() + patronymic[1:].lower()
+
+        self.save()
