@@ -10,7 +10,8 @@ class Course(models.Model):
     end = models.DateField(verbose_name=u'Завершение курса')
     hours = models.IntegerField(verbose_name=u'Количество часов')
     subject = models.ForeignKey('Subject')
-    students = models.ManyToManyField('auth.Listener', verbose_name=u'Слушатели', through='Vizit', related_name='courses')
+    students = models.ManyToManyField('auth.Listener', verbose_name=u'Слушатели',
+        through='Vizit', related_name='courses')
     department = models.ForeignKey('Department', related_name='courses', verbose_name=u'Филиал')
 
     def get_absolute_url(self):
@@ -27,7 +28,8 @@ class Vizit(models.Model):
 
 class Department(models.Model):
     name = models.CharField(verbose_name=u'Название', max_length=255)
-    address = models.CharField(verbose_name=u'Адрес', max_length=255)
+    address = models.CharField(verbose_name=u'Адрес', max_length=255,
+        null=True, blank=True)
 
     def get_absolute_url(self):
         return reverse('core.department.read', args=(self.pk,))
@@ -37,9 +39,11 @@ class Department(models.Model):
 
 class Organization(models.Model):
     name = models.CharField(verbose_name=u'Название', max_length=255)
-    address = models.CharField(verbose_name=u'Адрес', max_length=255)
-    cast = models.CharField(verbose_name=u'Тип организации', choices=enums.ORGANIZATION_TYPES)
-    number = models.IntegerField(verbose_name=u'Номер')
+    number = models.IntegerField(verbose_name=u'Номер', null=True, blank=True)
+    address = models.CharField(verbose_name=u'Адрес', max_length=255,
+        null=True, blank=True)
+    cast = models.CharField(verbose_name=u'Тип организации', max_length=50,
+        choices=enums.ORGANIZATION_TYPES, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -54,9 +58,10 @@ class Subject(models.Model):
 
 class Certificate(models.Model):
     name = models.CharField(verbose_name=u'Название', max_length=255)
-    required_hours = models.IntegerField(verbose_name=u'Количество часов')
+    cast = models.CharField(verbose_name=u'Тип документа', max_length=50,
+        choices=enums.DOCUMENT_CAST, null=True, blank=True)
     course = models.ForeignKey('Course', verbose_name=u'Предмет')
-    cast = models.CharField(verbose_name=u'Тип документа', max_length=50, choices=enums.DOCUMENT_CAST)
+    listener = models.ForeignKey('auth.Listener', verbose_name=u'Владелец')
 
     def __unicode__(self):
         return self.name

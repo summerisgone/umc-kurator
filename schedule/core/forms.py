@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from django.contrib.admin.widgets import AdminDateWidget
-from django.contrib.auth.models import User
-from schedule.auth.models import Profile
+from schedule.auth.models import Listener
 from schedule.core.models import Organization, Vizit, Course
 import random
 
@@ -23,6 +21,7 @@ class CourseAddForm(forms.ModelForm):
 
     def save(self, **kwds):
         self.instance.department = self.department
+        self.name = self.__unicode__()
         super(CourseAddForm, self).save(**kwds)
 
 
@@ -39,16 +38,17 @@ class AddListenerForm(forms.Form):
         super(AddListenerForm, self).__init__(*args, **kwds)
 
     def save(self):
-        user = User.objects.create(
+        listener = Listener(
             username='user-%6d' % random.randint(0, 999999),
             first_name=self.cleaned_data['first_name'],
             last_name=self.cleaned_data['last_name'],
+            patronymic=self.cleaned_data['patronymic'],
         )
         organization, created = Organization.objects.get_or_create(
             name=self.cleaned_data['organization']
         )
-        profile = Profile.objects.create(
-            user=user,
-            organization=organization
-        )
-        Vizit.objects.create(course=self.course, user=user)
+
+        listener.organization = organization
+        listener.save()
+
+        Vizit.objects.create(course=self.course, listener=listener)

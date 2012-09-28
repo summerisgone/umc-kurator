@@ -16,6 +16,7 @@ class Teacher(ExtendedUser):
 
 
 class Listener(ExtendedUser):
+    organization = models.ForeignKey('core.Organization', verbose_name=u'Организация')
     category = models.CharField(verbose_name=u'Категория', max_length=50, choices=enums.LISTENER_CATEGORIES)
     position = models.CharField(verbose_name=u'Должность', max_length=50, choices=enums.LISTENER_POSITIONS)
     profile = models.CharField(verbose_name=u'Специфика должности', max_length=50, choices=enums.LISTENER_PROFILES)
