@@ -12,9 +12,30 @@
     <h2 class="page-header">{{ object }}</h2>
     Cлушатели
 
-    {% for user in object.students.all %}
-        {{ user.first_name }} {{ user.last_name }} ({{ user.get_profile.organization }})
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th>Фамилия</th>
+            <th>Имя</th>
+            <th>Отчество</th>
+            <th>Организация</th>
+            <th>Должность</th>
+            <th>Сертификат</th>
+        </tr>
+    {% for listener in object.students.all %}
+        <tr>
+            <td>{{ listener.last_name_inflated }}</td>
+            <td>{{ listener.first_name_inflated }}</td>
+            <td>{{ listener.patronymic_inflated }}</td>
+            <td>{{ listener.organization }}</td>
+            <td>{{ listener.position }}</td>
+            <td>
+                {% for cert in listener.certificate_set.all %}
+                {{ cert.name }}{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            </td>
+        </tr>
     {% endfor %}
+    </table>
 
     <a href="{% url add_listener object.pk %}">Добавить слушателя</a>
 {% endblock content %}
