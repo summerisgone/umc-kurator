@@ -10,7 +10,6 @@
 
 {% block content %}
     <h2 class="page-header">{{ object }}</h2>
-    Cлушатели
 
     <table class="table table-bordered table-striped">
         <tr>
@@ -32,10 +31,14 @@
                 {% for cert in listener.certificate_set.all %}
                 {{ cert.name }}{% if not forloop.last %},{% endif %}
                 {% endfor %}
+                {% if not listener.certificate_set.exists %}
+                    <a class="btn" href="#">выдать сертификат</a>
+                {% endif %}
             </td>
         </tr>
     {% endfor %}
     </table>
 
-    <a href="{% url add_listener object.pk %}">Добавить слушателя</a>
+    <a class="btn" href="{% url add_listener object.pk %}"><i class="icon-plus"></i> Добавить
+    слушателя</a>
 {% endblock content %}

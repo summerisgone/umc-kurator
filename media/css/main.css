@@ -139,7 +139,10 @@ footer {
     border-top: 1px solid #D9D6D2;
 }
 
-
+/* Select2 same width as UniForm inputs */
+.uniForm .select2-container {
+    width: 53%;
+}
 
 
 

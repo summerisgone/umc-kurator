@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django import forms
+import enums
 from schedule.auth.models import Listener
 from schedule.core.models import Organization, Vizit, Course
 import random
@@ -31,7 +32,14 @@ class AddListenerForm(forms.Form):
     first_name = forms.CharField(label=u'Имя')
     patronymic = forms.CharField(label=u'Отчество')
 
+    last_name_inflated = forms.CharField(label=u'Фамилия')
+    first_name_inflated = forms.CharField(label=u'Имя')
+    patronymic_inflated = forms.CharField(label=u'Отчество')
+
     organization = forms.CharField(label=u'Организация')
+    category = forms.ChoiceField(label=u'Категория слушателя', choices=enums.LISTENER_CATEGORIES)
+    position = forms.ChoiceField(label=u'Должность', choices=enums.LISTENER_POSITIONS)
+    profile = forms.ChoiceField(label=u'Профиль', choices=enums.LISTENER_PROFILES)
 
     def __init__(self, course, *args, **kwds):
         self.course = course
@@ -43,6 +51,14 @@ class AddListenerForm(forms.Form):
             first_name=self.cleaned_data['first_name'],
             last_name=self.cleaned_data['last_name'],
             patronymic=self.cleaned_data['patronymic'],
+
+            first_name_inflated=self.cleaned_data['first_name_inflated'],
+            last_name_inflated=self.cleaned_data['last_name_inflated'],
+            patronymic_inflated=self.cleaned_data['patronymic_inflated'],
+
+            category=self.cleaned_data['category'],
+            position=self.cleaned_data['position'],
+            profile=self.cleaned_data['profile'],
         )
         organization, created = Organization.objects.get_or_create(
             name=self.cleaned_data['organization']

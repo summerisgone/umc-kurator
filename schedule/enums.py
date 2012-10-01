@@ -4,7 +4,7 @@ from django.contrib.databrowse.views import choice_list
 
 def make_choices(*choice_list):
     numbers = range(len(choice_list))
-    return zip(numbers, choice_list)
+    return zip(choice_list, choice_list)
 
 ORGANIZATION_TYPES = make_choices(u'МОУ', u'МДОУ', u'МУДОД')
 LISTENER_PROFILES = make_choices(
