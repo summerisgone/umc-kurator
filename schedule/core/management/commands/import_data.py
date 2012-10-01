@@ -2,6 +2,7 @@
 from django.core.management.base import BaseCommand
 from core.file_import import ListenerFileFormat, ListenerImportLogic
 from core.models import Department, Course
+from normalize_names import Command as NormalizeCommand
 import tempfile
 import xlrd
 import os
@@ -41,6 +42,10 @@ class Command(BaseCommand):
 
             num_errors = len(logic.errors)
             self.dialog.infobox(u'Ошибок %d из %d: ' % (num_errors, total))
+
+        next_cmd = NormalizeCommand()
+        next_cmd.handle()
+
 
     def select_department_and_course(self):
 
