@@ -14,6 +14,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'^', include('schedule.core.urls')),
+    (r'^reports/', include('schedule.reports.urls')),
     (r'^crud/', include('schedule.crud.urls')),
     (r'^admin/', include(admin.site.urls)),
 )

@@ -86,6 +86,7 @@ INSTALLED_APPS = [
     'schedule.core',
     'schedule.auth',
     'schedule.crud',
+    'schedule.reports',
     'zenforms',
 ]
 
