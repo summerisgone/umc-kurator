@@ -1,0 +1,18 @@
+{% extends "reports/base.html" %}
+{% load zenforms %}
+
+{% block title %}Отчёт по количеству обученных специалистов{% endblock %}
+
+{% block content %}
+    {% if report %}
+        {% with None as course %}
+        {% with report as listeners %}
+            {% include "includes/listener_table.html" %}
+        {% endwith %}
+        {% endwith %}
+        <br>
+        <a href=".">Другой отчёт</a>
+    {% else %}
+        {% izenform form options submit="Построить" %}
+    {% endif %}
+{% endblock content %}

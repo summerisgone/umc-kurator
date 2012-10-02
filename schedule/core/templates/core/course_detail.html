@@ -11,35 +11,11 @@
 {% block title %}Курс - {{ object }}{% endblock %}
 
 {% block content %}
-    <table class="table table-bordered table-striped">
-        <tr>
-            <th>Фамилия</th>
-            <th>Имя</th>
-            <th>Отчество</th>
-            <th>Организация</th>
-            <th>Должность</th>
-            <th>Сертификат</th>
-        </tr>
-    {% for listener in object.students.all %}
-        <tr>
-            <td>{{ listener.last_name }}</td>
-            <td>{{ listener.first_name }}</td>
-            <td>{{ listener.patronymic }}</td>
-            <td>{{ listener.organization }}</td>
-            <td>{{ listener.position }}</td>
-            <td>
-                {% for cert in listener.certificate_set.all %}
-                {{ cert.name }}{% if not forloop.last %},{% endif %}
-                {% endfor %}
-                {% if not listener.certificate_set.exists %}
-                    <a class="btn" href=
-                            "{% url emit_certificate object.id listener.id %}">выдать
-                        сертификат</a>
-                {% endif %}
-            </td>
-        </tr>
-    {% endfor %}
-    </table>
+    {% with object as course %}
+    {% with object.students.all as listeners %}
+        {% include "includes/listener_table.html" %}
+    {% endwith %}
+    {% endwith %}
 
     <a class="btn" href="{% url add_listener object.pk %}"><i class="icon-plus"></i> Добавить
     слушателя</a>
