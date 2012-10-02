@@ -1,0 +1,23 @@
+{% extends "core/base.html" %}
+{% load zenforms %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}js/vendor/select2/select2.css" />
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript">
+    $(function(){
+        $('form.uniForm').uniform();
+        $('select').select2();
+    })
+    </script>
+    <script src="{{ STATIC_URL }}js/vendor/select2/select2.min.js"></script>
+{% endblock %}
+
+{% block content %}
+    <h2 class="page-header">Выдача сертификата</h2>
+    {% izenform form options submit="Выдать" %}
+{% endblock content %}

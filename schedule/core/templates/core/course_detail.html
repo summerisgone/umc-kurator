@@ -32,7 +32,9 @@
                 {{ cert.name }}{% if not forloop.last %},{% endif %}
                 {% endfor %}
                 {% if not listener.certificate_set.exists %}
-                    <a class="btn" href="#">выдать сертификат</a>
+                    <a class="btn" href=
+                            "{% url emit_certificate object.id listener.id %}">выдать
+                        сертификат</a>
                 {% endif %}
             </td>
         </tr>

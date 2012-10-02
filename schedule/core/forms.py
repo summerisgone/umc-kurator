@@ -2,7 +2,7 @@
 from django import forms
 import enums
 from schedule.auth.models import Listener
-from schedule.core.models import Organization, Vizit, Course
+from schedule.core.models import Organization, Vizit, Course, Certificate
 import random
 
 
@@ -68,3 +68,14 @@ class AddListenerForm(forms.Form):
         listener.save()
 
         Vizit.objects.create(course=self.course, listener=listener)
+
+
+class EmitCertificateForm(forms.models.ModelForm):
+    class Meta:
+        model = Certificate
+        fields = ('name', 'cast')
+
+    def __init__(self, course, listener, *args, **kwds):
+        super(EmitCertificateForm, self).__init__(*args, **kwds)
+        self.instance.course = course
+        self.instance.listener = listener

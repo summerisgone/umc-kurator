@@ -3,8 +3,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.forms.models import modelform_factory
 from django.views.generic import ListView, DetailView, FormView, View, TemplateView, CreateView
-from schedule.core.forms import AddListenerForm, CourseAddForm
-from schedule.core.models import Department, Course
+from auth.models import Listener
+from schedule.core.forms import AddListenerForm, CourseAddForm, EmitCertificateForm
+from schedule.core.models import Department, Course, Certificate
 
 
 class Index(TemplateView):
@@ -46,3 +47,24 @@ class AddListener(TemplateView):
             return HttpResponseRedirect(self.course.get_absolute_url())
         else:
             return {'form': form}
+
+
+class EmitCertificate(FormView):
+    model = Certificate
+    form_class = EmitCertificateForm
+    template_name = 'core/certificate_form.html'
+
+    def get_success_url(self):
+        return self.get_course_and_listener()[0].get_absolute_url()
+
+    def get_course_and_listener(self):
+        course = get_object_or_404(Course, pk=self.kwargs['course_id'])
+        listener = get_object_or_404(Listener, pk=self.kwargs['listener_id'])
+        return course, listener
+
+    def get_form(self, form_class):
+        return form_class(*self.get_course_and_listener(), **self.get_form_kwargs())
+
+    def form_valid(self, form):
+        form.save()
+        return HttpResponseRedirect(self.get_success_url())
