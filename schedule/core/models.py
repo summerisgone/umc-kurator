@@ -50,7 +50,10 @@ class Organization(models.Model):
 
 class Subject(models.Model):
     name = models.CharField(verbose_name=u'Название', max_length=255)
-    teacher = models.ForeignKey('auth.Teacher', verbose_name=u'Педагог')
+    short_name = models.CharField(verbose_name=u'Сокращенное наименование',
+        max_length=255, blank=True, null=True)
+    hours = models.IntegerField(verbose_name=u'Количество часов')
+    teacher = models.ForeignKey('auth.Teacher', verbose_name=u'Педагог', null=True)
 
     def __unicode__(self):
         return self.name

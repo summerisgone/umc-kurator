@@ -12,7 +12,7 @@ class ExtendedUser(User):
     phone = models.CharField(verbose_name=u'Телефон', max_length=50)
 
 class Teacher(ExtendedUser):
-    department = models.ForeignKey('core.Department')
+    department = models.ForeignKey('core.Department', null=True)
 
 
 class Listener(ExtendedUser):

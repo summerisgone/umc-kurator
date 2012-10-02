@@ -22,7 +22,7 @@ class CourseAddForm(forms.ModelForm):
 
     def save(self, **kwds):
         self.instance.department = self.department
-        self.name = self.__unicode__()
+        self.instance.name = self.instance.__unicode__()
         super(CourseAddForm, self).save(**kwds)
 
 

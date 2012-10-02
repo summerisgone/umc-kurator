@@ -2,8 +2,8 @@
 from django.db.models import Q
 from xlsimport.models import Format
 from xlsimport.parsers import*
-from auth.models import Listener
-from core.models import Organization, Certificate, Vizit
+from auth.models import Listener, Teacher
+from core.models import Organization, Certificate, Vizit, Subject
 from schedule.utils import get_position_fuzzy, get_organization_type
 import random
 
@@ -50,6 +50,23 @@ class ListenerFileFormat(Format):
             name=data_row[5]
         )
         return listener, organization, document
+
+
+class SubjectFormat(Format):
+    u"""Формат файла предметов"""
+    cells = (
+        {'name': u'Название', 'parsers': (TextCellToStringParser,)},
+        {'name': u'Кол-во часов', 'parsers': (TextCellToIntParser, NumberCellToIntParser,)},
+        {'name': u'Краткое название', 'parsers': (TextCellToStringParser,)},
+    )
+
+    def to_python(self, data_row):
+        return {
+            'name': data_row[0],
+            'short_name': data_row[2],
+            'hours': data_row[1],
+            'teacher': Teacher.objects.all()[0] if Teacher.objects.exists() else None,
+        }
 
 
 class ListenerImportLogic(object):
@@ -104,3 +121,29 @@ class ListenerImportLogic(object):
             self.register_listener(document_data, listener)
 
             return listener
+
+
+class SubjectImportLogic(object):
+    u"""Бизнес-логика испортирования предметов"""
+    errors = []
+
+    def __init__(self, format_doc):
+        self.doc = format_doc
+
+    def process_row(self, index, parsed_row):
+        if any([issubclass(type(cell), Exception) for cell in parsed_row]):
+            self.errors.append((parsed_row, index + self.doc.start_line))
+        else:
+            subject = self.doc.to_python(parsed_row)
+            self.save_row(subject)
+
+    def save_row(self, subject_dict):
+        # check is listener already in db
+        query = Q(
+            name__iexact=subject_dict['name'],
+            short_name__iexact=subject_dict['short_name'],
+            hours=subject_dict['hours'],
+        )
+
+        if not Subject.objects.filter(query).exists():
+            return Subject.objects.create(**subject_dict)
