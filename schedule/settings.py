@@ -11,12 +11,8 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.path.join(PROJECT_DIR, 'schedule.sqlite'),
-        'USER': 'sadiki3',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT': '5432',
     }
 }
 
