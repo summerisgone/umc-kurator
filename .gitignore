@@ -18,7 +18,6 @@ commit.txt
 media/upload/*
 searchindex/
 snapshots/
-sadiki/cover/
-sadiki/production.py
+schedule/production.py
 doc/build
 static/*
