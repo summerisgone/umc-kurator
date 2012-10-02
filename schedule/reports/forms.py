@@ -30,9 +30,9 @@ class ReportQueryForm(forms.Form):
     def get_query(self):
         # query - запрос к курсу
         query = Q()
-        if 'time_range' in self.cleaned_data and self.cleaned_data['time_range']:
-            start, end = self.get_timerange(self.cleaned_data['time_range'])
-            query &= Q(start__gt=start) and Q(end__lte=end)
+#        if 'time_range' in self.cleaned_data and self.cleaned_data['time_range']:
+#            start, end = self.get_timerange(self.cleaned_data['time_range'])
+#            query &= Q(start__gt=start) and Q(end__lte=end)
 #        if 'department' in self.cleaned_data and self.cleaned_data['department']:
 #            query &= Q(department=self.cleaned_data['department'])
 #        if 'listener_category' in self.cleaned_data and self.cleaned_data['listener_category']:
