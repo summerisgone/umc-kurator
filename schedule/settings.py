@@ -4,7 +4,7 @@ gettext_noop = lambda s: s
 PROJECT_DIR = os.path.dirname(os.path.dirname(__file__))
 
 ADMINS = (
-    ('src', 'src@redsolution.ru'),
+    ('webmaster', 'summer.is.gone@gmail.com'),
 )
 
 MANAGERS = ADMINS
