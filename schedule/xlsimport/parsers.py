@@ -98,7 +98,7 @@ class TextCellToStringParser(CellParser):
         return text
 
 
-class TextCellToIntegerParser(CellParser):
+class TextCellToIntParser(CellParser):
     """Parse text cell to int"""
     parser_type = XL_CELL_TEXT
 
