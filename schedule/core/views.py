@@ -46,7 +46,7 @@ class AddListener(TemplateView):
             form.save()
             return HttpResponseRedirect(self.course.get_absolute_url())
         else:
-            return {'form': form}
+            return self.render_to_response({'form': form})
 
 
 class EmitCertificate(FormView):

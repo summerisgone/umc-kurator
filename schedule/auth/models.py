@@ -2,6 +2,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from schedule import enums
+from utils import firstcaps
 
 
 class ExtendedUser(User):
@@ -30,17 +31,18 @@ class Listener(ExtendedUser):
         # имя
         if not self.first_name:
             first_name = morph.normalize(self.first_name_inflated.upper()).pop()
-            self.first_name = first_name[0].upper() + first_name[1:].lower()
+            self.first_name = firstcaps(first_name)
+
         sex = morph.get_graminfo(self.first_name_inflated.upper())[0]['info'].split(',', 1)[0]
         # отчество
         if not self.patronymic:
             patronymic = morph.inflect_ru(self.patronymic_inflated.upper(), u'им')
-            self.patronymic = patronymic[0].upper() + patronymic[1:].lower()
+            self.patronymic = firstcaps(patronymic)
 
         # фамилия
         if not self.last_name:
             last_name = lastnames_ru.normalize(morph, self.last_name_inflated.upper(), sex)
-            self.last_name = last_name[0].upper() + last_name[1:].lower()
+            self.last_name = firstcaps(last_name)
 
 
         self.save()

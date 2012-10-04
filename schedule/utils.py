@@ -14,3 +14,10 @@ def get_organization_type(original):
     for org_type in enums.ORGANIZATION_TYPES:
         if re.search('%s' % org_type[1], original):
             return org_type[1]
+
+
+def firstcaps(s):
+    """
+    Returns string in lowercase with first letter capitalized
+    """
+    return s[0].upper() + s[1:].lower()

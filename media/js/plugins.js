@@ -18,4 +18,40 @@ $(function(){
             dateFormat: "yy-mm-dd"
         });
     }
-})
+});
+
+
+(function ($) {
+    var cache = {}, lastXhr;
+    $.fn.extend({
+        autocompleteNames:function (options) {
+            this.defaultOptions = {};
+
+            var settings = $.extend({}, this.defaultOptions, options);
+
+            return this.each(function () {
+                var $this = $(this);
+                $this.autocomplete({
+                    minLength:3,
+                    source:function (request, response) {
+                        var term = request.term;
+                        if (term in cache) {
+                            response(cache[term]);
+                            return;
+                        }
+
+                        lastXhr = $.getJSON(settings.url,
+                            request,
+                            function (data, status, xhr) {
+                                cache[ term ] = data;
+                                if (xhr === lastXhr) {
+                                    response(data);
+                                }
+                            }
+                        );
+                    }
+                });
+            });
+        }
+    });
+})(jQuery);

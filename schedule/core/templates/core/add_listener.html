@@ -13,28 +13,16 @@
         $('form.uniForm').uniform();
         $('select').select2();
 
-        // autocomplete
-        var cache = {}, lastXhr;
-        $('#id_last_name').autocomplete({
-            minLength:3,
-            source:function (request, response) {
-                var term = request.term;
-                if (term in cache) {
-                    response(cache[term]);
-                    return;
-                }
-
-                lastXhr = $.getJSON("{% url api:autocomplete_lastname %}",
-                        {last_name: request.term},
-                        function (data, status, xhr) {
-                            cache[ term ] = data;
-                            if (xhr === lastXhr) {
-                                response(data);
-                            }
-                        }
-                );
-            }
+        $('#id_last_name').autocompleteNames({
+            url: '{% url api:autocomplete_last_name %}'
         });
+        $('#id_first_name').autocompleteNames({
+            url: '{% url api:autocomplete_first_name %}'
+        });
+        $('#id_patronymic').autocompleteNames({
+            url: '{% url api:autocomplete_patronymic %}'
+        });
+
     });
     </script>
     <script src="{{ STATIC_URL }}js/vendor/select2/select2.min.js"></script>
@@ -42,5 +30,11 @@
 
 {% block content %}
     <h2 class="page-header">Добавить слушателя</h2>
-    {% izenform form options submit="Добавить" %}
+    {% zenform form  %}
+        {% multifield 'last_name' 'first_name' 'patronymic' as credentials label 'ФИО слушателя' %}
+        {% fieldset credentials %}
+        {% multifield 'last_name_inflated' 'first_name_inflated' 'patronymic_inflated' as credentials_inflated label 'ФИО слушателя в дательном падеже' %}
+        {% fieldset credentials_inflated %}
+        {% submit "Добавить" %}
+    {% endzenform %}
 {% endblock content %}
