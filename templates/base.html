@@ -16,6 +16,7 @@
     {% block css %}
     <link rel="stylesheet" href="{{ STATIC_URL }}css/normalize.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/south-street/jquery-ui-1.8.24.custom.css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}zenforms/css/uni-form.css" type="text/css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}zenforms/css/default.uni-form.css" type="text/css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}css/main.css">
@@ -51,7 +52,9 @@
 </footer>
 {% block js %}
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
 <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/vendor/jquery-1.8.1.min.js"><\/script>')</script>
+<script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/vendor/jquery-ui-1.8.24.custom.min.js"><\/script>')</script>
 <script type="text/javascript" src="{{ STATIC_URL }}zenforms/js/uni-form.jquery.min.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 <script src="{{ STATIC_URL }}js/plugins.js"></script>

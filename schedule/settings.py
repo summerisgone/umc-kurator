@@ -84,6 +84,7 @@ INSTALLED_APPS = [
     'schedule.crud',
     'schedule.reports',
     'zenforms',
+    'djangorestframework',
 ]
 
 TEMPLATE_LOADERS = (

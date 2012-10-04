@@ -16,7 +16,9 @@ urlpatterns = patterns('',
     (r'^', include('schedule.core.urls')),
     (r'^reports/', include('schedule.reports.urls')),
     (r'^crud/', include('schedule.crud.urls')),
+    (r'^api/', include('schedule.api.urls', namespace='api')),
     (r'^admin/', include(admin.site.urls)),
+    url(r'^api-auth/', include('djangorestframework.urls', namespace='djangorestframework'))
 )
 
 if settings.DEBUG:
