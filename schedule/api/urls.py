@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls.defaults import patterns, url
-from api.resources import AutoCompleteLastName, AutoCompletePatronymic, AutoCompleteFirstName
+from api.resources import AutoCompleteLastName, AutoCompletePatronymic, AutoCompleteFirstName, \
+    InflateNames
 
 
 urlpatterns = patterns('',
@@ -10,4 +11,6 @@ urlpatterns = patterns('',
         name='autocomplete_first_name'),
     url(r'^autocomplete/patronymic/$', AutoCompletePatronymic.as_view(),
         name='autocomplete_patronymic'),
+    url(r'^inflate/$', InflateNames.as_view(),
+        name='inflate'),
 )

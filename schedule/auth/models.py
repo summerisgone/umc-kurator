@@ -26,7 +26,7 @@ class Listener(ExtendedUser):
     last_name_inflated = models.CharField(verbose_name=u'Фамилия (дат. падеж)', max_length=50)
     patronymic_inflated = models.CharField(verbose_name=u'Отчество (дат. падеж)', max_length=50)
 
-    def normalize_name(self, morph):
+    def normalize_name(self, morph, save=True):
         from pymorphy.contrib import lastnames_ru
         # имя
         if not self.first_name:
@@ -44,5 +44,5 @@ class Listener(ExtendedUser):
             last_name = lastnames_ru.normalize(morph, self.last_name_inflated.upper(), sex)
             self.last_name = firstcaps(last_name)
 
-
-        self.save()
+        if save:
+            self.save()

@@ -22,7 +22,6 @@ $(function(){
 
 
 (function ($) {
-    var cache = {}, lastXhr;
     $.fn.extend({
         autocompleteNames:function (options) {
             this.defaultOptions = {};
@@ -30,7 +29,7 @@ $(function(){
             var settings = $.extend({}, this.defaultOptions, options);
 
             return this.each(function () {
-                var $this = $(this);
+                var $this = $(this), cache = {}, lastXhr;
                 $this.autocomplete({
                     minLength:3,
                     source:function (request, response) {

@@ -23,6 +23,33 @@
             url: '{% url api:autocomplete_patronymic %}'
         });
 
+        $('#id_last_name, #id_first_name, #id_patronymic').blur(function(){
+            var last_name = $('#id_last_name').val(),
+                first_name = $('#id_first_name').val(),
+                patronymic = $('#id_patronymic').val();
+
+            if (last_name.length && first_name.length && patronymic.length) {
+                $.ajax('{% url api:inflate %}', {
+                    type: 'POST',
+                    data: {
+                        format: 'json',
+                        last_name: last_name,
+                        first_name: first_name,
+                        patronymic: patronymic
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        $('#id_last_name_inflated').val(data['last_name']);
+                        $('#id_first_name_inflated').val(data['first_name']);
+                        $('#id_patronymic_inflated').val(data['patronymic']);
+                        $('#id_last_name_inflated, #id_first_name_inflated, ' +
+                                '#id_patronymic_inflated').effect('highlight', 500);
+
+                    }
+                });
+            }
+        });
+
     });
     </script>
     <script src="{{ STATIC_URL }}js/vendor/select2/select2.min.js"></script>
