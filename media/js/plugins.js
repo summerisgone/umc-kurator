@@ -31,7 +31,7 @@ $(function(){
             return this.each(function () {
                 var $this = $(this), cache = {}, lastXhr;
                 $this.autocomplete({
-                    minLength:3,
+                    minLength:2,
                     source:function (request, response) {
                         var term = request.term;
                         if (term in cache) {

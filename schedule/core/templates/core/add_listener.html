@@ -23,30 +23,43 @@
             url: '{% url api:autocomplete_patronymic %}'
         });
 
+        var lock = false;
         $('#id_last_name, #id_first_name, #id_patronymic').blur(function(){
+            if (lock) return;
+            lock = true; // lock ajax
+
             var last_name = $('#id_last_name').val(),
                 first_name = $('#id_first_name').val(),
                 patronymic = $('#id_patronymic').val();
 
             if (last_name.length && first_name.length && patronymic.length) {
-                $.ajax('{% url api:inflate %}', {
+                $.ajax('{% url api:autocomplete_user %}', {
                     type: 'POST',
                     data: {
-                        format: 'json',
                         last_name: last_name,
                         first_name: first_name,
                         patronymic: patronymic
                     },
                     dataType: 'json',
                     success: function(data){
+                        lock = false; // release
                         $('#id_last_name_inflated').val(data['last_name']);
                         $('#id_first_name_inflated').val(data['first_name']);
                         $('#id_patronymic_inflated').val(data['patronymic']);
                         $('#id_last_name_inflated, #id_first_name_inflated, ' +
                                 '#id_patronymic_inflated').effect('highlight', 500);
 
+                        // Если пользователь уже есть - показать его данные,
+                        // если нет - создать нового
+                        if (data.user) {
+                            $('#id_user').html('Найден пользователь ' + data.user.id);
+                        } else {
+                            $('#id_user').html('Новый пользователь');
+                        }
                     }
                 });
+            } else {
+                lock = false; // release
             }
         });
 
@@ -62,6 +75,7 @@
         {% fieldset credentials %}
         {% multifield 'last_name_inflated' 'first_name_inflated' 'patronymic_inflated' as credentials_inflated label 'ФИО слушателя в дательном падеже' %}
         {% fieldset credentials_inflated %}
+        <span id="id_user"></span>
         {% submit "Добавить" %}
     {% endzenform %}
 {% endblock content %}

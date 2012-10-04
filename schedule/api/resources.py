@@ -38,7 +38,7 @@ class InflateForm(forms.Form):
     patronymic = forms.CharField(max_length=100)
 
 
-class InflateNames(View):
+class AutoCompeteUser(View):
     form = InflateForm
 
     def post(self, request):
@@ -52,16 +52,29 @@ class InflateNames(View):
             sex = morph.get_graminfo(first_name.upper())[0]['info'].split(',', 1)[0]
         except IndexError:
             # get_graminfo() вернул []
+            print 'get_graminfo failed on ', first_name
             sex = u'жр'
         # фамилия
         last_name_inflated = firstcaps(lastnames_ru.inflect(morph,
-            last_name.upper(), u'дт'))
+            last_name.upper(), sex + u',дт'))
         # имя
         first_name_inflated = firstcaps(morph.inflect_ru(first_name.upper(), u'дт'))
         # отчество
-        patronymic_inflated = firstcaps(morph.inflect_ru(patronymic.upper(), u'дт'))
+        patronymic_inflated = firstcaps(morph.inflect_ru(patronymic.upper(), sex + u',дт'))
         return {
             'last_name': last_name_inflated,
             'first_name': first_name_inflated,
             'patronymic': patronymic_inflated,
+            'user': self.get_user(),
         }
+
+    def get_user(self):
+        if Listener.objects.filter(**self.CONTENT).count() == 1:
+            listener = Listener.objects.get(**self.CONTENT)
+            return {
+                'id': listener.id,
+                'organization': listener.organization.name,
+                'category': listener.category,
+                'position': listener.position,
+                'profile': listener.profile,
+            }
