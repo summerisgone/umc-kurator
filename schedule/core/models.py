@@ -11,20 +11,27 @@ class Course(models.Model):
     hours = models.IntegerField(verbose_name=u'Количество часов')
     subject = models.ForeignKey('Subject')
     students = models.ManyToManyField('auth.Listener', verbose_name=u'Слушатели',
-        through='Vizit', related_name='courses')
+        through='Vizit', related_name='course')
     department = models.ForeignKey('Department', related_name='courses', verbose_name=u'Филиал')
 
     def get_absolute_url(self):
         return reverse('core.course.read', args=(self.pk,))
+
+    def organizations(self):
+        return Organization.objects.filter(listener__vizit__course=self).distinct()
 
     def __unicode__(self):
         return u'%s (%s ч.)' % (self.subject, self.hours)
 
 
 class Vizit(models.Model):
+
+    class Meta:
+        ordering = ['registration_date', 'id']
+
     course = models.ForeignKey('Course', verbose_name=u'Предмет')
     listener = models.ForeignKey('auth.Listener', verbose_name=u'Слушатель')
-
+    registration_date = models.DateTimeField(verbose_name=u'Дата регистрации', auto_now_add=True)
 
 class Department(models.Model):
     name = models.CharField(verbose_name=u'Название', max_length=255)

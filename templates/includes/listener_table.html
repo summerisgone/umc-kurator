@@ -1,19 +1,30 @@
 <table class="table table-bordered table-striped">
         <tr>
             <th></th>
-            <th>Фамилия</th>
-            <th>Имя</th>
-            <th>Отчество</th>
+            <th>ФИО</th>
             <th>Организация</th>
             <th>Должность</th>
             <th>Сертификат</th>
         </tr>
     {% for listener in listeners %}
         <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ listener.last_name }}</td>
-            <td>{{ listener.first_name }}</td>
-            <td>{{ listener.patronymic }}</td>
+            <td>
+                {% if page_obj %}
+                {{ forloop.counter0|add:page_obj.start_index }}
+                {% else %}
+                {{ forloop.counter }}
+                {% endif %}
+            </td>
+            <td>{{ listener.last_name }}
+                {{ listener.first_name }}
+                {{ listener.patronymic }}
+                <br>
+                <span class="muted">
+                    {{ listener.last_name_inflated }}
+                    {{ listener.first_name_inflated }}
+                    {{ listener.patronymic_inflated }}
+                </span>
+            </td>
             <td>{{ listener.organization }}</td>
             <td>{{ listener.position }}</td>
             <td>

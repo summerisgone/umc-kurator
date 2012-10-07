@@ -100,6 +100,56 @@ html, body {
 	height: 50px; /* .push must be the same height as .footer */
 }
 
+/* паджинация*/
+.pagination-page {
+	padding-top: 15px;
+	margin-bottom: 60px;
+	text-align: center;
+}
+.pagination-page .page {
+	display: inline-block;
+	text-align: center;
+	border-bottom: grey solid 3px;
+    margin: 0 3px;
+    width: 36px;
+}
+
+.pagination-page .page.arrow {
+    width: 5em;
+}
+
+.pagination-page .page:hover {
+	background: #F0F0F0;
+	border-bottom-color: #333;
+}
+
+.pagination-page .page.arrow {
+    border: none;
+}
+
+.pagination-page  .page *  {
+	display: block;
+	line-height: 36px;
+	color: #666;
+	text-decoration: none !important;
+}
+
+.pagination-page .current-page {
+	width: 36px;
+	line-height: 36px;
+	background: #333;
+	border-bottom-color: #333;
+	/*cursor: default;*/
+}
+
+.pagination-page  .current-page span {
+    color: white;
+}
+
+.pagination-page  .current-page:hover {
+	background: #333 !important;
+}
+
 /* ==========================================================================
    Layout
    ========================================================================== */

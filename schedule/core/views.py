@@ -68,3 +68,21 @@ class EmitCertificate(FormView):
     def form_valid(self, form):
         form.save()
         return HttpResponseRedirect(self.get_success_url())
+
+
+class ListenersList(ListView):
+    model = Listener
+    paginate_by = 50
+
+    def get_course(self):
+        return get_object_or_404(Course, pk=self.kwargs['course_pk'])
+
+    def get_queryset(self):
+        return self.model.objects.filter(course=self.get_course())
+
+    def get_context_data(self, **kwargs):
+        context = super(ListenersList, self).get_context_data(**kwargs)
+        context.update({
+            'course': self.get_course()
+        })
+        return context

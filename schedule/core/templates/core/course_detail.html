@@ -8,15 +8,38 @@
     </ul>
 {% endblock %}
 
-{% block title %}Курс - {{ object }}{% endblock %}
+{% block title %}Курс - {{ object|truncatewords:3 }}{% endblock %}
 
 {% block content %}
     {% with object as course %}
-    {% with object.students.all|slice:":20" as listeners %}
-        {% include "includes/listener_table.html" %}
-    {% endwith %}
-    {% endwith %}
+    <div class="row">
+        <div class="span6">
+            <table class="table">
+                <tr>
+                    <th colspan="2">{{ course.name }}</th>
+                </tr>
+                <tr>
+                    <th>Слушателей</th>
+                    <td>{{ course.students.count }}</td>
+                </tr>
+                <tr>
+                    <th>Организаций</th>
+                    <td>{{ course.organizations.count }}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="span12">
+            <h3>Последние зарегистрированные слушатели</h3>
+            {% with course.students.all.reverse|slice:":10" as listeners %}
+                {% include "includes/listener_table.html" %}
+            {% endwith %}
 
-    <a class="btn" href="{% url add_listener object.pk %}"><i class="icon-plus"></i> Добавить
-    слушателя</a>
+
+            <a class="btn" href="{% url add_listener object.pk %}"><i class="icon-plus"></i> Добавить
+            слушателя</a>
+            <a class="pull-right" href="{% url course_listeners_list course.pk %}">Полный список
+                слушателей</a>
+        </div>
+    </div>
+    {% endwith %}
 {% endblock content %}
