@@ -3,8 +3,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.forms.models import modelform_factory
 from django.views.generic import ListView, DetailView, FormView, View, TemplateView, CreateView
+from django.views.generic.edit import BaseFormView
 from auth.models import Listener
-from schedule.core.forms import AddListenerForm, CourseAddForm, EmitCertificateForm
+from schedule.core.forms import ListenerAddForm, CourseAddForm, EmitCertificateForm
 from schedule.core.models import Department, Course, Certificate
 
 
@@ -30,23 +31,22 @@ class CourseAdd(FormView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class AddListener(TemplateView):
+class AddListener(FormView):
     template_name = 'core/add_listener.html'
+    form_class = ListenerAddForm
 
-    def dispatch(self, request, course_pk, *args, **kwargs):
-        self.course = get_object_or_404(Course, pk=course_pk)
-        return super(AddListener, self).dispatch(request, *args, **kwargs)
+    def get_course(self):
+        return get_object_or_404(Course, pk=self.kwargs['course_pk'])
 
-    def get_context_data(self, **kwargs):
-        return {'form': AddListenerForm(self.course)}
+    def get_form(self, form_class):
+        return form_class(self.get_course(), **self.get_form_kwargs())
 
-    def post(self, *args, **kwds):
-        form = AddListenerForm(self.course, self.request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(self.course.get_absolute_url())
-        else:
-            return self.render_to_response({'form': form})
+    def form_valid(self, form):
+        form.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return self.get_course().get_absolute_url()
 
 
 class EmitCertificate(FormView):

@@ -1,5 +1,5 @@
 {% extends "core/base.html" %}
-{% load zenforms %}
+{% load zenforms zenforms2 %}
 
 {% block css %}
     {{ block.super }}
@@ -8,29 +8,45 @@
 
 {% block js %}
     {{ block.super }}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/knockout-2.1.0.js"></script>
     <script type="text/javascript">
     $(function(){
         $('form.uniForm').uniform();
         $('select').select2();
 
-        $('#id_last_name').autocompleteNames({
+        $('[name=last_name]').autocompleteNames({
             url: '{% url api:autocomplete_last_name %}'
         });
-        $('#id_first_name').autocompleteNames({
+        $('[name=first_name]').autocompleteNames({
             url: '{% url api:autocomplete_first_name %}'
         });
-        $('#id_patronymic').autocompleteNames({
+        $('[name=patronymic]').autocompleteNames({
             url: '{% url api:autocomplete_patronymic %}'
+        });
+        $('[name=organization]').select2({
+            ajax: {
+                dataType: 'json',
+                url: '{% url api:autocomplete_organization %}',
+                data: function(term, page) {
+                    return {term: term};
+                },
+                results: function(data, page) {
+                    var res = {results: $.map(data, function(item, index){
+                        return {id: index, text: item};
+                    })};
+                    return res;
+                }
+            }
         });
 
         var lock = false;
-        $('#id_last_name, #id_first_name, #id_patronymic').blur(function(){
+        $('[name=last_name], [name=first_name], [name=patronymic]').blur(function(){
             if (lock) return;
             lock = true; // lock ajax
 
-            var last_name = $('#id_last_name').val(),
-                first_name = $('#id_first_name').val(),
-                patronymic = $('#id_patronymic').val();
+            var last_name = $('[name=last_name]').val(),
+                first_name = $('[name=first_name]').val(),
+                patronymic = $('[name=patronymic]').val();
 
             if (last_name.length && first_name.length && patronymic.length) {
                 $.ajax('{% url api:autocomplete_user %}', {
@@ -43,18 +59,21 @@
                     dataType: 'json',
                     success: function(data){
                         lock = false; // release
-                        $('#id_last_name_inflated').val(data['last_name']);
-                        $('#id_first_name_inflated').val(data['first_name']);
-                        $('#id_patronymic_inflated').val(data['patronymic']);
-                        $('#id_last_name_inflated, #id_first_name_inflated, ' +
-                                '#id_patronymic_inflated').effect('highlight', 500);
+                        $('[name=last_name_inflated]').val(data['last_name']);
+                        $('[name=first_name_inflated]').val(data['first_name']);
+                        $('[name=patronymic_inflated]').val(data['patronymic']);
+                        $('[name=last_name]_inflated, [name=first_name_inflated], ' +
+                                '[name=patronymic_inflated]').effect('highlight', 500);
 
                         // Если пользователь уже есть - показать его данные,
                         // если нет - создать нового
+                        var userinfo_div = $('.user-info');
                         if (data.user) {
-                            $('#id_user').html('Найден пользователь ' + data.user.id);
+                            ko.applyBindings(data.user, userinfo_div.get(0));
+                            userinfo_div.show().effect('highlight', 300);
                         } else {
-                            $('#id_user').html('Новый пользователь');
+                            userinfo_div.html('Новый пользователь').show();
+                            $('.new-user-info').show();
                         }
                     }
                 });
@@ -70,12 +89,53 @@
 
 {% block content %}
     <h2 class="page-header">Добавить слушателя</h2>
-    {% zenform form  %}
-        {% multifield 'last_name' 'first_name' 'patronymic' as credentials label 'ФИО слушателя' %}
-        {% fieldset credentials %}
-        {% multifield 'last_name_inflated' 'first_name_inflated' 'patronymic_inflated' as credentials_inflated label 'ФИО слушателя в дательном падеже' %}
-        {% fieldset credentials_inflated %}
-        <span id="id_user"></span>
+    {% zenform form %}
+        <fieldset class="span6 bootstrap inline">
+            <legend>ФИО слушателя</legend>
+            <label>Фамилия<br>
+                {{ form.last_name|attrs:'class="input-medium"' }}
+                {{ form.last_name.errors }}
+            </label>
+            <label>Имя<br>
+                {{ form.first_name|attrs:'class="input-medium"' }}
+                {{ form.first_name.errors }}
+            </label>
+            <label>Отчество<br>
+                {{ form.patronymic|attrs:'class="input-medium"' }}
+                {{ form.patronymic.errors }}
+            </label>
+        </fieldset>
+        <fieldset class="span6 bootstrap inline">
+            <legend>ФИО слушателя в дательном падеже</legend>
+            <label>Фамилия<br>
+                {{ form.last_name_inflated|attrs:'class="input-medium"' }}
+                {{ form.last_name_inflated.errors }}
+            </label>
+            <label>Имя<br>
+                {{ form.first_name_inflated|attrs:'class="input-medium"' }}
+                {{ form.first_name_inflated.errors }}
+            </label>
+            <label>Отчество<br>
+                {{ form.patronymic_inflated|attrs:'class="input-medium"' }}
+                {{ form.patronymic_inflated.errors }}
+            </label>
+        </fieldset>
+        <div class="user-info" style="display: none;">
+            <div class="ctlGroup">
+                Огранизация: <span data-bind="text: organization"></span>
+            </div>
+            <div class="ctlGroup">
+                Должность: <span data-bind="text: position"></span>
+            </div>
+            <div class="ctlGroup" data-bind="if: profile">
+                Профиль: <span data-bind="text: profile"></span>
+            </div>
+            <input type="hidden" data-bind="value: id" id="user_id">
+        </div>
+        <div class="new-user-info" {% if form.errors and form.user_is_new %}{% else %}
+             style="display: none;"{% endif %}>
+            {% fieldset 'organization' 'category' 'position' 'profile' %}
+        </div>
         {% submit "Добавить" %}
     {% endzenform %}
 {% endblock content %}

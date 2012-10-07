@@ -3,6 +3,7 @@ from django.conf import settings
 from django import forms
 from os.path import join
 from auth.models import Listener
+from core.models import Organization
 from djangorestframework.views import View
 from utils import firstcaps
 from pymorphy import get_morph
@@ -24,6 +25,13 @@ class AutoCompleteFirstName(View):
             first_name__istartswith=firstcaps(self.PARAMS.get('term',''))
             ).values_list('first_name', flat=True).distinct()[:20]
 
+
+class AutoCompleteOrganization(View):
+
+    def get(self, request):
+        return Organization.objects.filter(
+            name__icontains=self.PARAMS.get('term','')
+            ).values_list('name', flat=True).distinct()[:20]
 
 class AutoCompletePatronymic(View):
 

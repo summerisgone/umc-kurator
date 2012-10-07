@@ -149,6 +149,37 @@ footer {
     font-size:80%;
 }
 
+/** Custom forms **/
+
+.bootstrap.inline legend {
+    margin-bottom: 0.5em;
+    padding-bottom: 0.5em;
+}
+
+.bootstrap.inline label {
+    display: inline-block;
+    margin-top: 0.5em;
+}
+
+.bootstrap.inline input {
+    display: block;
+}
+
+.bootstrap.inline ul.errorlist {
+    margin: 5px 0;
+    width: 100%;
+    padding: 0;
+}
+
+.bootstrap.inline ul.errorlist li {
+    margin: 0;
+}
+
+.bootstrap input[type=text] {
+    padding: 4px 6px;
+    border: 1px solid #CCC;
+    color: #555;
+}
 
 
 

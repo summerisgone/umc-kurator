@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls.defaults import patterns, url
 from api.resources import AutoCompleteLastName, AutoCompletePatronymic, AutoCompleteFirstName, \
-    AutoCompeteUser
+    AutoCompeteUser, AutoCompleteOrganization
 
 
 urlpatterns = patterns('',
@@ -11,6 +11,8 @@ urlpatterns = patterns('',
         name='autocomplete_first_name'),
     url(r'^autocomplete/patronymic/$', AutoCompletePatronymic.as_view(),
         name='autocomplete_patronymic'),
+    url(r'^autocomplete/organization/$', AutoCompleteOrganization.as_view(),
+            name='autocomplete_organization'),
     url(r'^autocomplete/user/$', AutoCompeteUser.as_view(),
         name='autocomplete_user'),
 )

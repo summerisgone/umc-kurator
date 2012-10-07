@@ -26,7 +26,7 @@ class CourseAddForm(forms.ModelForm):
         super(CourseAddForm, self).save(**kwds)
 
 
-class AddListenerForm(forms.Form):
+class ListenerAddForm(forms.Form):
     # User creation fields
     last_name = forms.CharField(label=u'Фамилия')
     first_name = forms.CharField(label=u'Имя')
@@ -36,14 +36,34 @@ class AddListenerForm(forms.Form):
     first_name_inflated = forms.CharField(label=u'Имя')
     patronymic_inflated = forms.CharField(label=u'Отчество')
 
-    organization = forms.CharField(label=u'Организация')
-    category = forms.ChoiceField(label=u'Категория слушателя', choices=enums.LISTENER_CATEGORIES)
-    position = forms.ChoiceField(label=u'Должность', choices=enums.LISTENER_POSITIONS)
-    profile = forms.ChoiceField(label=u'Профиль', choices=enums.LISTENER_PROFILES)
+    user_id = forms.IntegerField(widget=forms.HiddenInput, required=False)
+
+    organization = forms.CharField(label=u'Организация', required=False)
+    category = forms.ChoiceField(label=u'Категория слушателя', choices=enums.LISTENER_CATEGORIES,
+        required=False)
+    position = forms.ChoiceField(label=u'Должность', choices=enums.LISTENER_POSITIONS,
+        required=False)
+    profile = forms.ChoiceField(label=u'Профиль', choices=enums.LISTENER_PROFILES, required=False)
 
     def __init__(self, course, *args, **kwds):
         self.course = course
-        super(AddListenerForm, self).__init__(*args, **kwds)
+        super(ListenerAddForm, self).__init__(*args, **kwds)
+
+    def user_is_new(self):
+        return 'user_id' not in self.data
+
+    def clean(self):
+        if ('user_id' in self.cleaned_data and
+            self.cleaned_data['user_id'] and
+            Listener.objects.get(id=self.cleaned_data['user_id']).exists()):
+            return self.cleaned_data
+        else:
+            if all(map(lambda k: k in self.cleaned_data,
+                ['organization', 'category', 'position', 'profile'])):
+                return self.cleaned_data
+            else:
+                raise forms.ValidationError(u'Для нового пользователя все поля обязательны к '
+                                            u'заполнению')
 
     def save(self):
         listener = Listener(

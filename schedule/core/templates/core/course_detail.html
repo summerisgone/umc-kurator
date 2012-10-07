@@ -12,7 +12,7 @@
 
 {% block content %}
     {% with object as course %}
-    {% with object.students.all as listeners %}
+    {% with object.students.all|slice:":20" as listeners %}
         {% include "includes/listener_table.html" %}
     {% endwith %}
     {% endwith %}
