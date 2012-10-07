@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls.defaults import patterns, url
+from djangorestframework.views import ListOrCreateModelView
 from api.resources import AutoCompleteLastName, AutoCompletePatronymic, AutoCompleteFirstName, \
-    AutoCompeteUser, AutoCompleteOrganization
+    AutoCompeteUser, AutoCompleteOrganization, OrganizationResource
 
 
 urlpatterns = patterns('',
@@ -15,4 +16,6 @@ urlpatterns = patterns('',
             name='autocomplete_organization'),
     url(r'^autocomplete/user/$', AutoCompeteUser.as_view(),
         name='autocomplete_user'),
+    url(r'^organization/', ListOrCreateModelView.as_view(resource=OrganizationResource),
+        name='organization')
 )

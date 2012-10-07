@@ -181,12 +181,10 @@ footer {
     color: #555;
 }
 
-
-
-
-
-
-
+.select2-container.textInput {
+    border: none;
+    background: transparent;
+}
 
 /* ==========================================================================
    Helper classes

@@ -8,6 +8,7 @@ from schedule.crud.models import crud
 crud.register('core.Course')
 crud.register('core.Subject')
 crud.register('core.Department')
+crud.register('core.Organization')
 crud.register('auth.Teacher')
 
 admin.autodiscover()

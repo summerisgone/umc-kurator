@@ -4,6 +4,7 @@ from django import forms
 from os.path import join
 from auth.models import Listener
 from core.models import Organization
+from djangorestframework.resources import ModelResource
 from djangorestframework.views import View
 from utils import firstcaps
 from pymorphy import get_morph
@@ -86,3 +87,6 @@ class AutoCompeteUser(View):
                 'position': listener.position,
                 'profile': listener.profile,
             }
+
+class OrganizationResource(ModelResource):
+    model = Organization
