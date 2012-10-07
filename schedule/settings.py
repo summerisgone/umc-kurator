@@ -85,6 +85,7 @@ INSTALLED_APPS = [
     'schedule.reports',
     'zenforms',
     'djangorestframework',
+    'south',
 ]
 
 TEMPLATE_LOADERS = (

@@ -66,26 +66,28 @@ class ListenerAddForm(forms.Form):
                                             u'заполнению')
 
     def save(self):
-        listener = Listener(
-            username='user-%6d' % random.randint(0, 999999),
-            first_name=self.cleaned_data['first_name'],
-            last_name=self.cleaned_data['last_name'],
-            patronymic=self.cleaned_data['patronymic'],
+        if 'user_id' in self.cleaned_data:
+            listener = Listener.objects.get(id=self.cleaned_data['user_id'])
+        else:
+            listener = Listener(
+                username='user-%6d' % random.randint(0, 999999),
+                first_name=self.cleaned_data['first_name'],
+                last_name=self.cleaned_data['last_name'],
+                patronymic=self.cleaned_data['patronymic'],
 
-            first_name_inflated=self.cleaned_data['first_name_inflated'],
-            last_name_inflated=self.cleaned_data['last_name_inflated'],
-            patronymic_inflated=self.cleaned_data['patronymic_inflated'],
+                first_name_inflated=self.cleaned_data['first_name_inflated'],
+                last_name_inflated=self.cleaned_data['last_name_inflated'],
+                patronymic_inflated=self.cleaned_data['patronymic_inflated'],
 
-            category=self.cleaned_data['category'],
-            position=self.cleaned_data['position'],
-            profile=self.cleaned_data['profile'],
-        )
-        organization, created = Organization.objects.get_or_create(
-            name=self.cleaned_data['organization']
-        )
+                category=self.cleaned_data['category'],
+                position=self.cleaned_data['position'],
+                profile=self.cleaned_data['profile'],
+            )
 
-        listener.organization = organization
-        listener.save()
+            listener.organization = Organization.objects.get(
+                name=self.cleaned_data['organization']
+            )
+            listener.save()
 
         Vizit.objects.create(course=self.course, listener=listener)
 

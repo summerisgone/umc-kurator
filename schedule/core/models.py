@@ -38,7 +38,7 @@ class Department(models.Model):
         return u'Филиал %s' % self.name
 
 class Organization(models.Model):
-    name = models.CharField(verbose_name=u'Название', max_length=255)
+    name = models.CharField(verbose_name=u'Название', max_length=255, unique=True)
     number = models.IntegerField(verbose_name=u'Номер', null=True, blank=True)
     address = models.CharField(verbose_name=u'Адрес', max_length=255,
         null=True, blank=True)
