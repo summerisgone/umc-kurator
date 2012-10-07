@@ -1,0 +1,38 @@
+{% extends "auth/base.html" %}
+{% load paginate %}
+
+{% block title %}Слушатель {{ object }} {% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="span12">
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <th>ФИО</th>
+                    <td>{{ object }}</td>
+                </tr>
+                <tr>
+                    <th>Организация</th>
+                    <td>{{ object.organization }}</td>
+                </tr>
+                <tr>
+                    <th>Должность</th>
+                    <td>{{ object.position }}</td>
+                </tr>
+                <tr>
+                    <th colspan="2">Список курсов</th>
+                </tr>
+                {% for course in object.course.all %}
+                    <tr>
+                        <td><a href="{{ course.get_absolute_url }}
+                        ">{{ course|truncatewords:5 }}</a></td>
+                        <td>{{ course.hours }} ч.</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="2">Список пуст</td></tr>
+                {% endfor %}
+            </table>
+            Курсы: {{ object.courses }}
+        </div>
+    </div>
+{% endblock content %}

@@ -10,13 +10,14 @@ crud.register('core.Subject')
 crud.register('core.Department')
 crud.register('core.Organization')
 crud.register('auth.Teacher')
+crud.register('auth.Listener')
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'^', include('schedule.core.urls')),
     (r'^reports/', include('schedule.reports.urls')),
-    (r'^crud/', include('schedule.crud.urls')),
+    (r'^crud/', include('schedule.crud.urls', namespace='crud')),
     (r'^api/', include('schedule.api.urls', namespace='api')),
     (r'^admin/', include(admin.site.urls)),
     url(r'^api-auth/', include('djangorestframework.urls', namespace='djangorestframework'))

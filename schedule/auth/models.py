@@ -50,3 +50,9 @@ class Listener(ExtendedUser):
 
         if save:
             self.save()
+
+    def fio(self):
+        return u'%s %s %s' % (self.last_name, self.first_name, self.patronymic)
+
+    def __unicode__(self):
+        return self.fio()

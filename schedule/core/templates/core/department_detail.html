@@ -2,7 +2,7 @@
 
 {% block breadcrumbs %}
     <ul class="breadcrumb">
-      <li><a href="{% url core.department.list %}">Список филиалов</a> <span class="divider">/</span></li>
+      <li><a href="{% url crud:core.department.list %}">Список филиалов</a> <span class="divider">/</span></li>
       <li class="active">{{ object }}</li>
     </ul>
 {% endblock %}

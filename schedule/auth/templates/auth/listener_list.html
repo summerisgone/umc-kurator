@@ -3,9 +3,9 @@
 
 {% block breadcrumbs %}
     <ul class="breadcrumb">
-      <li><a href="{% url core.department.list %}">Список слушателей</a> <span
+      <li><a href="{% url crud:core.department.list %}">Список слушателей</a> <span
               class="divider">/</span></li>
-        <li><a href="{% url core.department.read course.department.pk %}">{{ course.department }}</a> <span class="divider">/</span></li>
+        <li><a href="{% url crud:core.department.read course.department.pk %}">{{ course.department }}</a> <span class="divider">/</span></li>
       <li class="active">{{ object }}</li>
     </ul>
 {% endblock %}
@@ -15,7 +15,6 @@
 {% block content %}
     <div class="row">
         <div class="span12">
-            <h3>Последние зарегистрированные слушатели</h3>
             {% with object_list as listeners %}
                 {% include "includes/listener_table.html" %}
             {% endwith %}
