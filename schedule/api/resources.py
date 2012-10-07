@@ -83,6 +83,7 @@ class AutoCompeteUser(View):
             return {
                 'id': listener.id,
                 'organization': listener.organization.name,
+                'organization_cast': listener.organization.cast,
                 'category': listener.category,
                 'position': listener.position,
                 'profile': listener.profile,

@@ -16,6 +16,7 @@
     {{ block.super }}
     <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/knockout-2.1.0.js"></script>
     <script type="text/javascript">
+    var POSITIONS = {{ POSITIONS_DICT|safe }};
     var Modal = function(options){
         var settings = options || {},
             $el = settings.el || $(".modal");
@@ -184,6 +185,7 @@
                 Профиль: <span data-bind="text: profile"></span>
             </div>
             <input type="hidden" data-bind="value: id" id="user_id">
+            <input type="hidden" data-bind="value: organization_cast" id="organization_cast">
         </div>
         <div class="new-user-info" {% if form.errors and form.user_is_new %}{% else %}
              style="display: none;"{% endif %}>
