@@ -1,34 +1,25 @@
 # coding=utf-8
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 from auth.models import Listener
 from core.models import Course
 from reports.forms import ReportQueryForm
+from reports.query import ResultTable, PARAMETERS
 
 
 class ReportList(TemplateView):
     template_name = 'reports/index.html'
 
 
-class ListenersCount(TemplateView):
+class ListenersCount(FormView):
     template_name = 'reports/listeners_count.html'
+    form_class = ReportQueryForm
 
-    def get(self, request, *args, **kwargs):
-        form = ReportQueryForm()
-        return self.render_to_response({'form': form})
-
-    def post(self, request, *args, **kwargs):
-        form = ReportQueryForm(request.POST)
-        if form.is_valid():
-            query = form.get_query()
-            data = self.build_report(query)
-            return self.render_to_response({
-                'form': form,
-                'report': data
-            })
-        else:
-            return self.render_to_response({'form': form})
-
-    def build_report(self, query):
-        courses_ids = Course.objects.filter(query).values_list('id', flat=True)
-        listeners = Listener.objects.filter(courses__id__in=courses_ids)
-        return listeners
+    def form_valid(self, form):
+        cols = PARAMETERS[form.cleaned_data['vertical']]()
+        rows = PARAMETERS[form.cleaned_data['horizontal']]()
+        rt = ResultTable(rows, cols, Listener.objects.all())
+        return self.render_to_response({
+            'table': rt,
+            'data': rt.process(),
+            'form': form,
+        })

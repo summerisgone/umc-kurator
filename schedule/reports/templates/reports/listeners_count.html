@@ -1,19 +1,31 @@
 {% extends "reports/base.html" %}
-{% load zenforms %}
+{% load zenforms core_tags %}
 
 {% block title %}Отчёт по количеству обученных специалистов{% endblock %}
 
 {% block content %}
-    {% if report %}
-        {% with None as course %}
-            <table class="table table-bordered table-striped">
-                {% include "includes/listener_table_thead.html" %}
-                {% for listener in listeners %}
-                    {% include "includes/listener_table_tr.html" %}
+    {% if data %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th></th>
+                    {% for th in table.col_header %}
+                        <th>{{ th }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                    <tr>
+                        <th>{{ table.row_header|at:forloop.counter0 }}</th>
+                    {% for cell in row %}
+                        <td>{{ cell }}</td>
+                    {% endfor %}
+                    </tr>
                 {% endfor %}
-            </table>
-        {% endwith %}
-        <br>
+            </tbody>
+        </table>
+
         <a href=".">Другой отчёт</a>
     {% else %}
         {% izenform form options submit="Построить" %}

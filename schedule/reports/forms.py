@@ -1,43 +1,37 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+from datetime import datetime, date
 from django import forms
 from django.db.models import Q
+from random import choice
 from core.models import Department
 from dateutil.relativedelta import relativedelta
 import enums
 
 TIMERANGE_CHOICES = (
     ('month', u'Текущий месяц'),
-#    ('quarter', u'Квартал'),
-#    ('halfyear', u'Полугодие'),
-#    ('year', u'Год'),
+    ('year', u'Год'),
 )
+
+QUERY_CHOICES = (
+    ('organization', u'По организациям'),
+    ('department', u'По филиалам'),
+    ('position', u'По должностям'),
+    ('cast', u'По типам органзаций'),
+    ('category', u'По категории слушателей'),
+)
+
 
 class ReportQueryForm(forms.Form):
 
     time_range = forms.ChoiceField(label=u'Временной интервал', choices=TIMERANGE_CHOICES, required=False)
-    department = forms.ModelChoiceField(label=u'Филиал', queryset=Department.objects.all(), required=False)
-    listener_category = forms.ChoiceField(label=u'Категория слушателей', choices=enums.LISTENER_CATEGORIES, required=False)
-    organization_type = forms.ChoiceField(label=u'Тип организации', choices=enums.ORGANIZATION_TYPES, required=False)
+    vertical = forms.ChoiceField(label=u'По вертикали', choices=QUERY_CHOICES)
+    horizontal = forms.ChoiceField(label=u'По горизонтали', choices=QUERY_CHOICES)
 
-    def get_timerange(self, time_range):
-        now = datetime.now()
-        if time_range == 'month':
-            end = now.replace(day=25)
-            start = end - relativedelta(months=-1)
-        return start, end
+    def get_timerange(self):
+        choice = self.cleaned_data['time_range']
+        today = date.today()
 
-    def get_query(self):
-        # query - запрос к курсу
-        query = Q()
-#        if 'time_range' in self.cleaned_data and self.cleaned_data['time_range']:
-#            start, end = self.get_timerange(self.cleaned_data['time_range'])
-#            query &= Q(start__gt=start) and Q(end__lte=end)
-#        if 'department' in self.cleaned_data and self.cleaned_data['department']:
-#            query &= Q(department=self.cleaned_data['department'])
-#        if 'listener_category' in self.cleaned_data and self.cleaned_data['listener_category']:
-#            query &= Q(students__category__exact=self.cleaned_data['listener_category'])
-#        if 'organization_type' in self.cleaned_data and self.cleaned_data['organization_type']:
-#            query &= Q(students__organization__cast__exact=
-#                self.cleaned_data['organization_type'])
-        return query
+        if choice == 'month':
+            return today.replace(day=25) + relativedelta(months=-1),  today.replace(day=25)
+        if choice == 'year':
+            return today.replace(month=1, day=1), today.replace(month=12, day=31)

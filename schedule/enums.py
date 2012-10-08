@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from django.contrib.databrowse.datastructures import EasyChoice
-from django.contrib.databrowse.views import choice_list
 
 def make_choices(*choice_list):
     numbers = range(len(choice_list))
