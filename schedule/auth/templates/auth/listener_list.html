@@ -15,9 +15,12 @@
 {% block content %}
     <div class="row">
         <div class="span12">
-            {% with object_list as listeners %}
-                {% include "includes/listener_table.html" %}
-            {% endwith %}
+            <table class="table table-bordered table-striped">
+                {% include "includes/listener_table_thead.html" %}
+                {% for listener in object_list %}
+                    {% include "includes/listener_table_tr.html" %}
+                {% endfor %}
+            </table>
             <div class="pagination-page">{% digg_paginator %}</div>
 
         </div>

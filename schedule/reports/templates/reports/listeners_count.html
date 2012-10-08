@@ -6,9 +6,12 @@
 {% block content %}
     {% if report %}
         {% with None as course %}
-        {% with report as listeners %}
-            {% include "includes/listener_table.html" %}
-        {% endwith %}
+            <table class="table table-bordered table-striped">
+                {% include "includes/listener_table_thead.html" %}
+                {% for listener in listeners %}
+                    {% include "includes/listener_table_tr.html" %}
+                {% endfor %}
+            </table>
         {% endwith %}
         <br>
         <a href=".">Другой отчёт</a>

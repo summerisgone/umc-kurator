@@ -30,9 +30,12 @@
         </div>
         <div class="span12">
             <h3>Последние зарегистрированные слушатели</h3>
-            {% with course.students.all.reverse|slice:":10" as listeners %}
-                {% include "includes/listener_table.html" %}
-            {% endwith %}
+            <table class="table table-bordered table-striped">
+                {% include "includes/listener_table_thead.html" %}
+                {% for listener in course.students.all.reverse|slice:":10" %}
+                    {% include "includes/listener_table_tr.html" %}
+                {% endfor %}
+            </table>
 
 
             <a class="btn" href="{% url add_listener object.pk %}"><i class="icon-plus"></i> Добавить
