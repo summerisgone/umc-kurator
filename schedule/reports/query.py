@@ -35,7 +35,7 @@ class OrganizationParameter(AbstractParameter):
 class PositionParameter(AbstractParameter):
 
     def process_queryset(self, queryset, position):
-        return queryset.filter(profile=position)
+        return queryset.filter(position=position)
 
     def values(self):
         return enums.LISTENER_POSITIONS
