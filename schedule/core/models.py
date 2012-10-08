@@ -1,6 +1,7 @@
 # coding=utf-8
 from django.core.urlresolvers import reverse
 from django.db import models
+from auth.models import Listener
 from schedule import enums
 
 
@@ -32,6 +33,7 @@ class Vizit(models.Model):
     course = models.ForeignKey('Course', verbose_name=u'Предмет')
     listener = models.ForeignKey('auth.Listener', verbose_name=u'Слушатель')
     registration_date = models.DateTimeField(verbose_name=u'Дата регистрации', auto_now_add=True)
+    completed = models.BooleanField(verbose_name=u'Курс прослушан', default=False)
 
 class Department(models.Model):
     name = models.CharField(verbose_name=u'Название', max_length=255)
@@ -40,6 +42,9 @@ class Department(models.Model):
 
     def get_absolute_url(self):
         return reverse('crud:core.department.read', args=(self.pk,))
+
+    def listeners(self):
+        return Listener.objects.filter(vizit__course__department=self).distinct()
 
     def __unicode__(self):
         return u'Филиал %s' % self.name

@@ -54,5 +54,14 @@ class Listener(ExtendedUser):
     def fio(self):
         return u'%s %s %s' % (self.last_name, self.first_name, self.patronymic)
 
+    def apply_course(self, course):
+        if self.vizit_set.filter(course=course).exists():
+            return None
+        else:
+            return self.vizit_set.create(course=course)
+
+    def complete_course(self, course):
+        return self.vizit_set.filter(course=course).update(completed=True)
+
     def __unicode__(self):
         return self.fio()
