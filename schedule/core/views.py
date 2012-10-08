@@ -5,6 +5,7 @@ from django.forms.models import modelform_factory
 from django.views.generic import ListView, DetailView, FormView, View, TemplateView, CreateView
 from django.views.generic.edit import BaseFormView
 from auth.models import Listener
+from auth.views import ListenersList
 from schedule.core.forms import ListenerAddForm, CourseAddForm, EmitCertificateForm
 from schedule.core.models import Department, Course, Certificate
 
@@ -70,18 +71,17 @@ class EmitCertificate(FormView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ListenersList(ListView):
-    model = Listener
-    paginate_by = 50
+class CourseListenersList(ListenersList):
 
     def get_course(self):
         return get_object_or_404(Course, pk=self.kwargs['course_pk'])
 
     def get_queryset(self):
-        return self.model.objects.filter(course=self.get_course())
+        queryset = super(CourseListenersList, self).get_queryset()
+        return queryset.filter(course=self.get_course())
 
     def get_context_data(self, **kwargs):
-        context = super(ListenersList, self).get_context_data(**kwargs)
+        context = super(CourseListenersList, self).get_context_data(**kwargs)
         context.update({
             'course': self.get_course()
         })
