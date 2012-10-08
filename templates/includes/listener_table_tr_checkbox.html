@@ -1,0 +1,52 @@
+<tr>
+    <td>
+        <label for="listener_{{ listener.id }}">
+        {% if page_obj %}
+        {{ forloop.counter0|add:page_obj.start_index }}
+        {% else %}
+        {{ forloop.counter }}
+        {% endif %}
+        </label>
+    </td>
+    <td>
+        <input type="checkbox" id="listener_{{ listener.id }}" name="listeners" value=
+                "{{ listener.id }}">
+    </td>
+    <td>
+        <label for="listener_{{ listener.id }}">
+            <a href="{% url crud:auth.listener.read listener.pk %}">{{ listener.last_name }}
+                {{ listener.first_name }}
+                {{ listener.patronymic }}
+            </a>
+            <br>
+            <span class="muted">
+                {{ listener.last_name_inflated }}
+                {{ listener.first_name_inflated }}
+                {{ listener.patronymic_inflated }}
+            </span>
+        </label>
+    </td>
+    <td>
+        <a href="{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}organization=
+        {{ listener.organization.name }}">
+        {{ listener.organization }}
+        </a>
+    </td>
+    <td>
+        <a href="{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}position=
+                {{ listener.position }}">
+                {{ listener.position }}
+                </a>
+    </td>
+    <td>
+        {% for cert in listener.certificate_set.all %}
+        {{ cert.name }}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+        {% if not listener.certificate_set.exists %}
+            {% if course %}
+            <a class="btn" href="{% url emit_certificate course.id listener.id %}">выдать
+                сертификат</a>
+            {% endif %}
+        {% endif %}
+    </td>
+</tr>

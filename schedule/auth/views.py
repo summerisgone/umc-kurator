@@ -24,3 +24,13 @@ class ListenersList(ListView):
 
     def get_queryset(self):
         return self.model.objects.filter(self.build_query())
+
+    def get_context_data(self, **kwargs):
+        context = super(ListenersList, self).get_context_data(**kwargs)
+        if hasattr(self, 'extra_context'):
+            if callable(self.extra_context):
+                context.update(self.extra_context())
+            else:
+                context.update(self.extra_context)
+
+        return context

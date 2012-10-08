@@ -10,7 +10,7 @@ class Course(models.Model):
     start = models.DateField(verbose_name=u'Начало курса')
     end = models.DateField(verbose_name=u'Завершение курса')
     hours = models.IntegerField(verbose_name=u'Количество часов')
-    subject = models.ForeignKey('Subject')
+    subject = models.ForeignKey('Subject', verbose_name=u'Предмет')
     students = models.ManyToManyField('auth.Listener', verbose_name=u'Слушатели',
         through='Vizit', related_name='course')
     department = models.ForeignKey('Department', related_name='courses', verbose_name=u'Филиал')

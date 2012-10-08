@@ -38,10 +38,12 @@
             </table>
 
 
-            <a class="btn" href="{% url add_listener object.pk %}"><i class="icon-plus"></i> Добавить
-            слушателя</a>
-            <a class="pull-right" href="{% url course_listeners_list course.pk %}">Полный список
-                слушателей</a>
+            <a class="btn" href="{% url add_listener object.pk %}">
+                <i class="icon-plus"></i> Добавить слушателя</a>
+            <a href="{% url add_listener_batch object.pk %}">
+                <i class="icon-list"></i> Добавить из списка</a>
+            <a class="pull-right" href="{% url course_listeners_list course.pk %}">
+                Полный список слушателей</a>
         </div>
     </div>
     {% endwith %}

@@ -66,7 +66,7 @@ class ListenerAddForm(forms.Form):
                                             u'заполнению')
 
     def save(self):
-        if 'user_id' in self.cleaned_data:
+        if 'user_id' in self.cleaned_data and self.cleaned_data['user_id']:
             listener = Listener.objects.get(id=self.cleaned_data['user_id'])
         else:
             listener = Listener(
@@ -101,3 +101,8 @@ class EmitCertificateForm(forms.models.ModelForm):
         super(EmitCertificateForm, self).__init__(*args, **kwds)
         self.instance.course = course
         self.instance.listener = listener
+
+
+class BatchListenersForm(forms.Form):
+    listeners = forms.ModelMultipleChoiceField(label="Слушатели",
+        queryset=Listener.objects.all())
