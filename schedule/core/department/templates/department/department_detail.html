@@ -29,7 +29,8 @@
             </table>
             <a class="btn" href="{% url department:course_add department.pk %}"><i
                     class="icon-plus"></i> Добавить</a>
-            <a class="pull-right" href="#">Полный список курсов</a>
+            <a class="pull-right" href="{% url department:course_list department.pk %}">Полный
+                список курсов</a>
         </div>
         <div class="span6">
             <h4><i class="icon-headphones"></i> Слушатели</h4>

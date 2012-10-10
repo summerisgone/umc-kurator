@@ -1,14 +1,12 @@
-{% extends "core/base.html" %}
+{% extends "department/base.html" %}
 
-{% block breadcrumbs %}
-    <ul class="breadcrumb">
-      <li><a href="{% url crud:core.department.list %}">Список филиалов</a> <span class="divider">/</span></li>
-        <li><a href="{% url crud:core.department.read object.department.pk %}">{{  object.department }}</a> <span class="divider">/</span></li>
-      <li class="active">{{ object }}</li>
-    </ul>
+{% block extra_crumb %}
+    <li><a href="{% url department:course_list department.pk %}">
+        Cписок курсов</a></li><span class="divider">/</span></li>
+    <li class="active">{{ object|truncatewords:3 }}</li>
 {% endblock %}
 
-{% block title %}Курс - {{ object|truncatewords:3 }}{% endblock %}
+{% block title %}Курс - {{ object }}{% endblock %}
 
 {% block content %}
     {% with object as course %}
@@ -38,11 +36,13 @@
             </table>
 
 
-            <a class="btn" href="{% url add_listener object.pk %}">
+            <a class="btn" href="
+            {% url department:course_listener_add course.department.pk course.pk %}">
                 <i class="icon-plus"></i> Добавить слушателя</a>
-            <a href="{% url add_listener_batch object.pk %}">
+            <a href="{% url department:course_listener_add_batch course.department.pk course.pk %}">
                 <i class="icon-list"></i> Добавить из списка</a>
-            <a class="pull-right" href="{% url course_listeners_list course.pk %}">
+            <a class="pull-right" href="
+            {% url department:course_listeners_list course.department.pk course.pk %}">
                 Полный список слушателей</a>
         </div>
     </div>

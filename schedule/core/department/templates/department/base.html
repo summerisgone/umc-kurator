@@ -11,7 +11,8 @@
 {% endblock %}
 
 {% block menu %}
-<li><a href="#">Курсы</a></li>
+<li><a href="{{ department.get_absolute_url }}">Филиал</a></li>
+<li><a href="{% url department:course_list department.pk %}">Курсы</a></li>
 <li><a href="#">Слушатели</a></li>
 <li><a href="#">Организации</a></li>
 <li><a href="#">Отчёты</a></li>

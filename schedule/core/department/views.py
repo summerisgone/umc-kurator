@@ -1,24 +1,44 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.forms.models import modelform_factory
-from django.views.generic import ListView, DetailView, FormView, View, TemplateView, CreateView
-from django.views.generic.edit import BaseFormView
+from django.views.generic import ListView, DetailView, FormView
 from auth.models import Listener
 from auth.views import ListenersList
-from schedule.core.forms import ListenerAddForm, CourseAddForm, EmitCertificateForm, BatchListenersForm
+from forms import ListenerAddForm, CourseAddForm, EmitCertificateForm, BatchListenersForm
 from schedule.core.models import Department, Course, Certificate
+from utils import ExtraContextMixin
 
 
-class CourseAdd(FormView):
-    form_class = CourseAddForm
-    template_name = 'core/course_add.html'
-
-    def get_success_url(self):
-        return self.get_department().get_absolute_url()
+class DepartmentMixin(object):
 
     def get_department(self):
         return get_object_or_404(Department, pk=self.kwargs['department_id'])
+
+    def extra_context(self):
+        return {
+            'department': self.get_department()
+        }
+
+class CourseMixin(object):
+
+    def get_course(self):
+        return get_object_or_404(Course, pk=self.kwargs['course_pk'])
+
+
+class CourseList(DepartmentMixin, ExtraContextMixin, ListView):
+    model = Course
+    template_name = 'department/course_list.html'
+
+    def get_queryset(self):
+        return self.model.objects.all()  #filter(department=self.get_department())
+
+
+class CourseAdd(ExtraContextMixin, DepartmentMixin, FormView):
+    form_class = CourseAddForm
+    template_name = 'department/course_add.html'
+
+    def get_success_url(self):
+        return self.get_department().get_absolute_url()
 
     def get_form(self, form_class):
         return form_class(self.get_department(), **self.get_form_kwargs())
@@ -28,12 +48,14 @@ class CourseAdd(FormView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class AddListener(FormView):
-    template_name = 'core/add_listener.html'
-    form_class = ListenerAddForm
+class CourseDetail(ExtraContextMixin, DepartmentMixin, DetailView):
+    template_name = 'department/course_detail.html'
+    model = Course
 
-    def get_course(self):
-        return get_object_or_404(Course, pk=self.kwargs['course_pk'])
+
+class AddListener(FormView, DepartmentMixin, CourseMixin):
+    template_name = 'department/add_listener.html'
+    form_class = ListenerAddForm
 
     def get_form(self, form_class):
         return form_class(self.get_course(), **self.get_form_kwargs())
@@ -46,10 +68,10 @@ class AddListener(FormView):
         return self.get_course().get_absolute_url()
 
 
-class EmitCertificate(FormView):
+class EmitCertificate(FormView, CourseMixin):
     model = Certificate
     form_class = EmitCertificateForm
-    template_name = 'core/certificate_form.html'
+    template_name = 'department/certificate_form.html'
 
     def get_success_url(self):
         return self.get_course_and_listener()[0].get_absolute_url()
@@ -67,10 +89,7 @@ class EmitCertificate(FormView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class CourseListenersList(ListenersList):
-
-    def get_course(self):
-        return get_object_or_404(Course, pk=self.kwargs['course_pk'])
+class CourseListenersList(ListenersList, CourseMixin):
 
     def get_queryset(self):
         queryset = super(CourseListenersList, self).get_queryset()
@@ -82,7 +101,7 @@ class CourseListenersList(ListenersList):
 
 class ListenerBatchSelect(CourseListenersList):
 
-    template_name = 'core/add_listener_batch.html'
+    template_name = 'department/add_listener_batch.html'
 
     def extra_context(self):
         params = self.request.GET.copy()
@@ -99,7 +118,7 @@ class ListenerBatchSelect(CourseListenersList):
 class ListenerBatchUpdate(FormView):
 
     form_class = BatchListenersForm
-    template_name = 'core/add_listener_batch.html'
+    template_name = 'department/add_listener_batch.html'
 
     def get_course(self):
         return get_object_or_404(Course, pk=self.kwargs['course_pk'])

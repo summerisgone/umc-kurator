@@ -26,7 +26,7 @@
         {% endfor %}
         {% if not listener.certificate_set.exists %}
             {% if course %}
-            <a class="btn" href="{% url emit_certificate course.id listener.id %}">выдать
+            <a class="btn" href="#">выдать
                 сертификат</a>
             {% endif %}
         {% endif %}

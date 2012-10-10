@@ -16,7 +16,7 @@ class Course(models.Model):
     department = models.ForeignKey('Department', related_name='courses', verbose_name=u'Филиал')
 
     def get_absolute_url(self):
-        return reverse('crud:core.course.read', args=(self.pk,))
+        return reverse('department:course_detail', args=(self.department.pk, self.pk,))
 
     def organizations(self):
         return Organization.objects.filter(listener__vizit__course=self).distinct()
