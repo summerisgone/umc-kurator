@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.sites',
     'django.contrib.staticfiles',
+    'django.contrib.messages',
     'schedule.core',
     'schedule.core.department',
     'schedule.auth',
@@ -118,6 +119,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.csrf',
     'schedule.context_processors.enums.POSITIONS_DICT',
+    'django.contrib.messages.context_processors.messages',
 )
 
 AUTHENTICATION_BACKENDS = (
