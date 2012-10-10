@@ -142,10 +142,10 @@ html, body {
 	min-height: 100%;
 	height: auto !important;
 	height: 100%;
-	margin: 0 auto -50px; /* the bottom margin is the negative value of the footer's height */
+	margin: 0 auto -70px; /* the bottom margin is the negative value of the footer's height */
 }
 .footer, .push {
-	height: 50px; /* .push must be the same height as .footer */
+	height: 70px; /* .push must be the same height as .footer */
 }
 
 /* паджинация*/
@@ -231,8 +231,12 @@ body {
 .container-wrapper .container {
     margin: auto;
 }
-
+.footer .top {
+    padding-top: 20px;
+}
 footer {
+    /*margin-top: 20px;*/
+    height: 49px;
     background-color: #EDE9E4;
     border-top: 1px solid #D9D6D2;
 }
