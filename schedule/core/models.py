@@ -41,7 +41,10 @@ class Department(models.Model):
         null=True, blank=True)
 
     def get_absolute_url(self):
-        return reverse('crud:core.department.read', args=(self.pk,))
+        return reverse('department:index', args=(self.pk,))
+
+    def organizations(self):
+        return Organization.objects.filter(listener__course__department=self).distinct()
 
     def listeners(self):
         return Listener.objects.filter(vizit__course__department=self).distinct()

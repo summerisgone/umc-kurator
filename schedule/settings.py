@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'schedule.core',
+    'schedule.core.department',
     'schedule.auth',
     'schedule.crud',
     'schedule.reports',

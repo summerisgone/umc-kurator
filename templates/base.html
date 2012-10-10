@@ -16,6 +16,8 @@
     {% block css %}
     <link rel="stylesheet" href="{{ STATIC_URL }}css/normalize.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/font-awesome.css">
+    <!--[if lt IE 7]><link rel="stylesheet" href="{{ STATIC_URL }}css/font-awesome-ie7.css"><![endif]-->
     <link rel="stylesheet" href="{{ STATIC_URL }}css/south-street/jquery-ui-1.8.24.custom.css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}zenforms/css/uni-form.css" type="text/css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}zenforms/css/default.uni-form.css" type="text/css" />
@@ -31,9 +33,10 @@
 <div class="container-wrapper">
     <div class="navbar">
         <div class="navbar-inner">
-            {% block menu %}
-                {% include "menu.html" %}
-            {% endblock menu %}
+                <ul class="nav">
+                    <li><a href="/"><i class="icon-home icon-white"></i></a></li>
+                    {% block menu %}{% include "menu.html" %}{% endblock menu %}
+                </ul>
         </div>
     </div>
     {% block breadcrumbs %}{% endblock %}

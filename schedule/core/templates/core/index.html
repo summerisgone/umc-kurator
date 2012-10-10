@@ -4,8 +4,19 @@
 
 {% block content %}
     <div class="row">
-        <div class="span12">
-        <a href="{% url crud:core.department.list %}">Список филиалов</a>
-        </div>
+        {% for department in departments %}
+            <div class="span4">
+            <div class="thumbnail">
+                <a href="{{ department.get_absolute_url }}">
+                    <img src="http://lorempixel.com/400/200/nature/{{ department.id }}/"
+                     alt="http://lorempixel.com">
+                </a>
+                <hr>
+                <div class="centered">
+                    <a href="{{ department.get_absolute_url }}">{{ department }}</a>
+                </div>
+            </div>
+            </div>
+        {% endfor %}
     </div>
 {% endblock content %}
