@@ -1,0 +1,25 @@
+{% extends "department/base.html" %}
+{% load paginate %}
+
+{% block extra_crumb %}
+    <li><a href="{% url department:course_list department.pk %}">
+        Cписок курсов</a></li><span class="divider">/</span></li>
+    <li class="active">Список слушателей</li>
+{% endblock %}
+
+{% block title %}Список слушателей курса - {{ course|truncatewords:3 }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="span12">
+            <table class="table table-bordered table-striped">
+                {% include "includes/listener_table_thead.html" %}
+                {% for listener in object_list %}
+                    {% include "includes/listener_table_tr.html" %}
+                {% endfor %}
+            </table>
+            <div class="pagination-page">{% digg_paginator %}</div>
+
+        </div>
+    </div>
+{% endblock content %}

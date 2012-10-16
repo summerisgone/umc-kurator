@@ -13,7 +13,7 @@
 {% block menu %}
 <li><a href="{{ department.get_absolute_url }}">Филиал</a></li>
 <li><a href="{% url department:course_list department.pk %}">Курсы</a></li>
-<li><a href="#">Слушатели</a></li>
-<li><a href="#">Организации</a></li>
+<li><a href="{% url department:listener_list department.pk %}">Слушатели</a></li>
+<li><a href="{% url department:organization_list department.pk %}">Организации</a></li>
 <li><a href="#">Отчёты</a></li>
 {% endblock %}

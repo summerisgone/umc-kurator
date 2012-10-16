@@ -60,6 +60,10 @@ class Organization(models.Model):
     cast = models.CharField(verbose_name=u'Тип организации', max_length=50,
         choices=enums.ORGANIZATION_TYPES, null=True, blank=True)
 
+    def save(self, *args, **kwds):
+        self.name = self.name.strip()
+        return super(Organization, self).save(*args, **kwds)
+
     def __unicode__(self):
         return self.name
 

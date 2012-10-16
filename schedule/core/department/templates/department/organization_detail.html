@@ -1,0 +1,22 @@
+{% extends "department/base.html" %}
+
+{% block extra_crumb %}
+    <li><a href="{% url department:organization_list department.pk %}">
+        Все организации</a><span class="divider">/</span></li>
+    <li class="active">{{ object }}</li>
+{% endblock %}
+
+{% block title %}{{ object }}{% endblock %}
+
+{% block content %}
+    {% with object as organization %}
+    <div class="span6">
+        <table class="table">
+            <tr>
+                <th>Сотрудников</th>
+                <td>{{ organization.listener_set.all.count }}</td>
+            </tr>
+        </table>
+    </div>
+    {% endwith %}
+{% endblock content %}

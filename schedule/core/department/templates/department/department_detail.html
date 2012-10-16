@@ -45,6 +45,8 @@
                 </tr>
 
             </table>
+            <a class="pull-right" href="
+            {% url department:listener_list department.pk %}">Все слушатели</a>
         </div>
     </div>
     <hr>
@@ -59,7 +61,7 @@
                 </tr>
                 {% endfor %}
             </table>
-            <a class="pull-right" href="#">Полный список</a>
+            <a class="pull-right" href="{% url department:organization_list department.pk %}">Полный список</a>
         </div>
         <div class="span6 bordered-left">
             <h4><i class="icon-table"></i> Отчёты</h4>

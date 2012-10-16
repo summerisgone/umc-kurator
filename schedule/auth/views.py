@@ -4,8 +4,9 @@ from django.views.generic import ListView
 from core.models import Organization
 from schedule import enums
 from models import Listener
+from utils import ExtraContextMixin
 
-class ListenersList(ListView):
+class ListenersList(ExtraContextMixin, ListView):
     model = Listener
     paginate_by = 50
 
@@ -24,13 +25,3 @@ class ListenersList(ListView):
 
     def get_queryset(self):
         return self.model.objects.filter(self.build_query())
-
-    def get_context_data(self, **kwargs):
-        context = super(ListenersList, self).get_context_data(**kwargs)
-        if hasattr(self, 'extra_context'):
-            if callable(self.extra_context):
-                context.update(self.extra_context())
-            else:
-                context.update(self.extra_context)
-
-        return context

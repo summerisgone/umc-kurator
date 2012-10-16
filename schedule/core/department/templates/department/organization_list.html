@@ -1,0 +1,28 @@
+{% extends "department/base.html" %}
+
+{% block extra_crumb %}
+    <li class="active">Организации</li>
+{% endblock %}
+
+{% block title %}Список организаций{% endblock %}
+
+{% block content %}
+    <table class="table table-striped">
+        <tr>
+            <th></th>
+            <th>Название</th>
+            <th>Тип</th>
+            <th>Кол-во сотрудников</th>
+        </tr>
+        {% for organization in object_list %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td><a href="{% url department:organization_detail department.pk organization.pk %}"
+                    >{{ organization.name }}</a></td>
+            <td>{{ organization.cast|default_if_none:"&mdash;" }}</td>
+            <td>{{ organization.listeners.all.count }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+{% endblock content %}

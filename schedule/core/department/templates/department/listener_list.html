@@ -1,0 +1,23 @@
+{% extends "department/base.html" %}
+{% load paginate %}
+
+{% block extra_crumb %}
+    <li class="active">Список слушателей</li>
+{% endblock %}
+
+{% block title %}Список всех слушателей филиала{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="span12">
+            <table class="table table-bordered table-striped">
+                {% include "includes/listener_table_thead.html" %}
+                {% for listener in object_list %}
+                    {% include "includes/listener_table_tr.html" %}
+                {% endfor %}
+            </table>
+            <div class="pagination-page">{% digg_paginator %}</div>
+
+        </div>
+    </div>
+{% endblock content %}

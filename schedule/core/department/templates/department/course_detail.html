@@ -2,14 +2,15 @@
 
 {% block extra_crumb %}
     <li><a href="{% url department:course_list department.pk %}">
-        Cписок курсов</a></li><span class="divider">/</span></li>
+        Cписок курсов</a><span class="divider">/</span></li>
     <li class="active">{{ object|truncatewords:3 }}</li>
 {% endblock %}
 
-{% block title %}Курс - {{ object }}{% endblock %}
+{% block title %}{{ object }}{% endblock %}
 
 {% block content %}
     {% with object as course %}
+    <h2>Сводка</h2>
     <div class="row">
         <div class="span6">
             <table class="table">
@@ -27,7 +28,7 @@
             </table>
         </div>
         <div class="span12">
-            <h3>Последние зарегистрированные слушатели</h3>
+            <h2>Последние зарегистрированные слушатели</h2>
             <table class="table table-bordered table-striped">
                 {% include "includes/listener_table_thead.html" %}
                 {% for listener in course.students.all.reverse|slice:":10" %}
@@ -43,7 +44,7 @@
                 <i class="icon-list"></i> Добавить из списка</a>
             <a class="pull-right" href="
             {% url department:course_listeners_list course.department.pk course.pk %}">
-                Полный список слушателей</a>
+                Полный список слушателей этого курса</a>
         </div>
     </div>
     {% endwith %}
