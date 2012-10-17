@@ -4,6 +4,8 @@
 {% block extra_crumb %}
     <li><a href="{% url department:course_list department.pk %}">
         Cписок курсов</a></li><span class="divider">/</span></li>
+    <li><a href="{% url department:course_detail department.pk course.pk %}">
+            {{ course|truncatewords:3 }}</a></li><span class="divider">/</span></li>
     <li class="active">Список слушателей</li>
 {% endblock %}
 
@@ -12,6 +14,7 @@
 {% block content %}
     <div class="row">
         <div class="span12">
+            {% include "includes/listener_filter.html" %}
             <table class="table table-bordered table-striped">
                 {% include "includes/listener_table_thead.html" %}
                 {% for listener in object_list %}
@@ -19,7 +22,6 @@
                 {% endfor %}
             </table>
             <div class="pagination-page">{% digg_paginator %}</div>
-
         </div>
     </div>
 {% endblock content %}

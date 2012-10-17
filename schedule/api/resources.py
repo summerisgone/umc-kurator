@@ -91,3 +91,4 @@ class AutoCompeteUser(View):
 
 class OrganizationResource(ModelResource):
     model = Organization
+

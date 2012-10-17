@@ -9,6 +9,13 @@ class SettingsProcessor(object):
             # autoreload support in dev server
             return __file__
         else:
-            return lambda request: {attr: simplejson.dumps(getattr(enums, attr))}
+            return lambda request: {attr: getattr(enums, attr)}
 
 sys.modules[__name__ + '.enums'] = SettingsProcessor()
+
+def get_params(request):
+    params = request.GET.copy()
+    if 'page' in params:
+        del(params['page'])
+    get_params = params.urlencode()
+    return {'get_params': get_params}

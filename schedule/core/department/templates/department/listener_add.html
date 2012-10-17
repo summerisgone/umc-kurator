@@ -3,7 +3,6 @@
 
 {% block css %}
     {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}js/vendor/select2/select2.css" />
     <style>
     input[name=organization] {
         border: none;
@@ -138,7 +137,6 @@
 
     });
     </script>
-    <script src="{{ STATIC_URL }}js/vendor/select2/select2.min.js"></script>
 {% endblock %}
 
 {% block extra_crumb %}

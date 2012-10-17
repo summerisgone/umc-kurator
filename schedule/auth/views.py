@@ -12,7 +12,7 @@ class ListenersList(ExtraContextMixin, ListView):
 
     def build_query(self):
         query = Q()
-        if 'organization' in self.request.GET:
+        if 'organization' in self.request.GET and self.request.GET['organization']:
             try:
                 org = Organization.objects.get(name=self.request.GET['organization'])
                 query &= Q(organization=org)

@@ -98,15 +98,6 @@ class ListenerBatchSelect(CourseListenersList):
 
     template_name = 'department/listener_add_batch.html'
 
-    def extra_context(self):
-        context = super(ListenerBatchSelect, self).extra_context()
-        params = self.request.GET.copy()
-        if 'page' in params:
-            del(params['page'])
-        get_params = params.urlencode()
-        context.update({'get_params': get_params})
-        return context
-
     def get_queryset(self):
         # все слушатели этого филиала
         return self.get_course().department.listeners().filter(self.build_query())

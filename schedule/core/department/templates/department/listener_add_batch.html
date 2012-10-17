@@ -14,6 +14,7 @@
 {% block content %}
     <div class="row">
         <div class="span12">
+            {% include "includes/listener_filter.html" %}
             <form action="{% url department:course_listener_apply_batch department.pk course.pk %}"
                   method="post">
             {% if get_params %}

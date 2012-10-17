@@ -18,8 +18,16 @@
             {{ listener.patronymic_inflated }}
         </span>
     </td>
-    <td>{{ listener.organization }}</td>
-    <td>{{ listener.position }}</td>
+    <td>
+        <a href="{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}organization={{ listener.organization.name }}">
+                {{ listener.organization }}
+        </a>
+    </td>
+    <td>
+        <a href="{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}position={{ listener.position }}">
+        {{ listener.position }}
+        </a>
+    </td>
     <td>
         {% for cert in listener.certificate_set.all %}
         {{ cert.name }}{% if not forloop.last %},{% endif %}
