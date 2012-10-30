@@ -1,6 +1,5 @@
 # coding=utf-8
 from django.core.management.base import BaseCommand
-from django.db.models import Q
 from auth.models import Listener
 from pymorphy import get_morph
 from django.conf import settings

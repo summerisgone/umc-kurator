@@ -23,7 +23,7 @@ QUERY_CHOICES = (
 
 class ReportQueryForm(forms.Form):
 
-    time_range = forms.ChoiceField(label=u'Временной интервал', choices=TIMERANGE_CHOICES, required=False)
+#    time_range = forms.ChoiceField(label=u'Временной интервал', choices=TIMERANGE_CHOICES, required=False)
     vertical = forms.ChoiceField(label=u'По вертикали', choices=QUERY_CHOICES)
     horizontal = forms.ChoiceField(label=u'По горизонтали', choices=QUERY_CHOICES)
 

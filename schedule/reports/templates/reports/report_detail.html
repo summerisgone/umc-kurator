@@ -1,0 +1,12 @@
+{% extends "reports/base.html" %}
+{% load zenforms %}
+
+{% block title %}Отчёт по количеству обученных специалистов{% endblock %}
+
+{% block content %}
+    {% if object.status == 2 %}
+        {{ report_html|safe }}
+    {% else %}
+        <h3>Запрошеный отчёт ещё не готов</h3>
+    {% endif %}
+{% endblock content %}

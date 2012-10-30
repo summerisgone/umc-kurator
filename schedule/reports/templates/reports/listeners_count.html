@@ -1,33 +1,17 @@
 {% extends "reports/base.html" %}
-{% load zenforms core_tags %}
+{% load zenforms %}
 
 {% block title %}Отчёт по количеству обученных специалистов{% endblock %}
 
 {% block content %}
-    {% if data %}
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th></th>
-                    {% for th in table.col_header %}
-                        <th>{{ th }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in data %}
-                    <tr>
-                        <th>{{ table.row_header|at:forloop.counter0 }}</th>
-                    {% for cell in row %}
-                        <td>{{ cell }}</td>
-                    {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <a href=".">Другой отчёт</a>
+    {% if pending %}
+        <h3>Запрошеный отчёт уже есть в очереди на выполнение</h3>
+        <a href="{{ pending.get_absolute_url }}">Посмотреть</a>
     {% else %}
-        {% izenform form options submit="Построить" %}
+        {% if created %}
+            <h3>Запрошеный отчёт поставлен в очередь на выполнение</h3>
+            <a href="{{ created.get_absolute_url }}">Посмотреть</a>
+        {% endif %}
     {% endif %}
+    {% izenform form options submit="Построить" %}
 {% endblock content %}

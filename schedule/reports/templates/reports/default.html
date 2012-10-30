@@ -1,0 +1,21 @@
+{% load core_tags %}
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th></th>
+            {% for th in meta.col_header %}
+                <th>{{ th }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in table %}
+            <tr>
+                <th>{{ meta.row_header|at:forloop.counter0 }}</th>
+            {% for cell in row %}
+                <td>{{ cell }}</td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

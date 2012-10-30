@@ -21,6 +21,9 @@ class DepartmentParameter(AbstractParameter):
         for dep in Department.objects.all():
             yield (dep.name, dep)
 
+    def __unicode__(self):
+        return u'Филиал'
+
 
 class OrganizationParameter(AbstractParameter):
 
@@ -31,6 +34,9 @@ class OrganizationParameter(AbstractParameter):
         for org in Organization.objects.all():
             yield (org.name, org)
 
+    def __unicode__(self):
+        return u'Организация'
+
 
 class PositionParameter(AbstractParameter):
 
@@ -39,6 +45,9 @@ class PositionParameter(AbstractParameter):
 
     def values(self):
         return enums.LISTENER_POSITIONS
+
+    def __unicode__(self):
+        return u'Должность'
 
 
 class OrganizationCastParameter(AbstractParameter):
@@ -49,6 +58,9 @@ class OrganizationCastParameter(AbstractParameter):
     def values(self):
         return enums.ORGANIZATION_TYPES
 
+    def __unicode__(self):
+        return u'Тип организации'
+
 
 class CategoryParameter(AbstractParameter):
 
@@ -57,6 +69,9 @@ class CategoryParameter(AbstractParameter):
 
     def values(self):
         return enums.LISTENER_CATEGORIES
+
+    def __unicode__(self):
+        return u'Категория слушателя'
 
 PARAMETERS = {
     'department': DepartmentParameter,
@@ -92,3 +107,17 @@ class ResultTable(object):
                 qs = self.row_param.process_queryset(qs, row_value)
                 self.data[i].append(qs.count())
         return self.data
+
+    def to_dict(self):
+        if not self.data:
+            return {}
+        data = {}
+        data['meta'] = {
+            'vertical': unicode(self.row_param),
+            'horizontal': unicode(self.col_param),
+            'row_header': self.row_header,
+            'col_header': self.col_header,
+        }
+
+        data['table'] = self.data
+        return data
