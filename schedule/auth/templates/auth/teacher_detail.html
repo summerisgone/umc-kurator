@@ -1,0 +1,22 @@
+{% extends "auth/base.html" %}
+
+
+{% block title %}Сотрудник {{ object.last_name }} {{ object.first_name }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="span12">
+            <table class="table table-striped">
+                <tr>
+                    <th>ФИО</th><td> {{ object.last_name }} {{ object.first_name }}
+                    {{ object.patronimyc }}</td>
+                </tr>
+                <tr>
+                    <th>Филиал</th><td>{{ object.department }}</td>
+                </tr>
+            </table>
+            <a href="{% url crud:auth.teacher.delete object.id  %}" class="btn danger">Удалить</a>
+            <a href="{% url crud:auth.teacher.update object.id  %}" class="btn">Изменить</a>
+        </div>
+    </div>
+{% endblock content %}
