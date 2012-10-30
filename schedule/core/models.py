@@ -72,7 +72,6 @@ class Subject(models.Model):
     short_name = models.CharField(verbose_name=u'Сокращенное наименование',
         max_length=255, blank=True, null=True)
     hours = models.IntegerField(verbose_name=u'Количество часов')
-    teacher = models.ForeignKey('auth.Teacher', verbose_name=u'Педагог', null=True)
 
     def __unicode__(self):
         return self.name
