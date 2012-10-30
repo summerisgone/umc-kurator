@@ -1,6 +1,10 @@
 # coding=utf-8
 from django.core.urlresolvers import reverse
 from django.db import models
+from auth.models import Listener
+from reports.query import PARAMETERS, ResultTable
+from django.utils import simplejson
+from django_ztask.decorators import task
 
 
 class ReportStatus:
@@ -31,3 +35,22 @@ class Report(models.Model):
 
     def get_absolute_url(self):
         return reverse('report_detail', args=[self.pk])
+
+    def process(self):
+        print 'processing report', self.pk
+        self.status = ReportStatus.Working
+        self.save()
+
+        cols = PARAMETERS[self.vertical]()
+        rows = PARAMETERS[self.horizontal]()
+        # TODO: Ввести временной интервал
+        rt = ResultTable(rows, cols, Listener.objects.all())
+        rt.process()
+        self.data = simplejson.dumps(rt.to_dict())
+        self.status = ReportStatus.Ready
+        self.save()
+
+@task()
+def process_report(pk):
+    report = Report.objects.get(pk=pk)
+    report.process()

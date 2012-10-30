@@ -88,6 +88,7 @@ INSTALLED_APPS = [
     'zenforms',
     'djangorestframework',
     'south',
+    'django_ztask',
 ]
 
 TEMPLATE_LOADERS = (
