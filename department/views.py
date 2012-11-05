@@ -3,10 +3,9 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, DetailView, FormView
-from auth.models import Listener
 from auth.views import ListenersList
-from forms import ListenerAddForm, CourseAddForm, EmitCertificateForm, BatchListenersForm
-from schedule.core.models import Department, Course, Certificate, Organization
+from forms import ListenerAddForm, CourseAddForm, BatchListenersForm
+from core.models import Department, Course, Organization
 from utils import ExtraContextMixin
 
 

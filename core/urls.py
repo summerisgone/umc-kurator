@@ -5,6 +5,6 @@ from views import Index
 
 urlpatterns = patterns('',
     url(r'^$', Index.as_view(), name='frontpage'),
-    url(r'^', include('core.department.urls',
+    url(r'^', include('department.urls',
         namespace='department')),
 )

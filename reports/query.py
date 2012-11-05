@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from core.models import Organization, Department
-import enums
+from core import enums
 
 
 class AbstractParameter(object):

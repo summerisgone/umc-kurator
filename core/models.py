@@ -2,7 +2,7 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 from auth.models import Listener
-from schedule import enums
+import enums
 
 
 class Course(models.Model):

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from django import forms
-import enums
-from schedule.auth.models import Listener
-from schedule.core.models import Organization, Vizit, Course, Certificate
+from core import enums
+from auth.models import Listener
+from core.models import Organization, Vizit, Course, Certificate
 import random
 
 

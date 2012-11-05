@@ -1,10 +1,10 @@
 {% extends "crud/base.html" %}
 
-{% block title %}Создание {{ form.instance }}{% endblock %}
+{% block title %}{{ object }}{% endblock %}
 
 {% block content %}
-    <form action="." method="POST">
-        {{ form }}
+    Удалить {{ object }}?
+    <form action="" method="POST">
         {% csrf_token %}
         <input class="submit" type="submit">
     </form>

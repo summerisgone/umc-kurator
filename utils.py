@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from difflib import get_close_matches
-from schedule import enums
+from core import enums
 import re
 
 def get_position_fuzzy(original):

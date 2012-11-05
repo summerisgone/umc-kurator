@@ -5,7 +5,7 @@ from django.db.models import Q
 from random import choice
 from core.models import Department
 from dateutil.relativedelta import relativedelta
-import enums
+from core import enums
 
 TIMERANGE_CHOICES = (
     ('month', u'Текущий месяц'),

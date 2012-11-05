@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.utils import simplejson
 import sys
-from schedule import enums
+from core import enums
 
 class SettingsProcessor(object):
     def __getattr__(self, attr):

@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.contrib.auth.models import User
 from django.db import models
-from schedule import enums
+from core import enums
 from utils import firstcaps
 
 

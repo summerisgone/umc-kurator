@@ -3,7 +3,7 @@
 {% block title %}Редактирование {{ form.instance }}{% endblock %}
 
 {% block content %}
-    <form action="." method="POST">
+    <form action="" method="POST">
         {{ form }}
         {% csrf_token %}
         <input class="submit" type="submit">

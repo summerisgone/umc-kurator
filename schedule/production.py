@@ -1,2 +1,0 @@
-
-from schedule.settings import *
