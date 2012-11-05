@@ -5,12 +5,8 @@ URLObject==0.6.0
 distribute==0.6.24
 django-classy-tags==0.3.4.1
 django-zenforms==0.1.6
-django-ztask==0.1.5
 djangorestframework==0.4.0
 pymorphy==0.5.6
-python-dateutil==2.1
-pytz==2012h
-pyzmq==2.2.0.1
 six==1.2.0
 xlrd==0.8.0
 xlutils==1.5.2

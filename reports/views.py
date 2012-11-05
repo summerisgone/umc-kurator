@@ -5,7 +5,7 @@ from django.views.generic import TemplateView, FormView, DetailView
 from django.template.loader import render_to_string
 from datetime import datetime
 from reports.forms import ReportQueryForm
-from reports.models import Report, ReportStatus, process_report
+from reports.models import Report, ReportStatus
 
 
 class ReportList(TemplateView):
@@ -54,5 +54,5 @@ class ListenersCount(FormView):
                 year=datetime.today().year
             )
             report.save()
-            process_report.async(report.pk)
+            report.process.delay()
             return self.render_to_response({'form': form, 'created': report})

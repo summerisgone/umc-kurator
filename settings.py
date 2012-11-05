@@ -122,7 +122,7 @@ INSTALLED_APPS = [
     'zenforms',
     'djangorestframework',
     'south',
-    'django_ztask',
+    'celery',
 ]
 
 # A sample logging configuration. The only tangible logging

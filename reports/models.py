@@ -1,4 +1,5 @@
 # coding=utf-8
+import celery
 from django.core.urlresolvers import reverse
 from django.db import models
 from auth.models import Listener
@@ -36,8 +37,8 @@ class Report(models.Model):
     def get_absolute_url(self):
         return reverse('report_detail', args=[self.pk])
 
+    @celery.task
     def process(self):
-        print 'processing report', self.pk
         self.status = ReportStatus.Working
         self.save()
 
@@ -49,8 +50,3 @@ class Report(models.Model):
         self.data = simplejson.dumps(rt.to_dict())
         self.status = ReportStatus.Ready
         self.save()
-
-@task()
-def process_report(pk):
-    report = Report.objects.get(pk=pk)
-    report.process()
