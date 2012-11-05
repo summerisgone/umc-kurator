@@ -12,12 +12,15 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': {
+DATABASES = {}
+try:
+    import dj_database_url
+    DATABASES['default'] =  dj_database_url.config()
+except ImportError:
+    DATABASES = ['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(PROJECT_DIR, 'schedule.sqlite'),
     }
-}
 
 TIME_ZONE = None
 

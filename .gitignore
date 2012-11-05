@@ -2,8 +2,6 @@
 *.orig
 *.pyc
 *.sh
-*.sql
-.svn
 .project
 .pydevproject
 .settings
@@ -14,10 +12,6 @@ downloads/*
 eggs/*
 develop-eggs/*
 parts/*
-commit.txt
-media/upload/*
-searchindex/
-snapshots/
-schedule/production.py
-doc/build
-static/*
+lib/*
+local/*
+include/*
