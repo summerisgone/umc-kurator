@@ -1,9 +1,11 @@
 # Django settings for kurator project.
 import os
+import dj_database_url
+
 gettext_noop = lambda s: s
 PROJECT_DIR = os.path.dirname(__file__)
 
-DEBUG = False
+DEBUG = 'DEBUG' in os.environ
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -13,10 +15,11 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASES = {}
-try:
-    import dj_database_url
-    DATABASES['default'] =  dj_database_url.config()
-except ImportError:
+
+config = dj_database_url.config()
+if config:
+    DATABASES['default'] = config
+else:
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(PROJECT_DIR, 'schedule.sqlite'),
@@ -28,9 +31,9 @@ LANGUAGE_CODE = 'ru'
 
 SITE_ID = 1
 
-EMAIL_SUBJECT_PREFIX = '[schedule]'
+EMAIL_SUBJECT_PREFIX = '[kurator]'
 DEFAULT_FROM_EMAIL = 'noreply@umc74.ru'
-SERVER_EMAIL = 'schedule'
+SERVER_EMAIL = 'kurator'
 
 USE_I18N = True
 
@@ -61,9 +64,9 @@ STATICFILES_DIRS = (
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'staticfiles.finders.FileSystemFinder',
+    'staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -99,12 +102,12 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.i18n',
     'django.core.context_processors.debug',
     'django.core.context_processors.media',
-    'django.core.context_processors.static',
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.csrf',
     'django.contrib.messages.context_processors.messages',
+    'staticfiles.context_processors.static',
     'context_processors.enums.LISTENER_POSITIONS',
     'context_processors.get_params',
 )
@@ -115,8 +118,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.admin',
     'django.contrib.sites',
-    'django.contrib.staticfiles',
     'django.contrib.messages',
+    'staticfiles',
     'core',
     'department',
     'auth',
@@ -126,6 +129,8 @@ INSTALLED_APPS = [
     'djangorestframework',
     'south',
     'celery',
+    'storages',
+    'compressor',
 ]
 
 # A sample logging configuration. The only tangible logging
@@ -150,3 +155,16 @@ LOGGING = {
         },
     }
 }
+
+# Static S3 settings
+S3_STORAGE = 'storage.CachedS3BotoStorage'
+AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+AWS_STORAGE_BUCKET_NAME = 'umc.kurator'
+
+if not DEBUG:
+    STATICFILES_STORAGE = S3_STORAGE
+    STATIC_URL = 'http://umc.kurator.s3-website-eu-west-1.amazonaws.com/'
+    COMPRESS_STORAGE = S3_STORAGE
+    COMPRESS_OFFLINE = True
+    COMPRESS_URL = STATIC_URL

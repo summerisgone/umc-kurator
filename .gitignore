@@ -15,3 +15,4 @@ parts/*
 lib/*
 local/*
 include/*
+static/*
