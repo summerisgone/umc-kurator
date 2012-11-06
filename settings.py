@@ -3,7 +3,7 @@ import os
 gettext_noop = lambda s: s
 PROJECT_DIR = os.path.dirname(__file__)
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
