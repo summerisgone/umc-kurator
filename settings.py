@@ -131,6 +131,7 @@ INSTALLED_APPS = [
     'celery',
     'storages',
     'compressor',
+    'gunicorn',
 ]
 
 # A sample logging configuration. The only tangible logging
