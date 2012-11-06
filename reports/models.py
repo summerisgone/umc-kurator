@@ -5,7 +5,6 @@ from django.db import models
 from auth.models import Listener
 from reports.query import PARAMETERS, ResultTable
 from django.utils import simplejson
-from django_ztask.decorators import task
 
 
 class ReportStatus:
