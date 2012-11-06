@@ -166,6 +166,8 @@ AWS_STORAGE_BUCKET_NAME = 'umc.kurator'
 if not DEBUG:
     STATICFILES_STORAGE = S3_STORAGE
     STATIC_URL = 'http://umc.kurator.s3-website-eu-west-1.amazonaws.com/'
+    ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
+
     COMPRESS_STORAGE = S3_STORAGE
     COMPRESS_OFFLINE = True
     COMPRESS_URL = STATIC_URL
