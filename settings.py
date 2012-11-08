@@ -161,11 +161,11 @@ LOGGING = {
 S3_STORAGE = 'storage.CachedS3BotoStorage'
 AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
 AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
-AWS_STORAGE_BUCKET_NAME = 'umc.kurator'
+AWS_STORAGE_BUCKET_NAME = 'umc_kurator'
 
 if not DEBUG:
     STATICFILES_STORAGE = S3_STORAGE
-    STATIC_URL = 'http://umc.kurator.s3-website-eu-west-1.amazonaws.com/'
+    STATIC_URL = 'http://umc_kurator.s3-website-eu-west-1.amazonaws.com/'
     ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
     COMPRESS_STORAGE = S3_STORAGE
