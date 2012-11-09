@@ -171,3 +171,18 @@ if not DEBUG:
     COMPRESS_STORAGE = S3_STORAGE
     COMPRESS_OFFLINE = True
     COMPRESS_URL = STATIC_URL
+
+# Setup Email from mailgun
+
+#:port           => ENV['MAILGUN_SMTP_PORT'],
+#:address        => ENV['MAILGUN_SMTP_SERVER'],
+#:user_name      => ENV['MAILGUN_SMTP_LOGIN'],
+#:password       => ENV['MAILGUN_SMTP_PASSWORD'],
+#:domain         => 'yourapp.heroku.com',
+#:authentication => :plain,
+
+if 'MAILGUN_SMTP_SERVER' in os.environ:
+    EMAIL_HOST = os.environ['MAILGUN_SMTP_SERVER']
+    EMAIL_PORT = os.environ['MAILGUN_SMTP_PORT']
+    EMAIL_HOST_USER = os.environ['MAILGUN_SMTP_LOGIN']
+    EMAIL_HOST_PASSWORD = os.environ['MAILGUN_SMTP_PASSWORD']
