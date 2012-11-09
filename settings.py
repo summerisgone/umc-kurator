@@ -172,14 +172,10 @@ if not DEBUG:
     COMPRESS_OFFLINE = True
     COMPRESS_URL = STATIC_URL
 
-# Setup Email from mailgun
+# Hope, temporary
+COMPRESS_ENABLED = False
 
-#:port           => ENV['MAILGUN_SMTP_PORT'],
-#:address        => ENV['MAILGUN_SMTP_SERVER'],
-#:user_name      => ENV['MAILGUN_SMTP_LOGIN'],
-#:password       => ENV['MAILGUN_SMTP_PASSWORD'],
-#:domain         => 'yourapp.heroku.com',
-#:authentication => :plain,
+# Setup Email from mailgun
 
 if 'MAILGUN_SMTP_SERVER' in os.environ:
     EMAIL_HOST = os.environ['MAILGUN_SMTP_SERVER']
