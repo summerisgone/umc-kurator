@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, include, url
 from django.views.generic import DetailView
 from core.models import Department
 from views import AddListener, CourseAdd, CourseList, CourseDetail,\

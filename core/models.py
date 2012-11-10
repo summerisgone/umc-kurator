@@ -5,7 +5,7 @@ from auth.models import Listener
 import enums
 
 
-class Course(models.Model):
+class StudyGroup(models.Model):
     name = models.CharField(verbose_name=u'Название', max_length=255)
     start = models.DateField(verbose_name=u'Начало курса')
     end = models.DateField(verbose_name=u'Завершение курса')
@@ -14,6 +14,7 @@ class Course(models.Model):
     students = models.ManyToManyField('auth.Listener', verbose_name=u'Слушатели',
         through='Vizit', related_name='course')
     department = models.ForeignKey('Department', related_name='courses', verbose_name=u'Филиал')
+    status = models.IntegerField(verbose_name=u'Статус группы', choices=enums.STUDY_GROUP_STATUSES)
 
     def get_absolute_url(self):
         return reverse('department:course_detail', args=(self.department.pk, self.pk,))
@@ -30,7 +31,7 @@ class Vizit(models.Model):
     class Meta:
         ordering = ['registration_date', 'id']
 
-    course = models.ForeignKey('Course', verbose_name=u'Предмет')
+    course = models.ForeignKey('StudyGroup', verbose_name=u'Предмет')
     listener = models.ForeignKey('auth.Listener', verbose_name=u'Слушатель')
     registration_date = models.DateTimeField(verbose_name=u'Дата регистрации', auto_now_add=True)
     completed = models.BooleanField(verbose_name=u'Курс прослушан', default=False)
@@ -81,7 +82,7 @@ class Certificate(models.Model):
     name = models.CharField(verbose_name=u'Название', max_length=255)
     cast = models.CharField(verbose_name=u'Тип документа', max_length=50,
         choices=enums.DOCUMENT_CAST, null=True, blank=True)
-    course = models.ForeignKey('Course', verbose_name=u'Предмет')
+    course = models.ForeignKey('StudyGroup', verbose_name=u'Предмет')
     listener = models.ForeignKey('auth.Listener', verbose_name=u'Владелец')
 
     def __unicode__(self):

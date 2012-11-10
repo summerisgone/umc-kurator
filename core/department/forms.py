@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from core import enums
-from auth.models import Listener
-from core.models import Organization, Vizit, Course, Certificate
+from core.auth.models import Listener
+from core.models import Organization, Vizit, StudyGroup, Certificate
 import random
 
 
 class CourseAddForm(forms.ModelForm):
     class Meta:
-        model = Course
+        model = StudyGroup
         fields = ('subject', 'start', 'end', 'hours')
 
     class Media:

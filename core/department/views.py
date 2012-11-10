@@ -3,9 +3,9 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, DetailView, FormView
-from auth.views import ListenersList
+from core.auth.models import Listener
 from forms import ListenerAddForm, CourseAddForm, BatchListenersForm
-from core.models import Department, Course, Organization
+from core.models import Department, StudyGroup, Organization
 from utils import ExtraContextMixin
 
 
@@ -22,7 +22,7 @@ class DepartmentMixin(object):
 class CourseMixin(DepartmentMixin):
 
     def get_course(self):
-        return get_object_or_404(Course, pk=self.kwargs['course_pk'])
+        return get_object_or_404(StudyGroup, pk=self.kwargs['course_pk'])
 
     def extra_context(self):
         context = super(CourseMixin, self).extra_context()
@@ -34,7 +34,7 @@ class CourseMixin(DepartmentMixin):
 
 
 class CourseList(ExtraContextMixin, DepartmentMixin, ListView):
-    model = Course
+    model = StudyGroup
     template_name = 'department/course_list.html'
 
     def get_queryset(self):
@@ -58,7 +58,7 @@ class CourseAdd(ExtraContextMixin, DepartmentMixin, FormView):
 
 class CourseDetail(ExtraContextMixin, DepartmentMixin, DetailView):
     template_name = 'department/course_detail.html'
-    model = Course
+    model = StudyGroup
 
 
 class AddListener(ExtraContextMixin, CourseMixin, FormView):
@@ -76,16 +76,19 @@ class AddListener(ExtraContextMixin, CourseMixin, FormView):
         return self.get_course().get_absolute_url()
 
 
-class ListenerList(DepartmentMixin, ListenersList):
+class ListenerList(DepartmentMixin, ListView):
     template_name = 'department/listener_list.html'
+
+    model = Listener
 
     def get_queryset(self):
         qs = super(ListenerList, self).get_queryset()
         return qs.filter(vizit__course__department=self.get_department()).distinct()
 
 
-class CourseListenersList(CourseMixin, ListenersList):
+class CourseListenersList(CourseMixin, ListView):
 
+    model = Listener
     template_name = 'department/course_listener_list.html'
 
     def get_queryset(self):

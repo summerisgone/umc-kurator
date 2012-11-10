@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.core.management.base import BaseCommand
 from core.file_import import ListenerFileFormat, ListenerImportLogic
-from core.models import Department, Course
+from core.models import Department, StudyGroup
 from normalize_names import Command as NormalizeCommand
 import tempfile
 import xlrd
@@ -59,4 +59,4 @@ class Command(BaseCommand):
             u'Выберите курс',
             choices=[(str(course.id), course.name) for course in department.courses.all()]
         )
-        return Course.objects.get(id=course_id)
+        return StudyGroup.objects.get(id=course_id)

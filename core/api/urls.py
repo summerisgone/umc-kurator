@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 from djangorestframework.views import ListOrCreateModelView
-from api.resources import AutoCompleteLastName, AutoCompletePatronymic, AutoCompleteFirstName, \
+from core.api.resources import AutoCompleteLastName, AutoCompletePatronymic, \
+    AutoCompleteFirstName, \
     AutoCompeteUser, AutoCompleteOrganization, OrganizationResource
 
 

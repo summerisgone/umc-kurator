@@ -2,7 +2,7 @@
 import celery
 from django.core.urlresolvers import reverse
 from django.db import models
-from auth.models import Listener
+from core.auth.models import Listener
 from reports.query import PARAMETERS, ResultTable
 from django.utils import simplejson
 

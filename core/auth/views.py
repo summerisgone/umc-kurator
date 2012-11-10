@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.views.generic import ListView
 from core.models import Organization
 from core import enums
-from models import Listener, Teacher
+from models import Listener, Employee
 from utils import ExtraContextMixin
 
 class ListenersList(ExtraContextMixin, ListView):

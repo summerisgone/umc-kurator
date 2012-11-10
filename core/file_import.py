@@ -2,9 +2,9 @@
 from django.db.models import Q
 from xlsimport.models import Format
 from xlsimport.parsers import*
-from auth.models import Listener, Teacher
+from auth.models import Listener, Employee
 from core.models import Organization, Certificate, Vizit, Subject
-from schedule.utils import get_position_fuzzy, get_organization_type
+from utils import get_position_fuzzy, get_organization_type
 import random
 
 
@@ -65,7 +65,7 @@ class SubjectFormat(Format):
             'name': data_row[0],
             'short_name': data_row[2],
             'hours': data_row[1],
-            'teacher': Teacher.objects.all()[0] if Teacher.objects.exists() else None,
+            'teacher': Employee.objects.all()[0] if Employee.objects.exists() else None,
         }
 
 

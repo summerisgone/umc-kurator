@@ -12,14 +12,11 @@ class ExtendedUser(User):
     patronymic = models.CharField(verbose_name=u'Отчество', max_length=255)
     phone = models.CharField(verbose_name=u'Телефон', max_length=50)
 
-class Teacher(ExtendedUser):
-    department = models.ForeignKey('core.Department', null=True)
+class Employee(ExtendedUser):
+    department = models.ManyToManyField('core.Department')
 
 
 class Listener(ExtendedUser):
-
-    class Meta:
-        ordering = ['id', ]
 
     organization = models.ForeignKey('core.Organization', verbose_name=u'Организация')
     category = models.CharField(verbose_name=u'Категория', max_length=50, choices=enums.LISTENER_CATEGORIES)

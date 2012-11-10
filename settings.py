@@ -22,7 +22,7 @@ if config:
 else:
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(PROJECT_DIR, 'schedule.sqlite'),
+        'NAME': os.path.join(PROJECT_DIR, 'kurator.sqlite'),
     }
 
 TIME_ZONE = None
@@ -119,12 +119,14 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.sites',
     'django.contrib.messages',
-    'staticfiles',
     'core',
-    'department',
-    'auth',
+    'core.department',
+    'core.auth',
+
     'crud',
     'reports',
+
+    'staticfiles',
     'zenforms',
     'djangorestframework',
     'south',
@@ -158,19 +160,21 @@ LOGGING = {
 }
 
 # Static S3 settings
-S3_STORAGE = 'storage.CachedS3BotoStorage'
-AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
-AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
-AWS_STORAGE_BUCKET_NAME = 'umc_kurator'
+if 'AWS_ACCESS_KEY_ID' in os.environ:
+    S3_STORAGE = 'storage.CachedS3BotoStorage'
+    AWS_STORAGE_BUCKET_NAME = 'umc_kurator'
 
-if not DEBUG:
-    STATICFILES_STORAGE = S3_STORAGE
-    STATIC_URL = 'http://umc_kurator.s3.amazonaws.com/'
-    ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
+    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 
-    COMPRESS_STORAGE = S3_STORAGE
-    COMPRESS_OFFLINE = True
-    COMPRESS_URL = STATIC_URL
+    if not DEBUG:
+        STATICFILES_STORAGE = S3_STORAGE
+        STATIC_URL = 'http://umc_kurator.s3.amazonaws.com/'
+        ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
+
+        COMPRESS_STORAGE = S3_STORAGE
+        COMPRESS_OFFLINE = True
+        COMPRESS_URL = STATIC_URL
 
 # Hope, temporary
 COMPRESS_ENABLED = False

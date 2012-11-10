@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.core.management.base import BaseCommand
-from auth.models import Listener
+from core.auth.models import Listener
 from pymorphy import get_morph
 from django.conf import settings
 from os.path import join
