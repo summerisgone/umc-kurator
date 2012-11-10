@@ -18,6 +18,19 @@ class FIOCell(TextCellToStringParser):
             return fio.split(" ")
 
 
+class FewNumbersCell(TextCellToStringParser):
+
+    def to_python(self):
+        value = super(FewNumbersCell, self).to_python()
+        value = value.strip()
+        reg = re.compile('\s+')
+        numbers = reg.split(value)
+        if len(numbers) > 1:
+            return ','.join(numbers)
+        else:
+            return numbers
+
+
 class ListenerFileFormat(Format):
     u"""Формат файла слушателей"""
 
@@ -56,7 +69,10 @@ class SubjectFormat(Format):
     u"""Формат файла предметов"""
     cells = (
         {'name': u'Название', 'parsers': (TextCellToStringParser,)},
-        {'name': u'Кол-во часов', 'parsers': (TextCellToIntParser, NumberCellToIntParser,)},
+        {'name': u'Кол-во часов', 'parsers': (FewNumbersCell,
+                                              TextCellToIntParser,
+                                              NumberCellToIntParser,
+                                              )},
         {'name': u'Краткое название', 'parsers': (TextCellToStringParser,)},
     )
 
