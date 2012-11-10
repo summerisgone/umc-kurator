@@ -63,9 +63,8 @@ class SubjectFormat(Format):
     def to_python(self, data_row):
         return {
             'name': data_row[0],
-            'short_name': data_row[2],
+            'short_name': re.sub(r'[0-9-]+', '', data_row[2]),
             'hours': data_row[1],
-            'teacher': Employee.objects.all()[0] if Employee.objects.exists() else None,
         }
 
 

@@ -16,9 +16,6 @@ class Command(BaseCommand):
         doc = xlrd.open_workbook(source_filename, formatting_info=True)
         format_doc = SubjectFormat(doc)
 
-        if not Employee.objects.exists():
-            Employee.objects.create(username=u'teacher', first_name=u'Преподаватель')
-
         from dialog import Dialog
         self.dialog = Dialog()
         if format_doc.sheet.ncols >= len(format_doc.cells):
