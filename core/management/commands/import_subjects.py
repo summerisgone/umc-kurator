@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.core.management.base import BaseCommand
 from core.file_import import SubjectFormat, SubjectImportLogic
-from auth.models import Teacher
+from core.auth.models import Employee
 from normalize_names import Command as NormalizeCommand
 import tempfile
 import xlrd
@@ -16,8 +16,8 @@ class Command(BaseCommand):
         doc = xlrd.open_workbook(source_filename, formatting_info=True)
         format_doc = SubjectFormat(doc)
 
-        if not Teacher.objects.exists():
-            Teacher.objects.create(username=u'teacher', first_name=u'Преподаватель')
+        if not Employee.objects.exists():
+            Employee.objects.create(username=u'teacher', first_name=u'Преподаватель')
 
         from dialog import Dialog
         self.dialog = Dialog()

@@ -2,28 +2,8 @@
 from django import forms
 from core import enums
 from core.auth.models import Listener
-from core.models import Organization, Vizit, StudyGroup, Certificate
+from core.models import Organization, Vizit, Certificate
 import random
-
-
-class CourseAddForm(forms.ModelForm):
-    class Meta:
-        model = StudyGroup
-        fields = ('subject', 'start', 'end', 'hours')
-
-    class Media:
-        js = ('//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js',)
-
-    def __init__(self, department, *args, **kwds):
-        super(CourseAddForm, self).__init__(*args, **kwds)
-        self.department = department
-        self.fields['start'].widget = forms.TextInput(attrs={'data-datepicker': 'datepicker'})
-        self.fields['end'].widget = forms.TextInput(attrs={'data-datepicker': 'datepicker'})
-
-    def save(self, **kwds):
-        self.instance.department = self.department
-        self.instance.name = self.instance.__unicode__()
-        super(CourseAddForm, self).save(**kwds)
 
 
 class ListenerAddForm(forms.Form):

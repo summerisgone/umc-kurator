@@ -1,0 +1,41 @@
+{% extends "manager/base.html" %}
+
+{% block extra_crumb %}
+    <li class="active">Группы</li>
+{% endblock %}
+
+{% block title %}Список групп{% endblock %}
+
+{% block content %}
+    <div class="span12">
+        <h2>Список ЛПК</h2>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Филиал</th>
+                <th>Направление</th>
+                <th>Дата начала</th>
+                <th>Дата окончания</th>
+                <th>Статус</th>
+                <th>Номер</th>
+                <th>Кол-во слушателей</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for group in groups %}
+                <tr>
+                    <td>{{ group.department }}</td>
+                    <td>{{ group.subject.short_name }} ({{ group.hours }} ч.)</td>
+                    <td>{{ group.start }}</td>
+                    <td>{{ group.end }}</td>
+                    <td>{{ group.get_status_display }}</td>
+                    <td>{{ group.number }}</td>
+                    <td>{{ group.students.all.count }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url manager:group_add %}" class="btn"><i class="icon-plus"></i>
+            Добавить</a>
+    </div>
+{% endblock content %}

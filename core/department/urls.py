@@ -2,7 +2,7 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic import DetailView
 from core.models import Department
-from views import AddListener, CourseAdd, CourseList, CourseDetail,\
+from views import AddListener, CourseList, CourseDetail,\
     OrganizationList, CourseListenersList, ListenerBatchSelect, \
     ListenerBatchApply, ListenerList, OrganizationDetail
 
@@ -20,7 +20,6 @@ urlpatterns = patterns('',
 
     # course-related  urls
 
-    url(r'^d(?P<department_id>\d{1,5})/course/add/$', CourseAdd.as_view(), name='course_add'),
     url(r'^d(?P<department_id>\d{1,5})/course/(?P<pk>\d{1,5})/$', CourseDetail.as_view(),
         name='course_detail'),
     url(r'^d(?P<department_id>\d{1,5})/course/(?P<course_pk>\d{1,5})/listeners/$',

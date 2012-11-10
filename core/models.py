@@ -10,11 +10,14 @@ class StudyGroup(models.Model):
     start = models.DateField(verbose_name=u'Начало курса')
     end = models.DateField(verbose_name=u'Завершение курса')
     hours = models.IntegerField(verbose_name=u'Количество часов')
-    subject = models.ForeignKey('Subject', verbose_name=u'Предмет')
+    subject = models.ForeignKey('Subject', verbose_name=u'Направление')
     students = models.ManyToManyField('auth.Listener', verbose_name=u'Слушатели',
         through='Vizit', related_name='course')
-    department = models.ForeignKey('Department', related_name='courses', verbose_name=u'Филиал')
+    department = models.ForeignKey('Department', related_name='courses',
+        verbose_name=u'Структурное продразделение')
     status = models.IntegerField(verbose_name=u'Статус группы', choices=enums.STUDY_GROUP_STATUSES)
+    number = models.CharField(verbose_name=u'Номер группы', null=True, blank=True,
+        max_length=64)
 
     def get_absolute_url(self):
         return reverse('department:course_detail', args=(self.department.pk, self.pk,))
@@ -72,10 +75,10 @@ class Subject(models.Model):
     name = models.CharField(verbose_name=u'Название', max_length=255)
     short_name = models.CharField(verbose_name=u'Сокращенное наименование',
         max_length=255, blank=True, null=True)
-    hours = models.IntegerField(verbose_name=u'Количество часов')
+    hours = models.CommaSeparatedIntegerField(verbose_name=u'Количество часов', max_length=64)
 
     def __unicode__(self):
-        return self.name
+        return self.short_name
 
 
 class Certificate(models.Model):
@@ -84,6 +87,7 @@ class Certificate(models.Model):
         choices=enums.DOCUMENT_CAST, null=True, blank=True)
     course = models.ForeignKey('StudyGroup', verbose_name=u'Предмет')
     listener = models.ForeignKey('auth.Listener', verbose_name=u'Владелец')
+    number = models.CharField(verbose_name=u'Номер', max_length=64, null=True, blank=True)
 
     def __unicode__(self):
         return self.name

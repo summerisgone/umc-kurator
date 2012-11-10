@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, DetailView, FormView
 from core.auth.models import Listener
-from forms import ListenerAddForm, CourseAddForm, BatchListenersForm
+from forms import ListenerAddForm, BatchListenersForm
 from core.models import Department, StudyGroup, Organization
 from utils import ExtraContextMixin
 
@@ -39,21 +39,6 @@ class CourseList(ExtraContextMixin, DepartmentMixin, ListView):
 
     def get_queryset(self):
         return self.model.objects.all()  #filter(department=self.get_department())
-
-
-class CourseAdd(ExtraContextMixin, DepartmentMixin, FormView):
-    form_class = CourseAddForm
-    template_name = 'department/course_add.html'
-
-    def get_success_url(self):
-        return self.get_department().get_absolute_url()
-
-    def get_form(self, form_class):
-        return form_class(self.get_department(), **self.get_form_kwargs())
-
-    def form_valid(self, form):
-        form.save()
-        return HttpResponseRedirect(self.get_success_url())
 
 
 class CourseDetail(ExtraContextMixin, DepartmentMixin, DetailView):

@@ -6,13 +6,5 @@
 .pydevproject
 .settings
 .idea/*
-.installed.cfg
-bin/*
-downloads/*
-eggs/*
-develop-eggs/*
-parts/*
-lib/*
-local/*
-include/*
+env/*
 static/*

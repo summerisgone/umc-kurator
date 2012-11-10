@@ -121,6 +121,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'core',
     'core.department',
+    'core.manager',
     'core.auth',
 
     'crud',

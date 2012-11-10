@@ -1,4 +1,4 @@
-{% extends "department/base.html" %}
+{% extends "manager/base.html" %}
 {% load zenforms %}
 
 {% block css %}
@@ -19,12 +19,12 @@
 {% endblock %}
 
 {% block extra_crumb %}
-    <li><a href="{% url department:course_list department.pk %}">
-        Cписок курсов</a></li><span class="divider">/</span></li>
-    <li class="active">Добавить курс</li>
+    <li><a href="{% url manager:group_list %}">
+        Группы</a></li><span class="divider">/</span></li>
+    <li class="active">Добавить группу</li>
 {% endblock %}
 
-{% block title %}Добавить курс{% endblock %}
+{% block title %}Добавить группу{% endblock %}
 
 {% block content %}
 <div class="row">
