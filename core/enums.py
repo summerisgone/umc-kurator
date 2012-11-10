@@ -160,3 +160,11 @@ STUDY_GROUP_STATUSES = (
     (StudyGroupStatus.Active, u'Идут занятия'),
     (StudyGroupStatus.Closed, u'Закрыта'),
 )
+
+HOURS_CHOICES = (
+    (6, 6),
+    (8, 8),
+    (12, 12),
+    (18, 18),
+    (36, 36),
+)

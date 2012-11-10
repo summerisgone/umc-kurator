@@ -283,6 +283,12 @@ footer {
     color: #555;
 }
 
+.bootstrap ul.errorlist,
+.bootstrap ul.errorlist li {
+    list-style: none;
+}
+
+
 .select2-container.textInput {
     border: none;
     background: transparent;

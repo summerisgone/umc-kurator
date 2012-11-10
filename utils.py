@@ -23,6 +23,15 @@ def firstcaps(s):
     return s[0].upper() + s[1:].lower()
 
 
+def get_hours_data():
+    from core.models import Subject
+    data = {}
+    for subj in Subject.objects.all():
+        data[subj.id] = subj.hours.split(',')
+    data['default'] = [choice[0] for choice in enums.HOURS_CHOICES]
+    return data
+
+
 class ExtraContextMixin(object):
 
     def get_context_data(self, **kwargs):
