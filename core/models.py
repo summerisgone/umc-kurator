@@ -9,7 +9,6 @@ import enums
 
 
 class StudyGroup(models.Model):
-    name = models.CharField(verbose_name=u'Название', max_length=255)
     start = models.DateField(verbose_name=u'Начало курса')
     end = models.DateField(verbose_name=u'Завершение курса')
     hours = models.IntegerField(verbose_name=u'Количество часов', choices=enums.HOURS_CHOICES)
@@ -41,7 +40,7 @@ class StudyGroup(models.Model):
         return super(StudyGroup, self).save(*args, **kwds)
 
     def __unicode__(self):
-        return u'%s (%s ч.)' % (self.subject, self.hours)
+        return u'%s-%s' % (self.subject, self.hours)
 
 
 def update_group_numbers():
