@@ -1,10 +1,12 @@
-# Create your views here.
+# coding=utf-8
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.utils import simplejson
-from django.views.generic import TemplateView, DetailView, FormView, ListView
+from django.views.generic import TemplateView, DetailView, FormView, ListView, CreateView, UpdateView, DeleteView
+from core.enums import StudyGroupStatus
 from core.manager.forms import StudyGroupCreateForm
-from core.models import StudyGroup
+from core.models import StudyGroup, update_group_numbers
 from utils import ExtraContextMixin, get_hours_data
 
 
@@ -17,7 +19,6 @@ class Index(ExtraContextMixin, TemplateView):
         }
 
 
-
 class StudyGroupList(ExtraContextMixin, ListView):
     template_name = 'manager/study_group_list.html'
     context_object_name = 'groups'
@@ -27,18 +28,25 @@ class StudyGroupList(ExtraContextMixin, ListView):
 class StudyGroupRead(ExtraContextMixin, DetailView):
     template_name = 'manager/study_group_detail.html'
     context_object_name = 'studygroup'
+    pk_url_kwarg = 'stugygroup_id'
     model = StudyGroup
 
 
-class StudyGroupCreate(ExtraContextMixin, FormView):
+class StudyGroupDelete(DeleteView):
+    pk_url_kwarg = 'stugygroup_id'
+    model = StudyGroup
+
+    def get_success_url(self):
+        messages.add_message(self.request, messages.WARNING, u'Группа удалена')
+        return reverse('manager:group_list')
+
+class StudyGroupCreate(ExtraContextMixin, CreateView):
     form_class = StudyGroupCreateForm
+    model = StudyGroup
     template_name = 'manager/study_group_form.html'
 
     def get_success_url(self):
         return reverse('manager:group_list')
-
-    def get_form(self, form_class):
-        return form_class(**self.get_form_kwargs())
 
     def extra_context(self):
         return {
@@ -48,3 +56,17 @@ class StudyGroupCreate(ExtraContextMixin, FormView):
     def form_valid(self, form):
         form.save()
         return HttpResponseRedirect(self.get_success_url())
+
+
+class StudyGroupUpdate(StudyGroupCreate, UpdateView):
+    queryset = StudyGroup.objects.filter(status=StudyGroupStatus.Pending)
+    pk_url_kwarg = 'stugygroup_id'
+
+    def form_valid(self, form):
+        form.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+
+def update_numbers(request):
+    update_group_numbers()
+    return HttpResponseRedirect(reverse('manager:group_list'))

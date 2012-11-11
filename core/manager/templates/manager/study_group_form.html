@@ -19,7 +19,7 @@
                 $option.attr('value', options[i]);
                 $select.append($option);
             }
-        };
+        }
 
         $('form.uniForm').uniform();
         $('#id_subject').change(function(e){
@@ -31,7 +31,16 @@
                 set_options($('#id_hours'), data['default']);
             }
         });
-    })
+
+        $('#id_auto_number').change(function(e){
+            if ($('#id_auto_number:checked').length) {
+                $('#id_number').prop('disabled', true);
+            } else {
+                $('#id_number').prop('disabled', false);
+            }
+        }).trigger('change');
+
+    });
     </script>
     <script src="{{ STATIC_URL }}js/vendor/select2/select2.min.js"></script>
 {% endblock %}
@@ -39,56 +48,78 @@
 {% block extra_crumb %}
     <li><a href="{% url manager:group_list %}">
         Группы</a></li><span class="divider">/</span></li>
-    <li class="active">Добавить группу</li>
+    {% if studygroup %}
+    <li><a href="{% url manager:group_detail studygroup.pk %}">
+            {{ studygroup.subject.short_name }} ({{ studygroup.start }} - {{ studygroup.end }})
+    </a></li><span
+            class="divider">/</span></li>
+    {% else %}
+    <li class="active">Редактировать</li>
+    {% endif %}
 {% endblock %}
 
-{% block title %}Добавить группу{% endblock %}
+{% block title %}{% if studygroup %}Редактировать {% else %}Добавить {% endif %}группу{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="span10">
-        <form action="." method="POST" class="bootstrap">
-            <div class="control-group {% if form.subject.errors %}error{% endif %}">
-                <label class="control-label"for="id_subject">
-                    {{ form.subject.label }}</label>
-                <div class="controls controls-row">
-                    {{ form.subject|attrs:"class=span5" }}
-                    {{ form.hours|attrs:"class=span1" }} &nbsp; ч.
-                    {% if form.subject.errors %}
-                    <span class="help-inline">{{ form.subject.errors }}</span>
-                    {% endif %}
+    <div class="row">
+        <div class="span10">
+            <form action="." method="POST" class="bootstrap">
+                <div class="control-group {% if form.subject.errors %}error{% endif %}">
+                    <label class="control-label" for="id_subject">
+                        {{ form.subject.label }}</label>
+
+                    <div class="controls controls-row">
+                        {{ form.subject|attrs:"class=span5" }}
+                        {{ form.hours|attrs:"class=span1" }} &nbsp; ч.
+                        {% if form.subject.errors %}
+                            <span class="help-inline">{{ form.subject.errors }}</span>
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
-            <div class="control-group {% if form.start.errors or form.end.errors %}error{% endif %}">
-                <label class="control-label">Сроки обучения</label>
-                <div class="controls controls-row">
-                    {{ form.start|attrs:"class=span3" }}
-                    {{ form.end|attrs:"class=span3" }}
-                    {% if form.start.errors or form.end.errors %}
-                        <span class="help-inline">
+                <div class="control-group {% if form.start.errors or form.end.errors %}error{% endif %}">
+                    <label class="control-label">Сроки обучения</label>
+
+                    <div class="controls controls-row">
+                        {{ form.start|attrs:"class=span3" }}
+                        {{ form.end|attrs:"class=span3" }}
+                        {% if form.start.errors or form.end.errors %}
+                            <span class="help-inline">
                             {{ form.start.errors }}
                             {{ form.end.errors }}
                         </span>
-                    {% endif %}
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
-            <div class="control-group {% if form.department.errors %}error{% endif %}">
-                <label class="control-label" for="id_department">
-                    {{ form.department.label }}</label>
-                <div class="controls controls-row">
-                    {{ form.department|attrs:"class=span6" }}
-                    {% if form.department.errors %}
-                        <span class="help-inline">
+                <div class="control-group {% if form.department.errors %}error{% endif %}">
+                    <label class="control-label" for="id_department">
+                        {{ form.department.label }}</label>
+
+                    <div class="controls controls-row">
+                        {{ form.department|attrs:"class=span6" }}
+                        {% if form.department.errors %}
+                            <span class="help-inline">
                             {{ form.department.errors }}
                         </span>
-                    {% endif %}
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
-            {% csrf_token %}
-            <div class="form-actions">
-                <input type="submit" class="btn btn-primary" value="Сохранить">
-            </div>
-        </form>
+                <div class="control-group">
+                    <label class="control-label" for="id_auto_number">Номер</label>
+
+                    <div class="controls">
+                        <label class="checkbox">
+                            {{ form.auto_number }}
+                            {{ form.auto_number.label }}
+                        </label>
+                        {{ form.number }}
+                    </div>
+                </div>
+
+                {% csrf_token %}
+                <div class="form-actions">
+                    <input type="submit" class="btn btn-primary" value="Сохранить">
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 {% endblock content %}

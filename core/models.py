@@ -1,7 +1,10 @@
 # coding=utf-8
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from auth.models import Listener
+from core.enums import StudyGroupStatus
 import enums
 
 
@@ -17,8 +20,10 @@ class StudyGroup(models.Model):
         verbose_name=u'Структурное продразделение')
     status = models.IntegerField(verbose_name=u'Статус группы',
         choices=enums.STUDY_GROUP_STATUSES, default=enums.StudyGroupStatus.Pending)
-    number = models.CharField(verbose_name=u'Номер группы', null=True, blank=True,
-        max_length=64)
+    number = models.IntegerField(verbose_name=u'Номер группы', null=True, blank=True)
+
+    class Meta:
+        ordering = ['start', 'number', 'id']
 
     def get_absolute_url(self):
         return reverse('department:course_detail', args=(self.department.pk, self.pk,))
@@ -26,8 +31,29 @@ class StudyGroup(models.Model):
     def organizations(self):
         return Organization.objects.filter(listener__vizit__course=self).distinct()
 
+    def save(self, *args, **kwds):
+        if not self.pk and not self.number:
+            if StudyGroup.objects.exists():
+                last_number = StudyGroup.objects.order_by('-start','number')[0].number
+            else:
+                last_number = 0
+            self.number = last_number + 1
+        return super(StudyGroup, self).save(*args, **kwds)
+
     def __unicode__(self):
         return u'%s (%s ч.)' % (self.subject, self.hours)
+
+
+def update_group_numbers():
+    if StudyGroup.objects.exclude(status=StudyGroupStatus.Pending).exists():
+        last_number = StudyGroup.objects.exclude(status=StudyGroupStatus.Pending).order_by(
+            '-start', 'number')[0].number
+    else:
+        last_number = 0
+    for group in StudyGroup.objects.filter(status=StudyGroupStatus.Pending).order_by('start'):
+        last_number += 1
+        group.number = last_number
+        group.save()
 
 
 class Vizit(models.Model):
