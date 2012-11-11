@@ -20,19 +20,20 @@ class Index(ExtraContextMixin, TemplateView):
 
 
 class StudyGroupList(ExtraContextMixin, ListView):
-    template_name = 'manager/study_group_list.html'
+    template_name = 'manager/studygroup_list.html'
     context_object_name = 'groups'
     model = StudyGroup
 
 
 class StudyGroupRead(ExtraContextMixin, DetailView):
-    template_name = 'manager/study_group_detail.html'
+    template_name = 'manager/studygroup_detail.html'
     context_object_name = 'studygroup'
     pk_url_kwarg = 'stugygroup_id'
     model = StudyGroup
 
 
 class StudyGroupDelete(DeleteView):
+    template_name = 'manager/studygroup_confirm_delete.html'
     pk_url_kwarg = 'stugygroup_id'
     model = StudyGroup
 
@@ -43,7 +44,7 @@ class StudyGroupDelete(DeleteView):
 class StudyGroupCreate(ExtraContextMixin, CreateView):
     form_class = StudyGroupCreateForm
     model = StudyGroup
-    template_name = 'manager/study_group_form.html'
+    template_name = 'manager/studygroup_form.html'
 
     def get_success_url(self):
         return reverse('manager:group_list')
