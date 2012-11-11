@@ -187,3 +187,10 @@ if 'MAILGUN_SMTP_SERVER' in os.environ:
     EMAIL_PORT = os.environ['MAILGUN_SMTP_PORT']
     EMAIL_HOST_USER = os.environ['MAILGUN_SMTP_LOGIN']
     EMAIL_HOST_PASSWORD = os.environ['MAILGUN_SMTP_PASSWORD']
+
+
+# Setup DEBUG mode
+if DEBUG:
+    INSTALLED_APPS += ['debug_toolbar']
+#    MIDDLEWARE_CLASSES += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+    INTERNAL_IPS = ('127.0.0.1',)
