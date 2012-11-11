@@ -8,8 +8,14 @@ from core.models import StudyGroup
 from utils import ExtraContextMixin, get_hours_data
 
 
-class Index(TemplateView):
+class Index(ExtraContextMixin, TemplateView):
     template_name = 'manager/index.html'
+
+    def extra_context(self):
+        return {
+            'groups': StudyGroup.objects.all()[:10]
+        }
+
 
 
 class StudyGroupList(ExtraContextMixin, ListView):

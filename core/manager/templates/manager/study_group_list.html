@@ -8,7 +8,6 @@
 
 {% block content %}
     <div class="row"><div class="span12">
-        <h2>Список ЛПК</h2>
         <table class="table table-striped">
             <thead>
             <tr>
@@ -29,7 +28,7 @@
                     <td>{{ group.start }}</td>
                     <td>{{ group.end }}</td>
                     <td>{{ group.get_status_display }}</td>
-                    <td>{{ group.number }}</td>
+                    <td>{{ group.number|default_if_none:"&mdash;" }}</td>
                     <td>{{ group.students.all.count }}</td>
                 </tr>
             {% endfor %}

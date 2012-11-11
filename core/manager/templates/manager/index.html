@@ -6,5 +6,35 @@
 
 {% block content %}
     <div class="row">
+        <div class="span12">
+            <h4><i class="icon-list"></i> Группы ЛПК</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Филиал</th>
+                        <th>Направление</th>
+                        <th>Дата начала</th>
+                        <th>Дата окончания</th>
+                        <th>Статус</th>
+                        <th>Номер</th>
+                        <th>Кол-во слушателей</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for group in groups %}
+                    <tr>
+                        <td>{{ group.department }}</td>
+                        <td>{{ group.subject.short_name }} ({{ group.hours }} ч.)</td>
+                        <td>{{ group.start }}</td>
+                        <td>{{ group.end }}</td>
+                        <td>{{ group.get_status_display }}</td>
+                        <td>{{ group.number|default_if_none:"&mdash;" }}</td>
+                        <td>{{ group.students.all.count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="{% url manager:group_list %}">Все группы</a>
+        </div>
     </div>
 {% endblock %}
