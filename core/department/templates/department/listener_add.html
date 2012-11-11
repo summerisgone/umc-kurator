@@ -15,7 +15,6 @@
     {{ block.super }}
     <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/knockout-2.1.0.js"></script>
     <script type="text/javascript">
-    var POSITIONS = {{ POSITIONS_DICT|safe }};
     var Modal = function(options){
         var settings = options || {},
             $el = settings.el || $(".modal");
@@ -141,13 +140,13 @@
 
 {% block extra_crumb %}
     <li><a href="{% url department:course_list department.pk %}">
-        Cписок курсов</a><span class="divider">/</span></li>
+        Cписок групп</a><span class="divider">/</span></li>
     <li><a href="{{ course.get_absolute_url }}">
         {{ course|truncatewords:3 }}</a><span class="divider">/</span></li>
-    <li class="active">Добавить слушателя</li>
+    <li class="active">Регистрация нового слушателя</li>
 {% endblock %}
 
-{% block title %}Добавить слушателя{% endblock %}
+{% block title %}Регистрация нового слушателя{% endblock %}
 
 {% block content %}
     {% zenform form %}

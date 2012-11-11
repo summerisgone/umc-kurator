@@ -3,13 +3,13 @@
 
 {% block extra_crumb %}
     <li><a href="{% url department:course_list department.pk %}">
-        Cписок курсов</a></li><span class="divider">/</span></li>
+        Cписок групп</a></li><span class="divider">/</span></li>
     <li><a href="{% url department:course_detail department.pk course.pk %}">
             {{ course|truncatewords:3 }}</a></li><span class="divider">/</span></li>
     <li class="active">Список слушателей</li>
 {% endblock %}
 
-{% block title %}Список слушателей курса - {{ course|truncatewords:3 }}{% endblock %}
+{% block title %}Список слушателей группы - {{ course|truncatewords:3 }}{% endblock %}
 
 {% block content %}
     <div class="row">

@@ -56,7 +56,7 @@ class Command(BaseCommand):
         department = Department.objects.get(id=department_id)
 
         retcode, course_id = self.dialog.menu(
-            u'Выберите курс',
+            u'Выберите группу',
             choices=[(str(course.id), course.name) for course in department.courses.all()]
         )
         return StudyGroup.objects.get(id=course_id)

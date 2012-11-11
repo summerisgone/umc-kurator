@@ -1,10 +1,10 @@
 {% extends "department/base.html" %}
 
 {% block extra_crumb %}
-    <li class="active">Курсы</li>
+    <li class="active">Группы</li>
 {% endblock %}
 
-{% block title %}Список курсов{% endblock %}
+{% block title %}Список групп{% endblock %}
 
 {% block content %}
     <table class="table table-striped">
@@ -16,7 +16,7 @@
         </tr>
         {% for course in object_list %}
         <tr>
-            <td><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></td>
+            <td><a href="{{ course.get_absolute_url }}">{{ course }}</a></td>
             <td>{{ course.start }}</td>
             <td>{{ course.end }}</td>
             <td>{{ course.listeners.all.count }}</td>

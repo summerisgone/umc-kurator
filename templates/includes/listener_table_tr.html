@@ -7,10 +7,9 @@
         {% endif %}
     </td>
     <td>
-        <a href="{% url crud:auth.listener.read listener.pk %}">{{ listener.last_name }}
+        {{ listener.last_name }}
             {{ listener.first_name }}
             {{ listener.patronymic }}
-        </a>
         <br>
         <span class="muted">
             {{ listener.last_name_inflated }}
