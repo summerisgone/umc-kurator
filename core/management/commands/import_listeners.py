@@ -22,8 +22,8 @@ class Command(BaseCommand):
         from dialog import Dialog
         self.dialog = Dialog()
         if format_doc.sheet.ncols >= len(format_doc.cells):
-            course = self.select_department_and_course()
-            logic = ListenerImportLogic(format_doc, course)
+            studygroup = self.select_department_and_group()
+            logic = ListenerImportLogic(format_doc, studygroup)
 
             total = logic.doc.sheet.nrows - logic.doc.start_line
 
@@ -47,7 +47,7 @@ class Command(BaseCommand):
         next_cmd.handle()
 
 
-    def select_department_and_course(self):
+    def select_department_and_group(self):
 
         retcode, department_id = self.dialog.menu(
             u"Выберите филиал",
@@ -55,8 +55,8 @@ class Command(BaseCommand):
         )
         department = Department.objects.get(id=department_id)
 
-        retcode, course_id = self.dialog.menu(
+        retcode, group_id = self.dialog.menu(
             u'Выберите группу',
-            choices=[(str(course.id), course.name) for course in department.courses.all()]
+            choices=[(str(group.id), group.subject.name) for group in department.groups.all()]
         )
-        return StudyGroup.objects.get(id=course_id)
+        return StudyGroup.objects.get(id=group_id)

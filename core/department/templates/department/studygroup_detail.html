@@ -1,7 +1,7 @@
 {% extends "department/base.html" %}
 
 {% block extra_crumb %}
-    <li><a href="{% url department:course_list department.pk %}">
+    <li><a href="{% url department:studygroup_list department.pk %}">
         Cписок групп</a><span class="divider">/</span></li>
     <li class="active">{{ object|truncatewords:3 }}</li>
 {% endblock %}
@@ -9,21 +9,21 @@
 {% block title %}{{ object }}{% endblock %}
 
 {% block content %}
-    {% with object as course %}
+    {% with object as studygroup %}
     <div class="row">
         <div class="span6">
             <table class="table">
                 <tr>
                     <th>Статус</th>
-                    <td>{{ course.get_status_display }}</td>
+                    <td>{{ studygroup.get_status_display }}</td>
                 </tr>
                 <tr>
                     <th>Слушателей</th>
-                    <td>{{ course.students.count }}</td>
+                    <td>{{ studygroup.students.count }}</td>
                 </tr>
                 <tr>
                     <th>Организаций</th>
-                    <td>{{ course.organizations.count }}</td>
+                    <td>{{ studygroup.organizations.count }}</td>
                 </tr>
             </table>
         </div>
@@ -31,19 +31,19 @@
             <h2>Последние зарегистрированные слушатели</h2>
             <table class="table table-bordered table-striped">
                 {% include "includes/listener_table_thead.html" %}
-                {% for listener in course.students.all.reverse|slice:":10" %}
+                {% for listener in studygroup.students.all.reverse|slice:":10" %}
                     {% include "includes/listener_table_tr.html" %}
                 {% endfor %}
             </table>
 
 
             <a class="btn" href="
-            {% url department:course_listener_add course.department.pk course.pk %}">
+            {% url department:studygroup_listener_add studygroup.department.pk studygroup.pk %}">
                 <i class="icon-plus"></i> Добавить слушателя</a>
-            <a href="{% url department:course_listener_add_batch course.department.pk course.pk %}">
+            <a href="{% url department:studygroup_listener_add_batch studygroup.department.pk studygroup.pk %}">
                 <i class="icon-list"></i> Добавить из списка</a>
             <a class="pull-right" href="
-            {% url department:course_listeners_list course.department.pk course.pk %}">
+            {% url department:studygroup_listeners_list studygroup.department.pk studygroup.pk %}">
                 Полный список слушателей этой группы</a>
         </div>
     </div>

@@ -2,14 +2,14 @@
 {% load paginate %}
 
 {% block extra_crumb %}
-    <li><a href="{% url department:course_list department.pk %}">
+    <li><a href="{% url department:studygroup_list department.pk %}">
         Cписок групп</a></li><span class="divider">/</span></li>
-    <li><a href="{% url department:course_detail department.pk course.pk %}">
-            {{ course|truncatewords:3 }}</a></li><span class="divider">/</span></li>
+    <li><a href="{% url department:studygroup_detail department.pk studygroup.pk %}">
+            {{ studygroup|truncatewords:3 }}</a></li><span class="divider">/</span></li>
     <li class="active">Список слушателей</li>
 {% endblock %}
 
-{% block title %}Список слушателей группы - {{ course|truncatewords:3 }}{% endblock %}
+{% block title %}Список слушателей группы - {{ studygroup|truncatewords:3 }}{% endblock %}
 
 {% block content %}
     <div class="row">

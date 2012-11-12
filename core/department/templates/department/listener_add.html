@@ -139,10 +139,10 @@
 {% endblock %}
 
 {% block extra_crumb %}
-    <li><a href="{% url department:course_list department.pk %}">
+    <li><a href="{% url department:studygroup_list department.pk %}">
         Cписок групп</a><span class="divider">/</span></li>
-    <li><a href="{{ course.get_absolute_url }}">
-        {{ course|truncatewords:3 }}</a><span class="divider">/</span></li>
+    <li><a href="{{ studygroup.get_absolute_url }}">
+        {{ studygroup|truncatewords:3 }}</a><span class="divider">/</span></li>
     <li class="active">Регистрация нового слушателя</li>
 {% endblock %}
 

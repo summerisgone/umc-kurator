@@ -88,9 +88,9 @@ class ListenerImportLogic(object):
     u"""Бизнес-логика испортирования слушателей"""
     errors = []
 
-    def __init__(self, format_doc, course):
+    def __init__(self, format_doc, group):
         self.doc = format_doc
-        self.course = course
+        self.group = group
 
     def process_row(self, index, parsed_row):
         if any([issubclass(type(cell), Exception) for cell in parsed_row]):
@@ -102,14 +102,14 @@ class ListenerImportLogic(object):
     def register_listener(self, document_data, listener):
         # добавить слушателя к курсу
         Vizit.objects.create(
-            course=self.course,
+            course=self.group,
             listener=listener
         )
 
         # создать сертификат
         Certificate.objects.create(
             name=document_data['name'],
-            course=self.course,
+            course=self.group,
             listener=listener
         )
 

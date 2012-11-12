@@ -16,18 +16,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for course in department.courses.all|slice:":10" %}
+                    {% for studygroup in department.studygroups.all|slice:":10" %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
-                        <td><a href="{{ course.get_absolute_url }}">
-                            {{ course|truncatewords_html:5 }}</a></td>
-                        <td>{{ course.start }}</td>
-                        <td>{{ course.end }}</td>
+                        <td><a href="{{ studygroup.get_absolute_url }}">
+                            {{ studygroup|truncatewords_html:5 }}</a></td>
+                        <td>{{ studygroup.start }}</td>
+                        <td>{{ studygroup.end }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
-            <a class="pull-right" href="{% url department:course_list department.pk %}">Полный
+            <a class="pull-right" href="{% url department:studygroup_list department.pk %}">Полный
                 список групп</a>
         </div>
         <div class="span6">

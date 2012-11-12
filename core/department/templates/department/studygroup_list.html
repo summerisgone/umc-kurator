@@ -14,12 +14,12 @@
             <th>Дата завершения</th>
             <th>Кол-во слушателей</th>
         </tr>
-        {% for course in object_list %}
+        {% for studygroup in object_list %}
         <tr>
-            <td><a href="{{ course.get_absolute_url }}">{{ course }}</a></td>
-            <td>{{ course.start }}</td>
-            <td>{{ course.end }}</td>
-            <td>{{ course.listeners.all.count }}</td>
+            <td><a href="{{ studygroup.get_absolute_url }}">{{ studygroup }}</a></td>
+            <td>{{ studygroup.start }}</td>
+            <td>{{ studygroup.end }}</td>
+            <td>{{ studygroup.listeners.all.count }}</td>
         </tr>
         {% endfor %}
     </table>

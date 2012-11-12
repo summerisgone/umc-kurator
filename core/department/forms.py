@@ -25,8 +25,8 @@ class ListenerAddForm(forms.Form):
         required=False)
     profile = forms.ChoiceField(label=u'Профиль', choices=enums.LISTENER_PROFILES, required=False)
 
-    def __init__(self, course, *args, **kwds):
-        self.course = course
+    def __init__(self, studygroup, *args, **kwds):
+        self.studygroup = studygroup
         super(ListenerAddForm, self).__init__(*args, **kwds)
 
     def user_is_new(self):
@@ -69,7 +69,7 @@ class ListenerAddForm(forms.Form):
             )
             listener.save()
 
-        Vizit.objects.create(course=self.course, listener=listener)
+        Vizit.objects.create(group=self.studygroup, listener=listener)
 
 
 class EmitCertificateForm(forms.models.ModelForm):
@@ -77,9 +77,9 @@ class EmitCertificateForm(forms.models.ModelForm):
         model = Certificate
         fields = ('name', 'cast')
 
-    def __init__(self, course, listener, *args, **kwds):
+    def __init__(self, studygroup, listener, *args, **kwds):
         super(EmitCertificateForm, self).__init__(*args, **kwds)
-        self.instance.course = course
+        self.instance.studygroup = studygroup
         self.instance.listener = listener
 
 

@@ -19,46 +19,46 @@ class DepartmentMixin(object):
             'department': self.get_department()
         }
 
-class CourseMixin(DepartmentMixin):
+class StudyGroupMixin(DepartmentMixin):
 
-    def get_course(self):
-        return get_object_or_404(StudyGroup, pk=self.kwargs['course_pk'])
+    def get_studygroup(self):
+        return get_object_or_404(StudyGroup, pk=self.kwargs['studygroup_pk'])
 
     def extra_context(self):
-        context = super(CourseMixin, self).extra_context()
+        context = super(StudyGroupMixin, self).extra_context()
         context.update({
-            'course': self.get_course()
+            'studygroup': self.get_studygroup()
         })
         return context
 
 
 
-class CourseList(ExtraContextMixin, DepartmentMixin, ListView):
+class StudyGroupList(ExtraContextMixin, DepartmentMixin, ListView):
     model = StudyGroup
-    template_name = 'department/course_list.html'
+    template_name = 'department/studygroup_list.html'
 
     def get_queryset(self):
         return self.model.objects.all()  #filter(department=self.get_department())
 
 
-class CourseDetail(ExtraContextMixin, DepartmentMixin, DetailView):
-    template_name = 'department/course_detail.html'
+class StudyGroupDetail(ExtraContextMixin, DepartmentMixin, DetailView):
+    template_name = 'department/studygroup_detail.html'
     model = StudyGroup
 
 
-class AddListener(ExtraContextMixin, CourseMixin, FormView):
+class AddListener(ExtraContextMixin, StudyGroupMixin, FormView):
     template_name = 'department/listener_add.html'
     form_class = ListenerAddForm
 
     def get_form(self, form_class):
-        return form_class(self.get_course(), **self.get_form_kwargs())
+        return form_class(self.get_studygroup(), **self.get_form_kwargs())
 
     def form_valid(self, form):
         form.save()
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        return self.get_course().get_absolute_url()
+        return self.get_studygroup().get_absolute_url()
 
 
 class ListenerList(DepartmentMixin, ListView):
@@ -68,44 +68,44 @@ class ListenerList(DepartmentMixin, ListView):
 
     def get_queryset(self):
         qs = super(ListenerList, self).get_queryset()
-        return qs.filter(vizit__course__department=self.get_department()).distinct()
+        return qs.filter(vizit__studygroup__department=self.get_department()).distinct()
 
 
-class CourseListenersList(CourseMixin, ListView):
+class StudyGroupListenersList(StudyGroupMixin, ListView):
 
     model = Listener
-    template_name = 'department/course_listener_list.html'
+    template_name = 'department/studygroup_listener_list.html'
 
     def get_queryset(self):
-        queryset = super(CourseListenersList, self).get_queryset()
-        return queryset.filter(course=self.get_course())
+        queryset = super(StudyGroupListenersList, self).get_queryset()
+        return queryset.filter(group=self.get_studygroup())
 
 
-class ListenerBatchSelect(CourseListenersList):
+class ListenerBatchSelect(StudyGroupListenersList):
 
     template_name = 'department/listener_add_batch.html'
 
     def get_queryset(self):
         # все слушатели этого филиала
-        return self.get_course().department.listeners().filter(self.build_query())
+        return self.get_studygroup().department.listeners().filter(self.build_query())
 
 
-class ListenerBatchApply(CourseMixin, FormView):
+class ListenerBatchApply(StudyGroupMixin, FormView):
 
     form_class = BatchListenersForm
     template_name = 'department/listener_add_batch.html'
 
     def form_valid(self, form):
-        course = self.get_course()
+        studygroup = self.get_studygroup()
 
         for listener in form.cleaned_data['listeners']:
-            listener.apply_course(course)
+            listener.apply_studygroup(studygroup)
             messages.add_message(self.request, messages.INFO, u'Добавлен слушатель %s' % listener)
 
         if 'next' in self.request.POST:
             return HttpResponseRedirect(self.request.POST['next'])
         else:
-            return HttpResponseRedirect(course.get_absolute_url())
+            return HttpResponseRedirect(studygroup.get_absolute_url())
 
     def form_invalid(self, form):
         context = self.get_context_data()

@@ -14,8 +14,8 @@ class StudyGroup(models.Model):
     hours = models.IntegerField(verbose_name=u'Количество часов', choices=enums.HOURS_CHOICES)
     subject = models.ForeignKey('Subject', verbose_name=u'Направление')
     students = models.ManyToManyField('auth.Listener', verbose_name=u'Слушатели',
-        through='Vizit', related_name='course')
-    department = models.ForeignKey('Department', related_name='courses',
+        through='Vizit', related_name='group')
+    department = models.ForeignKey('Department', related_name='groups',
         verbose_name=u'Структурное продразделение')
     status = models.IntegerField(verbose_name=u'Статус группы',
         choices=enums.STUDY_GROUP_STATUSES, default=enums.StudyGroupStatus.Pending)
@@ -25,10 +25,10 @@ class StudyGroup(models.Model):
         ordering = ['start', 'number', 'id']
 
     def get_absolute_url(self):
-        return reverse('department:course_detail', args=(self.department.pk, self.pk,))
+        return reverse('department:studygroup_detail', args=(self.department.pk, self.pk,))
 
     def organizations(self):
-        return Organization.objects.filter(listener__vizit__course=self).distinct()
+        return Organization.objects.filter(listener__vizit__group=self).distinct()
 
     def save(self, *args, **kwds):
         if not self.pk and not self.number:
@@ -60,7 +60,7 @@ class Vizit(models.Model):
     class Meta:
         ordering = ['registration_date', 'id']
 
-    course = models.ForeignKey('StudyGroup', verbose_name=u'Предмет')
+    group = models.ForeignKey('StudyGroup', verbose_name=u'Предмет')
     listener = models.ForeignKey('auth.Listener', verbose_name=u'Слушатель')
     registration_date = models.DateTimeField(verbose_name=u'Дата регистрации', auto_now_add=True)
     completed = models.BooleanField(verbose_name=u'Курс прослушан', default=False)
@@ -74,10 +74,10 @@ class Department(models.Model):
         return reverse('department:index', args=(self.pk,))
 
     def organizations(self):
-        return Organization.objects.filter(listener__course__department=self).distinct()
+        return Organization.objects.filter(listener__group__department=self).distinct()
 
     def listeners(self):
-        return Listener.objects.filter(vizit__course__department=self).distinct()
+        return Listener.objects.filter(vizit__group__department=self).distinct()
 
     def __unicode__(self):
         return u'Филиал %s' % self.name
@@ -111,7 +111,7 @@ class Certificate(models.Model):
     name = models.CharField(verbose_name=u'Название', max_length=255)
     cast = models.CharField(verbose_name=u'Тип документа', max_length=50,
         choices=enums.DOCUMENT_CAST, null=True, blank=True)
-    course = models.ForeignKey('StudyGroup', verbose_name=u'Предмет')
+    group = models.ForeignKey('StudyGroup', verbose_name=u'Предмет')
     listener = models.ForeignKey('auth.Listener', verbose_name=u'Владелец')
     number = models.CharField(verbose_name=u'Номер', max_length=64, null=True, blank=True)
 
