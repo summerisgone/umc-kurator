@@ -152,12 +152,14 @@ class StudyGroupStatus:
     Pending = 1
     Complected = 2
     Active = 3
-    Closed = 4
+    Attestation = 4
+    Closed = 5
 
 STUDY_GROUP_STATUSES = (
     (StudyGroupStatus.Pending, u'Не укомплектована'),
     (StudyGroupStatus.Complected, u'Укомплектована'),
     (StudyGroupStatus.Active, u'Идут занятия'),
+    (StudyGroupStatus.Attestation, u'Аттестация'),
     (StudyGroupStatus.Closed, u'Закрыта'),
 )
 
