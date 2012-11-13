@@ -1,12 +1,32 @@
 # coding=utf-8
+from datetime import date
+from dateutil.relativedelta import relativedelta
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from auth.models import Listener
 from core.enums import StudyGroupStatus
 import enums
 
+
+def query_set_factory(query_set_class):
+    """Allows to use QuerySet methods in chain"""
+    class ChainedManager(models.Manager):
+
+        def get_query_set(self):
+            return query_set_class(self.model)
+
+        def __getattr__(self, attr, *args):
+            try:
+                return getattr(self.__class__, attr, *args)
+            except AttributeError:
+                return getattr(self.get_query_set(), attr, *args)
+    return ChainedManager()
+
+class GroupQuerySet(models.query.QuerySet):
+
+    def available_for_enroll(self):
+        period = date.today() + relativedelta(days=+2)
+        return self.filter(status=enums.StudyGroupStatus.Pending, start__lte=period)
 
 class StudyGroup(models.Model):
     start = models.DateField(verbose_name=u'Начало курса')
@@ -21,6 +41,8 @@ class StudyGroup(models.Model):
         choices=enums.STUDY_GROUP_STATUSES, default=enums.StudyGroupStatus.Pending)
     number = models.IntegerField(verbose_name=u'Номер группы', null=True, blank=True)
 
+    objects = query_set_factory(GroupQuerySet)
+
     class Meta:
         ordering = ['start', 'number', 'id']
 
@@ -30,10 +52,15 @@ class StudyGroup(models.Model):
     def organizations(self):
         return Organization.objects.filter(listener__vizit__group=self).distinct()
 
+    def lateness(self):
+        return (self.start - date.today()).days
+
     def save(self, *args, **kwds):
+        # логика автоматической нумерации при создании
         if not self.pk and not self.number:
             if StudyGroup.objects.exists():
-                last_number = StudyGroup.objects.order_by('-start','number')[0].number
+                last_number = StudyGroup.objects.order_by('number','-start')[0].number
+                print 'last_number', last_number
             else:
                 last_number = 0
             self.number = last_number + 1
@@ -44,6 +71,9 @@ class StudyGroup(models.Model):
 
 
 def update_group_numbers():
+    """
+    Логика автоматической нумерации по запросу
+    """
     if StudyGroup.objects.exclude(status=StudyGroupStatus.Pending).exists():
         last_number = StudyGroup.objects.exclude(status=StudyGroupStatus.Pending).order_by(
             '-start', 'number')[0].number

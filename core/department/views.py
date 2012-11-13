@@ -2,7 +2,7 @@
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import ListView, DetailView, FormView
+from django.views.generic import ListView, DetailView, FormView, TemplateView
 from core.auth.models import Listener
 from forms import ListenerAddForm, BatchListenersForm
 from core.models import Department, StudyGroup, Organization
@@ -31,6 +31,11 @@ class StudyGroupMixin(DepartmentMixin):
         })
         return context
 
+
+class Index(ExtraContextMixin, DepartmentMixin, TemplateView):
+    template_name='department/index.html'
+    context_object_name='department'
+    model = Department
 
 
 class StudyGroupList(ExtraContextMixin, DepartmentMixin, ListView):

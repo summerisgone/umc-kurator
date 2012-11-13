@@ -1,17 +1,12 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, include, url
-from django.views.generic import DetailView
-from core.models import Department
 from views import AddListener, StudyGroupList, StudyGroupDetail,\
     OrganizationList, StudyGroupListenersList, ListenerBatchSelect, \
-    ListenerBatchApply, ListenerList, OrganizationDetail
+    ListenerBatchApply, ListenerList, OrganizationDetail, Index
 
 
 urlpatterns = patterns('',
-    url(r'^d(?P<pk>\d{1,5})/$', DetailView.as_view(model=Department,
-        template_name='department/department_detail.html',
-        context_object_name='department'),
-        name='index'),
+    url(r'^d(?P<department_id>\d{1,5})/$', Index.as_view(), name='index'),
 
     url(r'^d(?P<department_id>\d{1,5})/groups/$', StudyGroupList.as_view(), name='studygroup_list'),
     url(r'^d(?P<department_id>\d{1,5})/listeners/$', ListenerList.as_view(), name='listener_list'),

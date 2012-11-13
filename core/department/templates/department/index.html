@@ -1,0 +1,42 @@
+{% extends "department/base.html" %}
+
+{% block title %}Филиал {{ department.name }}{% endblock %}
+
+{% block content %}
+    <div class="row" xmlns="http://www.w3.org/1999/html">
+        <div class="span12">
+            <h4><i class="icon-bullhorn"></i> Группы, которые можно и нужно открыть</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Предмет</th>
+                        <th>Дата начала</th>
+                        <th>Дата завершения</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for studygroup in department.groups.available_for_enroll %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="{{ studygroup.get_absolute_url }}">
+                            {{ studygroup }}</a></td>
+                        <td>{{ studygroup.start }}
+                            {% if studygroup.lateness > 0 %}
+                                ({{ studygroup.start|timeuntil }} осталось)
+                            {% elif studygroup.lateness == 0 %}
+                                <span class="text-warning">(Сегодня)</span>
+                            {% else %}
+                                <span class="text-error">({{ studygroup.start|timesince }} назад)</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ studygroup.end }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a class="pull-right" href="{% url department:studygroup_list department.pk %}">Полный
+                список групп</a>
+        </div>
+    </div>
+{% endblock content %}
