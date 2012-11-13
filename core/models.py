@@ -95,6 +95,7 @@ class Vizit(models.Model):
     registration_date = models.DateTimeField(verbose_name=u'Дата регистрации', auto_now_add=True)
     completed = models.BooleanField(verbose_name=u'Курс прослушан', default=False)
 
+
 class Department(models.Model):
     name = models.CharField(verbose_name=u'Название', max_length=255)
     address = models.CharField(verbose_name=u'Адрес', max_length=255,

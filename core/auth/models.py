@@ -52,13 +52,13 @@ class Listener(ExtendedUser):
         return u'%s %s %s' % (self.last_name, self.first_name, self.patronymic)
 
     def apply_studygroup(self, group):
-        if self.vizit_set.filter(studygroup=group).exists():
+        if self.vizit_set.filter(group=group).exists():
             return None
         else:
-            return self.vizit_set.create(studygroup=group)
+            return self.vizit_set.create(group=group)
 
-    def complete_course(self, studygroup):
-        return self.vizit_set.filter(studygroup=studygroup).update(completed=True)
+    def complete_course(self, group):
+        return self.vizit_set.filter(group=group).update(completed=True)
 
     def __unicode__(self):
         return self.fio()

@@ -15,11 +15,20 @@
             <table class="table">
                 <tr>
                     <th>Статус</th>
-                    <td>{{ studygroup.get_status_display }}</td>
+                    <td>
+                        {{ studygroup.get_status_display }}
+                        {% if studygroup.status == 1 %}
+                            <form action="{% url department:studygroup_complete department.pk studygroup.pk %}"
+                                  method="post">
+                                {% csrf_token %}
+                                <input type="submit" value="Завершить набор">
+                            </form>
+                        {% endif %}
+                    </td>
                 </tr>
                 <tr>
                     <th>Слушателей</th>
-                    <td>{{ studygroup.students.count }}</td>
+                    <td>{{ studygroup.students.all.count }}</td>
                 </tr>
                 <tr>
                     <th>Организаций</th>
@@ -37,13 +46,11 @@
             </table>
 
 
-            <a class="btn" href="
-            {% url department:studygroup_listener_add studygroup.department.pk studygroup.pk %}">
-                <i class="icon-plus"></i> Добавить слушателя</a>
-            <a href="{% url department:studygroup_listener_add_batch studygroup.department.pk studygroup.pk %}">
+            {% if studygroup.status == 1 %}
+            <a class="btn" href="{% url department:studygroup_listener_add studygroup.department.pk studygroup.pk %}">
                 <i class="icon-list"></i> Добавить из списка</a>
-            <a class="pull-right" href="
-            {% url department:studygroup_listeners_list studygroup.department.pk studygroup.pk %}">
+            {% endif %}
+            <a class="pull-right" href="{% url department:studygroup_listeners_list studygroup.department.pk studygroup.pk %}">
                 Полный список слушателей этой группы</a>
         </div>
     </div>

@@ -17,7 +17,15 @@
         {% for studygroup in object_list %}
         <tr>
             <td><a href="{{ studygroup.get_absolute_url }}">{{ studygroup }}</a></td>
-            <td>{{ studygroup.start }}</td>
+            <td>
+                {% if studygroup.lateness < 0 %}
+                    <p class="text-error" rel="tooltip" title="Опоздание {{ studygroup.start|timesince }}">
+                        {{ studygroup.start }}
+                    </p>
+                {% else %}
+                    {{ studygroup.start }}
+                {% endif %}
+            </td>
             <td>{{ studygroup.end }}</td>
             <td>{{ studygroup.listeners.all.count }}</td>
         </tr>

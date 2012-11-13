@@ -1,3 +1,4 @@
+{% if paginator %}
 {% spaceless %}
   {% if has_previous %}
     <span class="page arrow"><a href="{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}page={{ previous }}">&larr; Назад</a></span>
@@ -6,7 +7,7 @@
     {% for p in pages_outside_trailing_range %}
       <span class="page"><a href="{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}page={{ p }}">{{ p }}</a></span>
     {% endfor %}
-    <span class="page"><span class="ellipsis">...</span></span>
+      <span class="page"><span class="ellipsis">...</span></span>
   {% endif %}
   {% for p in page_range %}
     {% if p == page %}
@@ -25,3 +26,4 @@
     <span class="page arrow"><a href="{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}page={{ next }}">Вперед &rarr;</a></span>
   {% endif %}
 {% endspaceless %}
+{% endif %}

@@ -10,9 +10,11 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Предмет</th>
+                        <th>Направление</th>
                         <th>Дата начала</th>
                         <th>Дата завершения</th>
+                        <th>Номер</th>
+                        <th>Слушателей</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,6 +33,8 @@
                             {% endif %}
                         </td>
                         <td>{{ studygroup.end }}</td>
+                        <td>{{ studygroup.number }}</td>
+                        <td>{{ studygroup.students.count }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

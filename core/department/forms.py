@@ -33,6 +33,9 @@ class ListenerAddForm(forms.Form):
         return 'user_id' not in self.data
 
     def clean(self):
+        if self.studygroup.status != enums.StudyGroupStatus.Pending:
+            raise forms.ValidationError(u'В эту группу уже нельзя добавлять слушателей')
+
         if ('user_id' in self.cleaned_data and
             self.cleaned_data['user_id'] and
             Listener.objects.get(id=self.cleaned_data['user_id']).exists()):

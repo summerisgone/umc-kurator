@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, include, url
-from views import AddListener, StudyGroupList, StudyGroupDetail,\
+from views import RegisterListener, StudyGroupList, StudyGroupDetail,\
     OrganizationList, StudyGroupListenersList, ListenerBatchSelect, \
-    ListenerBatchApply, ListenerList, OrganizationDetail, Index
+    ListenerBatchApply, ListenerList, OrganizationDetail, Index, StudyGroupComplete
 
 
 urlpatterns = patterns('',
@@ -17,15 +17,17 @@ urlpatterns = patterns('',
 
     url(r'^d(?P<department_id>\d{1,5})/group/(?P<pk>\d{1,5})/$', StudyGroupDetail.as_view(),
         name='studygroup_detail'),
+    url(r'^d(?P<department_id>\d{1,5})/group/(?P<pk>\d{1,5})/complete$', StudyGroupComplete.as_view(),
+            name='studygroup_complete'),
     url(r'^d(?P<department_id>\d{1,5})/group/(?P<studygroup_pk>\d{1,5})/listeners/$',
         StudyGroupListenersList.as_view(), name='studygroup_listeners_list'),
-    url(r'^d(?P<department_id>\d{1,5})/group/(?P<studygroup_pk>\d{1,5})/register/$',
-        AddListener.as_view(), name='studygroup_listener_add'),
-    url(r'^d(?P<department_id>\d{1,5})/group/(?P<studygroup_pk>\d{1,5})/add_batch/$',
-        ListenerBatchSelect.as_view(), name='studygroup_listener_add_batch'),
+    url(r'^d(?P<department_id>\d{1,5})/group/(?P<studygroup_pk>\d{1,5})/listeners/add/$',
+        ListenerBatchSelect.as_view(), name='studygroup_listener_add'),
     url(r'^d(?P<department_id>\d{1,5})/group/(?P<studygroup_pk>\d{1,5})/update_batch/$',
         ListenerBatchApply.as_view(),
         name='studygroup_listener_apply_batch'),
+    url(r'^d(?P<department_id>\d{1,5})/group/(?P<studygroup_pk>\d{1,5})/register/$',
+        RegisterListener.as_view(), name='studygroup_listener_register'),
 
     # Organization
 

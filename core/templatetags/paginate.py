@@ -25,6 +25,8 @@ def digg_paginator(context):
     """
     paginator = context['paginator']
     page_obj = context['page_obj']
+    if not paginator:
+        return {}
     pages = paginator.num_pages
     page = page_obj.number
     in_leading_range = in_trailing_range = False
