@@ -102,14 +102,14 @@ class ListenerImportLogic(object):
     def register_listener(self, document_data, listener):
         # добавить слушателя к курсу
         Vizit.objects.create(
-            course=self.group,
+            group=self.group,
             listener=listener
         )
 
         # создать сертификат
         Certificate.objects.create(
             name=document_data['name'],
-            course=self.group,
+            group=self.group,
             listener=listener
         )
 
