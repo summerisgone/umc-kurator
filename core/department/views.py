@@ -50,7 +50,7 @@ class StudyGroupList(DepartmentMixin, ListView):
     template_name = 'department/studygroup_list.html'
 
     def get_queryset(self):
-        return self.model.objects.all()  #filter(department=self.get_department())
+        return self.model.objects.order_by('status', 'start', 'id')
 
 
 class StudyGroupDetail(DepartmentMixin, DetailView):
@@ -137,8 +137,6 @@ class ListenerBatchApply(StudyGroupMixin, FormView):
         else:
             messages.add_message(self.request, messages.INFO, u'Добавлено %s слушателей' %
                                                               form.cleaned_data['listeners'].count())
-
-
 
         if 'next' in self.request.POST:
             return HttpResponseRedirect(self.request.POST['next'])

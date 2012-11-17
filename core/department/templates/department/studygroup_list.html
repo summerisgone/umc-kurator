@@ -12,22 +12,24 @@
             <th>Название</th>
             <th>Дата начала</th>
             <th>Дата завершения</th>
+            <th>Статус</th>
             <th>Кол-во слушателей</th>
         </tr>
         {% for studygroup in object_list %}
         <tr>
             <td><a href="{{ studygroup.get_absolute_url }}">{{ studygroup }}</a></td>
             <td>
-                {% if studygroup.lateness < 0 %}
+                {% if studygroup.status == 1 and studygroup.lateness < 0 %}
                     <p class="text-error" rel="tooltip" title="Опоздание {{ studygroup.start|timesince }}">
                         {{ studygroup.start }}
                     </p>
                 {% else %}
-                    {{ studygroup.start }}
+                    <p>{{ studygroup.start }}</p>
                 {% endif %}
             </td>
             <td>{{ studygroup.end }}</td>
-            <td>{{ studygroup.listeners.all.count }}</td>
+            <td>{{ studygroup.get_status_display }}</td>
+            <td>{{ studygroup.students.count }}</td>
         </tr>
         {% endfor %}
     </table>
