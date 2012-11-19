@@ -1,0 +1,16 @@
+{% extends "department/studygroup_base.html" %}
+
+{% block extra_crumb %}
+    <li class="active">Завершить набор</li>
+{% endblock %}
+
+{% block title %}Подтвердите завершение набора{% endblock %}
+
+{% block content %}
+    <p class="alert alert-danger"><strong>Внимание!</strong> Завершение набора означает,
+        что в группу нельзя будет добавить слушателей. Отмены действия нет!</p>
+    <form action="." method="post">
+        {% csrf_token %}
+        <input type="submit" class="btn btn-primary" value="Я подтверждаю завершение набора">
+    </form>
+{% endblock content %}

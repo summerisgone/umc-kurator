@@ -1,0 +1,37 @@
+{% extends "department/base.html" %}
+
+{% block breadcrumbs %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{% url department:studygroup_list department.pk %}">
+            Cписок групп
+            </a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{% url department:studygroup_detail department.pk studygroup.pk %}">
+                {{ studygroup|truncatewords:3 }}
+            </a>
+            <span class="divider">/</span>
+        </li>
+          {% block extra_crumb %}{% endblock %}
+    </ul>
+{% endblock %}
+
+{% block actions %}
+    <div class="btn-group">
+        <button class="btn dropdown-toggle" data-toggle="dropdown">Действия <span class="caret"></span></button>
+        <ul class="dropdown-menu">
+            {% if studygroup.status == 1 %}
+                <li><a href="{% url department:studygroup_complete department.pk studygroup.pk %}">
+                    Завершить набор
+                </a></li>
+            {% endif %}
+            {% if studygroup.status == 2 %}
+                <li><a href="{% url department:studygroup_listener_attestation department.pk studygroup.pk %}">
+                    Выдача дипломов
+                </a></li>
+            {% endif %}
+        </ul>
+    </div>
+{% endblock %}

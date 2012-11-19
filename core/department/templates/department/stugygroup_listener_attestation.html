@@ -1,32 +1,11 @@
-{% extends "department/base.html" %}
+{% extends "department/studygroup_base.html" %}
 {% load paginate zenforms %}
 
 {% block extra_crumb %}
-    <li>
-        <a href="{% url department:studygroup_list department.pk %}">
-            Cписок групп
-        </a>
-        <span class="divider">/</span>
-    </li>
-    <li>
-        <a href="{% url department:studygroup_detail department.pk studygroup.pk %}">
-            {{ studygroup|truncatewords:3 }}
-        </a>
-        <span class="divider">/</span>
-    </li>
     <li class="active">Заполнение курсовых работ</li>
 {% endblock %}
 
 {% block title %}Заполнение курсовых работ группы - {{ studygroup|truncatewords:3 }}{% endblock %}
-
-{% block actions %}
-    <div class="btn-group">
-        <button class="btn dropdown-toggle" data-toggle="dropdown">Действия <span class="caret"></span></button>
-        <ul class="dropdown-menu">
-            <li><a href="#">Заполнение курсовых работ</a></li>
-        </ul>
-    </div>
-{% endblock %}
 
 {% block content %}
     <div class="row">

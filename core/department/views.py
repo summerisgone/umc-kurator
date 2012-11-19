@@ -56,11 +56,19 @@ class StudyGroupList(DepartmentMixin, ListView):
 
 class StudyGroupDetail(DepartmentMixin, DetailView):
     template_name = 'department/studygroup_detail.html'
+    context_object_name = 'studygroup'
     model = StudyGroup
 
 
-class StudyGroupComplete(DepartmentMixin, SingleObjectMixin, View):
+class StudyGroupComplete(DepartmentMixin, SingleObjectMixin, TemplateView):
     model = StudyGroup
+    context_object_name = 'studygroup'
+    template_name = 'department/studygroup_complete_confirm.html'
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data()
+        return self.render_to_response(context)
 
     def post(self, request, *args, **kwargs):
         group = self.get_object()
@@ -106,19 +114,21 @@ class StudyGroupListenersList(StudyGroupMixin, ListExtras, ListView):
         return queryset.filter(group=self.get_studygroup())
 
 
-class ListenerBatchSelect(StudyGroupListenersList):
+class ListenerAddBatch(StudyGroupListenersList):
 
     template_name = 'department/listener_add.html'
+    form_class = BatchListenersForm
 
     def get_queryset(self):
         # все слушатели этого филиала
         return self.get_studygroup().department.listeners().filter(self.build_query())
 
-
-class ListenerBatchApply(StudyGroupMixin, FormView):
-
-    form_class = BatchListenersForm
-    template_name = 'department/listener_add.html'
+    def post(self, request, *args, **kwds):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            return self.form_valid()
+        else:
+            return self.form_invalid()
 
     def form_valid(self, form):
         studygroup = self.get_studygroup()

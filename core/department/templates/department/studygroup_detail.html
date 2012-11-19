@@ -1,8 +1,6 @@
-{% extends "department/base.html" %}
+{% extends "department/studygroup_base.html" %}
 
 {% block extra_crumb %}
-    <li><a href="{% url department:studygroup_list department.pk %}">
-        Cписок групп</a><span class="divider">/</span></li>
     <li class="active">{{ object|truncatewords:3 }}</li>
 {% endblock %}
 
@@ -17,13 +15,6 @@
                     <th>Статус</th>
                     <td>
                         {{ studygroup.get_status_display }}
-                        {% if studygroup.status == 1 %}
-                            <form action="{% url department:studygroup_complete department.pk studygroup.pk %}"
-                                  method="post">
-                                {% csrf_token %}
-                                <input type="submit" value="Завершить набор">
-                            </form>
-                        {% endif %}
                     </td>
                 </tr>
                 <tr>

@@ -48,8 +48,7 @@
             </form>
             {% include "includes/listener_filter.html" %}
             </div>
-            <form action="{% url department:studygroup_listener_apply_batch department.pk studygroup.pk %}"
-                  method="post">
+            <form action="." method="post">
             {% if get_params %}
                 <a class="pull-right" href="
                 {% url department:studygroup_listener_add department.pk studygroup.pk %}">
