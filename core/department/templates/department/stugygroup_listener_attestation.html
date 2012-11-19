@@ -1,0 +1,100 @@
+{% extends "department/base.html" %}
+{% load paginate zenforms %}
+
+{% block extra_crumb %}
+    <li>
+        <a href="{% url department:studygroup_list department.pk %}">
+            Cписок групп
+        </a>
+        <span class="divider">/</span>
+    </li>
+    <li>
+        <a href="{% url department:studygroup_detail department.pk studygroup.pk %}">
+            {{ studygroup|truncatewords:3 }}
+        </a>
+        <span class="divider">/</span>
+    </li>
+    <li class="active">Заполнение курсовых работ</li>
+{% endblock %}
+
+{% block title %}Заполнение курсовых работ группы - {{ studygroup|truncatewords:3 }}{% endblock %}
+
+{% block actions %}
+    <div class="btn-group">
+        <button class="btn dropdown-toggle" data-toggle="dropdown">Действия <span class="caret"></span></button>
+        <ul class="dropdown-menu">
+            <li><a href="#">Заполнение курсовых работ</a></li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="span12">
+            {% include "includes/listener_filter.html" %}
+            <form action="." method="POST">
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <th></th>
+                    <th>ФИО</th>
+                    <th>Организация</th>
+                    <th>Должность</th>
+                    <th>Сертификат</th>
+                </tr>
+                {{ formset.management_form }}
+                {% for form in formset %}
+                    {% with form.instance.listener as listener %}
+                        <tr>
+                            <td>
+                                {% if page_obj %}
+                                    {{ forloop.counter0|add:page_obj.start_index }}
+                                {% else %}
+                                    {{ forloop.counter }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ listener.last_name }}
+                                {{ listener.first_name }}
+                                {{ listener.patronymic }}
+                                <br>
+                            <span class="muted">
+                                {{ listener.last_name_inflated }}
+                                {{ listener.first_name_inflated }}
+                                {{ listener.patronymic_inflated }}
+                            </span>
+                            </td>
+                            <td>
+                                <a href="{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}organization={{ listener.organization.name }}">
+                                    {{ listener.organization }}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}position={{ listener.position }}">
+                                    {{ listener.position }}
+                                </a>
+                            </td>
+                            <td>
+                                <label>
+                                    Название курсовой работы:
+                                    {{ form.id }}
+                                    {{ form.attestation_work_name }}
+                                    {{ form.errors }}
+                                </label>
+                            </td>
+                        </tr>
+                    {% endwith %}
+                {% endfor %}
+            </table>
+            <div class="form-actions">
+                {% csrf_token %}
+                {% if page_obj and page_obj.has_next %}
+                    <input name="next_page" type="hidden" value="{{ page_obj.number|add:"1" }}" >
+                {% endif %} 
+                <input type="submit" class="btn btn-primary pull-right" value="Сохранить {% if page_obj and page_obj.has_next%}и далее{% endif %}">
+            </div>
+            </form>
+            <div class="pagination-page">{% digg_paginator %}</div>
+
+        </div>
+    </div>
+{% endblock content %}

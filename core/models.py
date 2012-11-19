@@ -94,6 +94,8 @@ class Vizit(models.Model):
     listener = models.ForeignKey('auth.Listener', verbose_name=u'Слушатель')
     registration_date = models.DateTimeField(verbose_name=u'Дата регистрации', auto_now_add=True)
     completed = models.BooleanField(verbose_name=u'Курс прослушан', default=False)
+    attestation_work_name = models.CharField(verbose_name=u'Название курсовой работы', max_length=255,
+        null=True, blank=True)
 
 
 class Department(models.Model):

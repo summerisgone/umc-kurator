@@ -5,11 +5,12 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, DetailView, FormView, TemplateView, View
 from django.views.generic.detail import SingleObjectMixin
+from django.forms.models import modelformset_factory
 from core import enums
 from core.auth.models import Listener
 from crud.views import ListExtras
 from forms import ListenerAddForm, BatchListenersForm
-from core.models import Department, StudyGroup, Organization
+from core.models import Department, StudyGroup, Organization, Vizit
 from utils import ExtraContextMixin
 
 
@@ -75,7 +76,7 @@ class ListenerList(DepartmentMixin, ListExtras, ListView):
 
     def get_queryset(self):
         qs = super(ListenerList, self).get_queryset()
-        return qs.filter(vizit__studygroup__department=self.get_department()).distinct()
+        return qs.filter(vizit__group__department=self.get_department()).distinct()
 
 
 class RegisterListener(StudyGroupMixin, FormView):
@@ -153,6 +154,55 @@ class ListenerBatchApply(StudyGroupMixin, FormView):
         })
 
         return self.render_to_response(context)
+
+
+class ListenerAttestation(StudyGroupMixin, ListView):
+    template_name = 'department/stugygroup_listener_attestation.html'
+    fields = ['attestation_work_name']
+    model = Vizit
+    paginate_by = 5
+
+    def get_queryset(self):
+        return self.get_studygroup().vizit_set.all()
+
+    def get(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        context = self.get_context_data(object_list=self.object_list)
+        if 'is_paginated' in context and context['is_paginated']:
+            page = context['page_obj']
+            context['formset'] = self.construct_formset()(queryset=page.object_list)
+        else:
+            context['formset'] = self.construct_formset()(queryset=self.get_queryset())
+        return self.render_to_response(context)
+
+    def post(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        context = self.get_context_data(object_list=self.object_list)
+        if 'is_paginated' in context and context['is_paginated']:
+            page = context['page_obj']
+            formset = self.construct_formset()(request.POST, queryset=page.object_list)
+        else:
+            formset = self.construct_formset()(request.POST, queryset=self.get_queryset())
+
+        if formset.is_valid():
+            formset.save()
+        else:
+            context['formset'] = formset
+            print 'not valid!', formset.errors
+
+            return self.render_to_response(context)
+
+
+        if 'next_page' in request.POST:
+            return HttpResponseRedirect(reverse('department:studygroup_listener_attestation',
+                args=[self.get_department().pk, self.get_studygroup().pk]) + '?page=' + request.POST['next_page'])
+        else:
+            return HttpResponseRedirect(reverse('department:studygroup_detail',
+                args=[self.get_department().pk, self.get_studygroup().pk]))
+
+
+    def construct_formset(self):
+        return modelformset_factory(self.model, fields=self.fields, extra=0)
 
 
 class OrganizationList(DepartmentMixin, ListView):

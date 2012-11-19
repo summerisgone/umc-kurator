@@ -15,7 +15,9 @@
     <div class="btn-group">
         <button class="btn dropdown-toggle" data-toggle="dropdown">Действия <span class="caret"></span></button>
         <ul class="dropdown-menu">
-            <li><a href="#">Выдача дипломов</a></li>
+            <li><a href="{% url department:studygroup_listener_attestation department.pk studygroup.pk %}">
+                Выдача дипломов
+            </a></li>
         </ul>
     </div>
 {% endblock %}
