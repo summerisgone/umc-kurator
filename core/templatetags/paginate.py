@@ -23,10 +23,11 @@ def digg_paginator(context):
     trailing page links in addition to those created by the object_list generic
     view.
     """
-    paginator = context['paginator']
-    page_obj = context['page_obj']
-    if not paginator:
+    try:
+        paginator = context['paginator']
+    except KeyError:
         return {}
+    page_obj = context['page_obj']
     pages = paginator.num_pages
     page = page_obj.number
     in_leading_range = in_trailing_range = False
