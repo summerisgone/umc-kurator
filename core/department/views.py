@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+from symbol import return_stmt
 from django.contrib import messages
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, DetailView, FormView, TemplateView, View
@@ -57,10 +59,11 @@ class StudyGroupList(DepartmentMixin, ListView):
 class StudyGroupDetail(DepartmentMixin, DetailView):
     template_name = 'department/studygroup_detail.html'
     context_object_name = 'studygroup'
+    pk_url_kwarg = 'studygroup_pk'
     model = StudyGroup
 
 
-class StudyGroupComplete(DepartmentMixin, SingleObjectMixin, TemplateView):
+class StudyGroupCompleteEnroll(StudyGroupMixin, SingleObjectMixin, TemplateView):
     model = StudyGroup
     context_object_name = 'studygroup'
     template_name = 'department/studygroup_complete_confirm.html'
@@ -72,9 +75,46 @@ class StudyGroupComplete(DepartmentMixin, SingleObjectMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         group = self.get_object()
-        group.status = enums.StudyGroupStatus.Complected
-        group.save()
-        messages.add_message(self.request, messages.INFO, u'Набор в группу %s завершен' % group)
+        if group.status == enums.StudyGroupStatus.Pending:
+            group.status = enums.StudyGroupStatus.Complected
+            group.save()
+            messages.add_message(self.request, messages.INFO, u'Набор в группу %s завершен' % group)
+        else:
+            messages.add_message(self.request, messages.ERROR, u'Ошибка: завершить набор нельзя')
+        return HttpResponseRedirect(reverse("department:studygroup_detail", kwargs=kwargs))
+
+
+class StudyGroupClose(StudyGroupMixin, SingleObjectMixin, TemplateView):
+    model = StudyGroup
+    context_object_name = 'studygroup'
+    pk_url_kwarg = 'studygroup_pk'
+    template_name = 'department/studygroup_close_confirm.html'
+
+    def extra_context(self):
+        extra = super(StudyGroupClose, self).extra_context()
+        ids_without_attestation = self.get_studygroup().vizit_set.filter(
+            Q(attestation_work_name__isnull=True) | Q(attestation_work_name='')).values_list('listener_id', flat=True)
+        ids_with_attestation = self.get_studygroup().vizit_set.exclude(
+            Q(attestation_work_name__isnull=True) | Q(attestation_work_name='')).values_list('listener_id', flat=True)
+        extra.update({
+            'without_exams': Listener.objects.filter(id__in=ids_without_attestation),
+            'with_exams': Listener.objects.filter(id__in=ids_with_attestation),
+        })
+        return extra
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+    def post(self, request, *args, **kwargs):
+        group = self.get_object()
+        if group.status == enums.StudyGroupStatus.Complected:
+            group.status = enums.StudyGroupStatus.Attestation
+            group.save()
+            messages.add_message(self.request, messages.INFO, u'Группа  %s закрыта' % group)
+        else:
+            messages.add_message(self.request, messages.ERROR, u'Ошибка: нельзя закрыть группу')
         return HttpResponseRedirect(reverse("department:studygroup_detail", kwargs=kwargs))
 
 

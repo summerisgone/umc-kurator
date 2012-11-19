@@ -29,7 +29,10 @@
             {% endif %}
             {% if studygroup.status == 2 %}
                 <li><a href="{% url department:studygroup_listener_attestation department.pk studygroup.pk %}">
-                    Выдача дипломов
+                    Заполнить курсовые работы
+                </a></li>
+                <li><a href="{% url department:studygroup_close department.pk studygroup.pk %}">
+                    Закрыть группу
                 </a></li>
             {% endif %}
         </ul>

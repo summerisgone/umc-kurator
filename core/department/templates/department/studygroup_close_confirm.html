@@ -1,0 +1,38 @@
+{% extends "department/studygroup_base.html" %}
+
+{% block extra_crumb %}
+    <li class="active">Закрыть группу</li>
+{% endblock %}
+
+{% block title %}Подтвердите закрутие группы{% endblock %}
+
+{% block content %}
+<div class="row">
+    <p class="span-12 alert alert-danger"><strong>Внимание!</strong> Закрытие группы означает,
+        что все сдавшие курсовые работы получат сертификаты, а остальные - не получат. Отмены действия нет!</p>
+    <div class="span6">
+        <h3>Слушатели без курсовых работ</h3>
+        <ul>
+            {% for listener in without_exams %}
+                <li>{{ listener }}</li>
+            {% empty %}
+                <li>Пусто</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="span6">
+        <h3>Список к получению сертификатов</h3>
+        <ul>
+            {% for listener in with_exams %}
+                <li>{{ listener }}</li>
+            {% empty %}
+                <li>Пусто</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <form action="." method="post">
+        {% csrf_token %}
+        <input type="submit" class="btn btn-primary" value="Я подтверждаю список к получению диплома набора">
+    </form>
+</div>
+{% endblock content %}
