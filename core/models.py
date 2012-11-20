@@ -55,6 +55,15 @@ class StudyGroup(models.Model):
     def lateness(self):
         return (self.start - date.today()).days
 
+    def is_last_attestated(self):
+        try:
+            last_id = StudyGroup.objects.filter(status=enums.StudyGroupStatus.Attestation).order_by(
+                '-end').values_list('id', flat=True)[0]
+        except IndexError:
+            return False
+        else:
+            return self.id == last_id
+
     def save(self, *args, **kwds):
         # логика автоматической нумерации при создании
         if not self.pk and not self.number:
@@ -107,7 +116,7 @@ class Department(models.Model):
         return reverse('department:index', args=(self.pk,))
 
     def organizations(self):
-        return Organization.objects.filter(listener__group__department=self).distinct()
+        return Organization.objects.f(listener__group__department=self).distinct()
 
     def listeners(self):
         return Listener.objects.filter(vizit__group__department=self).distinct()

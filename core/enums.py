@@ -159,7 +159,7 @@ STUDY_GROUP_STATUSES = (
     (StudyGroupStatus.Pending, u'Не укомплектована'),
     (StudyGroupStatus.Complected, u'Укомплектована'),
     (StudyGroupStatus.Active, u'Идут занятия'),
-    (StudyGroupStatus.Attestation, u'Аттестация'),
+    (StudyGroupStatus.Attestation, u'Аттестована'),
     (StudyGroupStatus.Closed, u'Закрыта'),
 )
 

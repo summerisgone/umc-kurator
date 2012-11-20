@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, url
 from views import Index, StudyGroupList, StudyGroupCreate, StudyGroupRead, StudyGroupUpdate, \
-    StudyGroupDelete, update_numbers
+    StudyGroupDelete, update_numbers, StudyGroupClose
 
 urlpatterns = patterns('',
     url(r'^$', Index.as_view(), name='index'),
@@ -10,6 +10,6 @@ urlpatterns = patterns('',
     url(r'^sg/add/$', StudyGroupCreate.as_view(), name='group_add'),
     url(r'^sg/(?P<stugygroup_id>\d{1,5})/$', StudyGroupRead.as_view(), name='group_detail'),
     url(r'^sg/(?P<stugygroup_id>\d{1,5})/edit/$', StudyGroupUpdate.as_view(), name='group_edit'),
-    url(r'^sg/(?P<stugygroup_id>\d{1,5})/delete/$', StudyGroupDelete.as_view(),
-        name='group_delete'),
+    url(r'^sg/(?P<stugygroup_id>\d{1,5})/delete/$', StudyGroupDelete.as_view(), name='group_delete'),
+    url(r'^sg/(?P<stugygroup_id>\d{1,5})/close/$', StudyGroupClose.as_view(), name='group_close'),
 )

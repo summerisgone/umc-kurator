@@ -27,3 +27,4 @@ class StudyGroupCreateForm(forms.ModelForm):
 
         self.instance.name = self.instance.__unicode__()
         super(StudyGroupCreateForm, self).save(**kwds)
+
