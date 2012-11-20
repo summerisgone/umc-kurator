@@ -220,15 +220,12 @@ class ListenerAttestation(StudyGroupMixin, ListView):
             context['formset'] = self.construct_formset()(queryset=page.object_list)
         else:
             context['formset'] = self.construct_formset()(queryset=self.get_queryset())
-        print 'GET', [form.instance.id for form in context['formset'].forms]
         return self.render_to_response(context)
 
     def post(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         context = self.get_context_data(object_list=self.object_list)
         formset = self.get_formset(context, request)
-
-        print 'POST', [form.instance.id for form in formset.forms]
 
         if formset.is_valid():
             group = self.get_studygroup()
@@ -249,13 +246,10 @@ class ListenerAttestation(StudyGroupMixin, ListView):
 
     def get_formset(self, context, request):
         if 'is_paginated' in context and context['is_paginated']:
-            print 'foo'
             paginator = context['paginator']
             page = paginator.page(request.POST['page'])
             formset = self.construct_formset()(request.POST, queryset=page.object_list)
-            print 'bar'
         else:
-            print 'baz'
             formset = self.construct_formset()(request.POST, queryset=self.get_queryset())
         return formset
 
