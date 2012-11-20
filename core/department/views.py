@@ -66,6 +66,7 @@ class StudyGroupDetail(DepartmentMixin, DetailView):
 class StudyGroupCompleteEnroll(StudyGroupMixin, SingleObjectMixin, TemplateView):
     model = StudyGroup
     context_object_name = 'studygroup'
+    pk_url_kwarg = 'studygroup_pk'
     template_name = 'department/studygroup_complete_confirm.html'
 
     def get(self, request, *args, **kwargs):
@@ -75,8 +76,8 @@ class StudyGroupCompleteEnroll(StudyGroupMixin, SingleObjectMixin, TemplateView)
 
     def post(self, request, *args, **kwargs):
         group = self.get_object()
-        if group.status == enums.StudyGroupStatus.Pending:
-            group.status = enums.StudyGroupStatus.Complected
+        if group.status == enums.StudyGroupStatus.Completing:
+            group.status = enums.StudyGroupStatus.Active
             group.save()
             messages.add_message(self.request, messages.INFO, u'Набор в группу %s завершен' % group)
         else:
@@ -93,8 +94,8 @@ class StudyGroupClose(StudyGroupMixin, SingleObjectMixin, TemplateView):
     def extra_context(self):
         extra = super(StudyGroupClose, self).extra_context()
         extra.update({
-            'without_exams': self.get_studygroup().attested_listeners(),
-            'with_exams': self.get_studygroup().not_attested_listeners(),
+            'with_exams': self.get_studygroup().attested_listeners(),
+            'without_exams': self.get_studygroup().not_attested_listeners(),
         })
         return extra
 
@@ -105,8 +106,8 @@ class StudyGroupClose(StudyGroupMixin, SingleObjectMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         group = self.get_object()
-        if group.status == enums.StudyGroupStatus.Complected:
-            group.status = enums.StudyGroupStatus.Attestation
+        if group.status == enums.StudyGroupStatus.Certificating:
+            group.status = enums.StudyGroupStatus.Certificated
             group.save()
             messages.add_message(self.request, messages.INFO, u'Группа  %s закрыта' % group)
         else:
@@ -162,9 +163,9 @@ class ListenerAddBatch(StudyGroupListenersList):
     def post(self, request, *args, **kwds):
         form = self.form_class(request.POST)
         if form.is_valid():
-            return self.form_valid()
+            return self.form_valid(form)
         else:
-            return self.form_invalid()
+            return self.form_invalid(form)
 
     def form_valid(self, form):
         studygroup = self.get_studygroup()
@@ -172,7 +173,7 @@ class ListenerAddBatch(StudyGroupListenersList):
             messages.add_message(self.request, messages.ERROR, u'В эту группу уже нельзя добавлять слушателей')
             return HttpResponseRedirect(reverse("department:studygroup_detail", kwargs={
                 'department_id': self.get_department().pk,
-                'pk': studygroup.pk
+                'studygroup_pk': studygroup.pk
             }))
 
         for listener in form.cleaned_data['listeners']:
@@ -190,7 +191,7 @@ class ListenerAddBatch(StudyGroupListenersList):
         else:
             return HttpResponseRedirect(reverse("department:studygroup_detail", kwargs={
                 'department_id': self.get_department().pk,
-                'pk': studygroup.pk
+                'studygroup_pk': studygroup.pk
             }))
 
     def form_invalid(self, form):
@@ -219,25 +220,25 @@ class ListenerAttestation(StudyGroupMixin, ListView):
             context['formset'] = self.construct_formset()(queryset=page.object_list)
         else:
             context['formset'] = self.construct_formset()(queryset=self.get_queryset())
+        print 'GET', [form.instance.id for form in context['formset'].forms]
         return self.render_to_response(context)
 
     def post(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         context = self.get_context_data(object_list=self.object_list)
-        if 'is_paginated' in context and context['is_paginated']:
-            page = context['page_obj']
-            formset = self.construct_formset()(request.POST, queryset=page.object_list)
-        else:
-            formset = self.construct_formset()(request.POST, queryset=self.get_queryset())
+        formset = self.get_formset(context, request)
+
+        print 'POST', [form.instance.id for form in formset.forms]
 
         if formset.is_valid():
+            group = self.get_studygroup()
+            if group.status != enums.StudyGroupStatus.Certificating:
+                group.status = enums.StudyGroupStatus.Certificating
+                group.save()
             formset.save()
         else:
             context['formset'] = formset
-            print 'not valid!', formset.errors
-
             return self.render_to_response(context)
-
 
         if 'next_page' in request.POST:
             return HttpResponseRedirect(reverse('department:studygroup_listener_attestation',
@@ -246,6 +247,17 @@ class ListenerAttestation(StudyGroupMixin, ListView):
             return HttpResponseRedirect(reverse('department:studygroup_detail',
                 args=[self.get_department().pk, self.get_studygroup().pk]))
 
+    def get_formset(self, context, request):
+        if 'is_paginated' in context and context['is_paginated']:
+            print 'foo'
+            paginator = context['paginator']
+            page = paginator.page(request.POST['page'])
+            formset = self.construct_formset()(request.POST, queryset=page.object_list)
+            print 'bar'
+        else:
+            print 'baz'
+            formset = self.construct_formset()(request.POST, queryset=self.get_queryset())
+        return formset
 
     def construct_formset(self):
         return modelformset_factory(self.model, fields=self.fields, extra=0)

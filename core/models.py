@@ -31,6 +31,9 @@ class GroupQuerySet(models.query.QuerySet):
         period = date.today() + relativedelta(days=+2)
         return self.filter(status=enums.StudyGroupStatus.Pending, start__lte=period)
 
+    def available_for_attestation(self):
+        return self.filter(status=enums.StudyGroupStatus.Active) #, end__lte=date.today())
+
 class StudyGroup(models.Model):
     start = models.DateField(verbose_name=u'Начало курса')
     end = models.DateField(verbose_name=u'Завершение курса')
@@ -59,16 +62,34 @@ class StudyGroup(models.Model):
         return (self.start - date.today()).days
 
     def is_managed(self):
-        return self.status in [enums.StudyGroupStatus.Pending, enums.StudyGroupStatus.Attestation]
+        return self.status in [enums.StudyGroupStatus.Pending, enums.StudyGroupStatus.Certificated]
 
     def is_last_attestated(self):
         try:
-            last_id = StudyGroup.objects.filter(status=enums.StudyGroupStatus.Attestation).order_by(
+            last_id = StudyGroup.objects.filter(status=enums.StudyGroupStatus.Certificated).order_by(
                 '-end').values_list('id', flat=True)[0]
         except IndexError:
             return False
         else:
             return self.id == last_id
+
+    def is_pending(self):
+        return self.status == StudyGroupStatus.Pending
+
+    def is_completing(self):
+        return self.status == StudyGroupStatus.Completing
+
+    def is_active(self):
+        return self.status == StudyGroupStatus.Active
+
+    def is_certificating(self):
+        return self.status == StudyGroupStatus.Certificating
+
+    def is_certificated(self):
+        return self.status == StudyGroupStatus.Certificated
+
+    def is_closed(self):
+        return self.status == StudyGroupStatus.Closed
 
     def attested_listeners(self):
         ids = self.vizit_set.with_attestation().values_list('listener_id', flat=True)
@@ -132,19 +153,19 @@ def before_save(sender, **kwargs):
 def create_cretificates(sender, **kwargs):
     group = kwargs['instance']
     if group.before_save:
-        if (group.before_save.status == StudyGroupStatus.Attestation and
+        if (group.before_save.status == StudyGroupStatus.Certificating and
             group.status == StudyGroupStatus.Closed):
             group.issue_certificates()
 
 
 
-class VizitQuerySet(models.query.QuerySet):
+class VizitManager(models.Manager):
 
     def with_attestation(self):
-        return self.exclude(Q(attestation_work_name__isnull=True) | Q(attestation_work_name=''))
+        return self.get_query_set().exclude(Q(attestation_work_name__isnull=True) | Q(attestation_work_name=''))
 
     def without_attestation(self):
-        return self.filter(Q(attestation_work_name__isnull=True) | Q(attestation_work_name=''))
+        return self.get_query_set().filter(Q(attestation_work_name__isnull=True) | Q(attestation_work_name=''))
 
 class Vizit(models.Model):
 
@@ -158,7 +179,7 @@ class Vizit(models.Model):
     attestation_work_name = models.CharField(verbose_name=u'Название курсовой работы', max_length=255,
         null=True, blank=True)
 
-    objects = query_set_factory(VizitQuerySet)
+    objects = VizitManager()
 
 
 class Department(models.Model):

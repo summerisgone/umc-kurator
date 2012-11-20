@@ -18,7 +18,7 @@
                     <th>ФИО</th>
                     <th>Организация</th>
                     <th>Должность</th>
-                    <th>Сертификат</th>
+                    <th>Курсовая работа</th>
                 </tr>
                 {{ formset.management_form }}
                 {% for form in formset %}
@@ -66,9 +66,12 @@
             </table>
             <div class="form-actions">
                 {% csrf_token %}
+                {% if page_obj %}
+                <input name="page" type="hidden" value="{{ page_obj.number }}" >
+                {% endif %}
                 {% if page_obj and page_obj.has_next %}
                     <input name="next_page" type="hidden" value="{{ page_obj.number|add:"1" }}" >
-                {% endif %} 
+                {% endif %}
                 <input type="submit" class="btn btn-primary pull-right" value="Сохранить {% if page_obj and page_obj.has_next%}и далее{% endif %}">
             </div>
             </form>

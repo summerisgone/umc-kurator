@@ -39,7 +39,7 @@
                                 <span class="caret"></span>
                             </span>
                             <ul class="dropdown-menu">
-                                {% if group.status == 1 %}
+                                {% if group.is_pending %}
                                 <li><a href="{% url manager:group_edit group.pk %}">Редактировать</a></li>
                                 <li class="danger"><a href="{% url manager:group_delete group.pk %}">Удалить</a></li>
                                 {% endif %}

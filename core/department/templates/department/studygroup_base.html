@@ -22,12 +22,12 @@
     <div class="btn-group">
         <button class="btn dropdown-toggle" data-toggle="dropdown">Действия <span class="caret"></span></button>
         <ul class="dropdown-menu">
-            {% if studygroup.status == 1 %}
+            {% if studygroup.is_completing %}
                 <li><a href="{% url department:studygroup_complete department.pk studygroup.pk %}">
                     Завершить набор
                 </a></li>
             {% endif %}
-            {% if studygroup.status == 2 %}
+            {% if studygroup.is_active or studygroup.is_certificating %}
                 <li><a href="{% url department:studygroup_listener_attestation department.pk studygroup.pk %}">
                     Заполнить курсовые работы
                 </a></li>

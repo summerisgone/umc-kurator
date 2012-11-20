@@ -19,7 +19,7 @@
         <tr>
             <td><a href="{{ studygroup.get_absolute_url }}">{{ studygroup }}</a></td>
             <td>
-                {% if studygroup.status == 1 and studygroup.lateness < 0 %}
+                {% if studygroup.is_pending and studygroup.lateness < 0 %}
                     <p class="text-error" rel="tooltip" title="Опоздание {{ studygroup.start|timesince }}">
                         {{ studygroup.start }}
                     </p>

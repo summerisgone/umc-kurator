@@ -12,7 +12,7 @@
 {% block content %}
     Статус: {{ studygroup.get_status_display }}
     <br>
-    {% if studygroup.status == 5 %}
+    {% if studygroup.is_closed %}
         Сертификаты:
         <ul>
         {% for certificate in studygroup.certificate_set.all %}

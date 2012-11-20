@@ -150,16 +150,18 @@ DOCUMENT_CAST = make_choices(u'удостоверение', u'сертифика
 
 class StudyGroupStatus:
     Pending = 1
-    Complected = 2
+    Completing = 2
     Active = 3
-    Attestation = 4
-    Closed = 5
+    Certificating = 4
+    Certificated = 5
+    Closed = 6
 
 STUDY_GROUP_STATUSES = (
     (StudyGroupStatus.Pending, u'Не укомплектована'),
-    (StudyGroupStatus.Complected, u'Укомплектована'),
+    (StudyGroupStatus.Completing, u'Комплектуется'),
     (StudyGroupStatus.Active, u'Идут занятия'),
-    (StudyGroupStatus.Attestation, u'Аттестована'),
+    (StudyGroupStatus.Certificating, u'Аттестуется'),
+    (StudyGroupStatus.Certificated, u'Аттестована'),
     (StudyGroupStatus.Closed, u'Закрыта'),
 )
 

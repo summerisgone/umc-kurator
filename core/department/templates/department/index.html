@@ -5,7 +5,7 @@
 {% block content %}
     <div class="row" xmlns="http://www.w3.org/1999/html">
         <div class="span12">
-            <h4><i class="icon-bullhorn"></i> Группы, которые можно и нужно открыть</h4>
+            <h4><i class="icon-bullhorn"></i> Группы, которые можно и нужно укомплектовать</h4>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -35,6 +35,43 @@
                         <td>{{ studygroup.end }}</td>
                         <td>{{ studygroup.number }}</td>
                         <td>{{ studygroup.students.count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <h4><i class="icon-ok-circle"></i> Группы, которые можно закрыть</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Направление</th>
+                        <th>Дата начала</th>
+                        <th>Дата завершения</th>
+                        <th>Номер</th>
+                        <th>Слушателей</th>
+                        <th>Курсовых</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for studygroup in department.groups.available_for_attestation %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="{{ studygroup.get_absolute_url }}">
+                            {{ studygroup }}</a></td>
+                        <td>{{ studygroup.start }}
+                            {% if studygroup.lateness > 0 %}
+                                ({{ studygroup.start|timeuntil }} осталось)
+                            {% elif studygroup.lateness == 0 %}
+                                <span class="text-warning">(Сегодня)</span>
+                            {% else %}
+                                <span class="text-error">({{ studygroup.start|timesince }} назад)</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ studygroup.end }}</td>
+                        <td>{{ studygroup.number }}</td>
+                        <td>{{ studygroup.students.count }}</td>
+                        <td>{{ studygroup.attested_listeners.count }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

@@ -1,4 +1,4 @@
-{% if paginator %}
+{% if pages %}
 {% spaceless %}
   {% if has_previous %}
     <span class="page arrow"><a href="{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}page={{ previous }}">&larr; Назад</a></span>

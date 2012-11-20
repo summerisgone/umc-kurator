@@ -52,6 +52,9 @@ class Listener(ExtendedUser):
         return u'%s %s %s' % (self.last_name, self.first_name, self.patronymic)
 
     def apply_studygroup(self, group):
+        if group.status != enums.StudyGroupStatus.Completing:
+            group.status = enums.StudyGroupStatus.Completing
+            group.save()
         if self.vizit_set.filter(group=group).exists():
             return None
         else:
