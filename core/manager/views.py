@@ -17,7 +17,7 @@ class Index(ExtraContextMixin, TemplateView):
 
     def extra_context(self):
         return {
-            'groups': StudyGroup.objects.all()[:10]
+            'groups': StudyGroup.objects.filter(status__in=[StudyGroupStatus.Pending, StudyGroupStatus.Certificated])[:10]
         }
 
 
@@ -88,9 +88,13 @@ class StudyGroupClose(SingleObjectMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         group = self.get_object()
         if group.is_last_attestated():
+            # Сначала выдать сертификаты, потом закрыть
+            group.issue_certificates()
             group.status = enums.StudyGroupStatus.Closed
             group.save()
             messages.add_message(self.request, messages.INFO, u'Группа закрыта')
+            return HttpResponseRedirect(reverse('manager:group_detail', args=[group.id,]))
+
         else:
             messages.add_message(self.request, messages.ERROR, u'Нельзя закрыть эту группу')
-        return HttpResponseRedirect(reverse('manager:group_list'))
+            return HttpResponseRedirect(reverse('manager:group_list'))

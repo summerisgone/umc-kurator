@@ -80,7 +80,9 @@
                        value="Добавить выбранных">
                 <input type="hidden" name="next"
                     value="{% url department:studygroup_listener_add department.pk studygroup.pk %}{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}page={{ page_obj.next_page_number }}" />
+                {% if page_obj.has_next %}
                 <input type="submit" class="btn submit btn-primary" value="Добавить и дальше">
+                {% endif %}
             </div>
             {% csrf_token %}
             {{ form.errors }}

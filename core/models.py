@@ -101,7 +101,7 @@ class StudyGroup(models.Model):
 
     def issue_certificates(self):
         try:
-            last_number = Certificate.objects.order_by('cert_number')[0].cert_number
+            last_number = Certificate.objects.order_by('-cert_number')[0].cert_number
         except IndexError:
             last_number = 0
         for listener in self.attested_listeners():
@@ -139,24 +139,6 @@ def update_group_numbers():
         last_number += 1
         group.number = last_number
         group.save()
-
-
-@receiver(pre_save, sender=StudyGroup)
-def before_save(sender, **kwargs):
-    instance = kwargs['instance']
-    try:
-        instance.before_save = sender.objects.get(pk=instance.pk)
-    except sender.DoesNotExist:
-        instance.before_save = None
-
-@receiver(post_save, sender=StudyGroup)
-def create_cretificates(sender, **kwargs):
-    group = kwargs['instance']
-    if group.before_save:
-        if (group.before_save.status == StudyGroupStatus.Certificating and
-            group.status == StudyGroupStatus.Closed):
-            group.issue_certificates()
-
 
 
 class VizitManager(models.Manager):

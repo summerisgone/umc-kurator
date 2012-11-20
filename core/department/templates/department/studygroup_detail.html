@@ -78,7 +78,7 @@
             </table>
 
 
-            {% if studygroup.is_pending %}
+            {% if studygroup.is_pending or studygroup.is_completing %}
             <a class="btn" href="{% url department:studygroup_listener_add studygroup.department.pk studygroup.pk %}">
                 <i class="icon-list"></i> Добавить из списка</a>
             {% endif %}
