@@ -11,6 +11,19 @@
 
 {% block content %}
 {% if  studygroup.is_last_attestated %}
+    Сертификаты получат:
+    <ul>
+        {% for listener in studygroup.attested_listeners %}
+            <li>{{ listener }}</li>
+        {% endfor %}
+    </ul>
+
+    Без сертификатов:
+    <ul>
+        {% for listener in studygroup.not_attested_listeners %}
+            <li>{{ listener }}</li>
+        {% endfor %}
+    </ul>
     <form action="." method="post">
         {% csrf_token %}
         <input type="submit" value="Закрыть">

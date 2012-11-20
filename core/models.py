@@ -3,6 +3,9 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import Q
+from django.db.models.signals import post_save, pre_save
+from django.dispatch.dispatcher import receiver
 from auth.models import Listener
 from core.enums import StudyGroupStatus
 import enums
@@ -67,12 +70,32 @@ class StudyGroup(models.Model):
         else:
             return self.id == last_id
 
+    def attested_listeners(self):
+        ids = self.vizit_set.with_attestation().values_list('listener_id', flat=True)
+        return Listener.objects.filter(id__in=ids)
+
+    def not_attested_listeners(self):
+        ids = self.vizit_set.without_attestation().values_list('listener_id', flat=True)
+        return Listener.objects.filter(id__in=ids)
+
+    def issue_certificates(self):
+        try:
+            last_number = Certificate.objects.order_by('cert_number')[0].cert_number
+        except IndexError:
+            last_number = 0
+        for listener in self.attested_listeners():
+            last_number += 1
+            Certificate.objects.create(**{
+                'cert_number': last_number,
+                'listener': listener,
+                'group': self,
+            })
+
     def save(self, *args, **kwds):
         # логика автоматической нумерации при создании
         if not self.pk and not self.number:
             if StudyGroup.objects.exists():
                 last_number = StudyGroup.objects.order_by('number','-start')[0].number
-                print 'last_number', last_number
             else:
                 last_number = 0
             self.number = last_number + 1
@@ -97,6 +120,32 @@ def update_group_numbers():
         group.save()
 
 
+@receiver(pre_save, sender=StudyGroup)
+def before_save(sender, **kwargs):
+    instance = kwargs['instance']
+    try:
+        instance.before_save = sender.objects.get(pk=instance.pk)
+    except sender.DoesNotExist:
+        instance.before_save = None
+
+@receiver(post_save, sender=StudyGroup)
+def create_cretificates(sender, **kwargs):
+    group = kwargs['instance']
+    if group.before_save:
+        if (group.before_save.status == StudyGroupStatus.Attestation and
+            group.status == StudyGroupStatus.Closed):
+            group.issue_certificates()
+
+
+
+class VizitQuerySet(models.query.QuerySet):
+
+    def with_attestation(self):
+        return self.exclude(Q(attestation_work_name__isnull=True) | Q(attestation_work_name=''))
+
+    def without_attestation(self):
+        return self.filter(Q(attestation_work_name__isnull=True) | Q(attestation_work_name=''))
+
 class Vizit(models.Model):
 
     class Meta:
@@ -108,6 +157,8 @@ class Vizit(models.Model):
     completed = models.BooleanField(verbose_name=u'Курс прослушан', default=False)
     attestation_work_name = models.CharField(verbose_name=u'Название курсовой работы', max_length=255,
         null=True, blank=True)
+
+    objects = query_set_factory(VizitQuerySet)
 
 
 class Department(models.Model):
@@ -153,12 +204,9 @@ class Subject(models.Model):
 
 
 class Certificate(models.Model):
-    name = models.CharField(verbose_name=u'Название', max_length=255)
-    cast = models.CharField(verbose_name=u'Тип документа', max_length=50,
-        choices=enums.DOCUMENT_CAST, null=True, blank=True)
-    group = models.ForeignKey('StudyGroup', verbose_name=u'Предмет')
+    group = models.ForeignKey('StudyGroup', verbose_name=u'Группа')
     listener = models.ForeignKey('auth.Listener', verbose_name=u'Владелец')
-    number = models.CharField(verbose_name=u'Номер', max_length=64, null=True, blank=True)
+    cert_number = models.IntegerField(verbose_name=u'Номер', unique=True)
 
     def __unicode__(self):
         return self.name

@@ -44,7 +44,7 @@
                                 <li class="danger"><a href="{% url manager:group_delete group.pk %}">Удалить</a></li>
                                 {% endif %}
                                 {% if group.is_last_attestated %}
-                                <li><a href="{% url manager:group_delete group.pk %}">
+                                <li><a href="{% url manager:group_close group.pk %}">
                                     Закрыть и выдать сертификаты
                                 </a></li>
                                 {% endif %}

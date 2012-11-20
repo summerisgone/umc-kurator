@@ -92,13 +92,9 @@ class StudyGroupClose(StudyGroupMixin, SingleObjectMixin, TemplateView):
 
     def extra_context(self):
         extra = super(StudyGroupClose, self).extra_context()
-        ids_without_attestation = self.get_studygroup().vizit_set.filter(
-            Q(attestation_work_name__isnull=True) | Q(attestation_work_name='')).values_list('listener_id', flat=True)
-        ids_with_attestation = self.get_studygroup().vizit_set.exclude(
-            Q(attestation_work_name__isnull=True) | Q(attestation_work_name='')).values_list('listener_id', flat=True)
         extra.update({
-            'without_exams': Listener.objects.filter(id__in=ids_without_attestation),
-            'with_exams': Listener.objects.filter(id__in=ids_with_attestation),
+            'without_exams': self.get_studygroup().attested_listeners(),
+            'with_exams': self.get_studygroup().not_attested_listeners(),
         })
         return extra
 

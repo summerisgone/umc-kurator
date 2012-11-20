@@ -10,5 +10,16 @@
 {% endblock %}
 
 {% block content %}
-Не готово
+    Статус: {{ studygroup.get_status_display }}
+    <br>
+    {% if studygroup.status == 5 %}
+        Сертификаты:
+        <ul>
+        {% for certificate in studygroup.certificate_set.all %}
+            <li>Сертификат №{{ certificate.cert_number }} Выдан {{ certificate.listener }}</li>
+        {% empty %}
+            <li>Ошибка вышла. Нет сертификатов, а группа уже закрыта</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
 {% endblock %}

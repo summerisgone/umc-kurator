@@ -75,17 +75,6 @@ class ListenerAddForm(forms.Form):
         Vizit.objects.create(group=self.studygroup, listener=listener)
 
 
-class EmitCertificateForm(forms.models.ModelForm):
-    class Meta:
-        model = Certificate
-        fields = ('name', 'cast')
-
-    def __init__(self, studygroup, listener, *args, **kwds):
-        super(EmitCertificateForm, self).__init__(*args, **kwds)
-        self.instance.studygroup = studygroup
-        self.instance.listener = listener
-
-
 class BatchListenersForm(forms.Form):
     listeners = forms.ModelMultipleChoiceField(label="Слушатели",
         queryset=Listener.objects.all())
