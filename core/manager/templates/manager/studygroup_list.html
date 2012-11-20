@@ -32,11 +32,26 @@
                     <td>{{ group.number|default_if_none:"&mdash;" }}</td>
                     <td>{{ group.students.all.count }}</td>
                     <td>
-                        <a href="{% url manager:group_detail group.pk %}">Посмотреть</a>
-                        {% if group.status = 1 %}
-                        <a href="{% url manager:group_edit group.pk %}">Редактировать</a>
-                        <a href="{% url manager:group_delete group.pk %}">Удалить</a>
-                        {% endif %}
+                        <div class="btn-group">
+                            <a class="btn" href="{% url manager:group_detail group.pk %}">Посмотреть</a>
+                            {% if group.is_managed %}
+                            <span class="btn dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                            </span>
+                            <ul class="dropdown-menu">
+                                {% if group.status == 1 %}
+                                <li><a href="{% url manager:group_edit group.pk %}">Редактировать</a></li>
+                                <li class="danger"><a href="{% url manager:group_delete group.pk %}">Удалить</a></li>
+                                {% endif %}
+                                {% if group.is_last_attestated %}
+                                <li><a href="{% url manager:group_delete group.pk %}">
+                                    Закрыть и выдать сертификаты
+                                </a></li>
+                                {% endif %}
+                            </ul>
+                            {% endif %}
+                        </div>
+
                     </td>
                 </tr>
             {% endfor %}

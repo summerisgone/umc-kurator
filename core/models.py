@@ -55,6 +55,9 @@ class StudyGroup(models.Model):
     def lateness(self):
         return (self.start - date.today()).days
 
+    def is_managed(self):
+        return self.status in [enums.StudyGroupStatus.Pending, enums.StudyGroupStatus.Attestation]
+
     def is_last_attestated(self):
         try:
             last_id = StudyGroup.objects.filter(status=enums.StudyGroupStatus.Attestation).order_by(
