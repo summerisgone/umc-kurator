@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.utils import simplejson
-from django.views.generic import TemplateView, DetailView, FormView, ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import TemplateView, DetailView, ListView, CreateView, UpdateView, DeleteView
 from django.views.generic.detail import SingleObjectMixin
 from core import enums
 from core.enums import StudyGroupStatus

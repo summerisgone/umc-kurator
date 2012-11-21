@@ -33,7 +33,7 @@ class ListenerAddForm(forms.Form):
         return 'user_id' not in self.data
 
     def clean(self):
-        if self.studygroup.status != enums.StudyGroupStatus.Pending:
+        if not self.studygroup.can_add_listener():
             raise forms.ValidationError(u'В эту группу уже нельзя добавлять слушателей')
 
         if ('user_id' in self.cleaned_data and
@@ -45,8 +45,7 @@ class ListenerAddForm(forms.Form):
                 ['organization', 'category', 'position', 'profile'])):
                 return self.cleaned_data
             else:
-                raise forms.ValidationError(u'Для нового пользователя все поля обязательны к '
-                                            u'заполнению')
+                raise forms.ValidationError(u'Для нового пользователя все поля обязательны к заполнению')
 
     def save(self):
         if 'user_id' in self.cleaned_data and self.cleaned_data['user_id']:
@@ -67,8 +66,9 @@ class ListenerAddForm(forms.Form):
                 profile=self.cleaned_data['profile'],
             )
 
+            print self.cleaned_data
             listener.organization = Organization.objects.get(
-                name=self.cleaned_data['organization']
+                id=self.cleaned_data['organization']
             )
             listener.save()
 

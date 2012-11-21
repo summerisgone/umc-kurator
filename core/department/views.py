@@ -169,7 +169,7 @@ class ListenerAddBatch(StudyGroupListenersList):
 
     def form_valid(self, form):
         studygroup = self.get_studygroup()
-        if studygroup.status not in [enums.StudyGroupStatus.Pending, enums.StudyGroupStatus.Completing]:
+        if not studygroup.can_add_listener():
             messages.add_message(self.request, messages.ERROR, u'В эту группу уже нельзя добавлять слушателей')
             return HttpResponseRedirect(reverse("department:studygroup_detail", kwargs={
                 'department_id': self.get_department().pk,

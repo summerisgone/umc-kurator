@@ -50,7 +50,7 @@ class StudyGroup(models.Model):
     objects = query_set_factory(GroupQuerySet)
 
     class Meta:
-        ordering = ['start', 'number', 'id']
+        ordering = ['status', 'start', 'number', 'id']
 
     def get_absolute_url(self):
         return reverse('department:studygroup_detail', args=(self.department.pk, self.pk,))
@@ -112,11 +112,15 @@ class StudyGroup(models.Model):
                 'group': self,
             })
 
+    def can_add_listener(self):
+        return self.status in [enums.StudyGroupStatus.Pending, enums.StudyGroupStatus.Completing]
+
+
     def save(self, *args, **kwds):
         # логика автоматической нумерации при создании
         if not self.pk and not self.number:
             if StudyGroup.objects.exists():
-                last_number = StudyGroup.objects.order_by('number','-start')[0].number
+                last_number = StudyGroup.objects.order_by('-number')[0].number
             else:
                 last_number = 0
             self.number = last_number + 1

@@ -78,6 +78,9 @@
                 <input type="hidden" name="next" value="none">
                 <input type="submit" onclick="$('input[name=next]').remove();" class="btn submit"
                        value="Добавить выбранных">
+                <a href="{% url department:studygroup_listener_register department.pk studygroup.pk %}">
+                    Зарегистрировать нового слушателя
+                </a>
                 <input type="hidden" name="next"
                     value="{% url department:studygroup_listener_add department.pk studygroup.pk %}{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}page={{ page_obj.next_page_number }}" />
                 {% if page_obj.has_next %}
