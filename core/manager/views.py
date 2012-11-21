@@ -10,7 +10,7 @@ from core.enums import StudyGroupStatus
 from core.manager.forms import StudyGroupCreateForm
 from core.models import StudyGroup, update_group_numbers
 from utils import ExtraContextMixin, get_hours_data
-
+from djappypod.response import OdtTemplateResponse
 
 class Index(ExtraContextMixin, TemplateView):
     template_name = 'manager/index.html'
@@ -98,3 +98,20 @@ class StudyGroupClose(SingleObjectMixin, TemplateView):
         else:
             messages.add_message(self.request, messages.ERROR, u'Нельзя закрыть эту группу')
             return HttpResponseRedirect(reverse('manager:group_list'))
+
+
+class GenerateCertificateList(ExtraContextMixin, DetailView):
+    response_class = OdtTemplateResponse
+    template_name = 'manager/certificates.odt'
+
+    pk_url_kwarg = 'stugygroup_id'
+    model = StudyGroup
+
+    def extra_context(self):
+        group = self.get_object()
+        return {
+            'group': group,
+            'start': group.start,
+            'end': group.end,
+            'certificates': group.certificate_set.all(),
+        }

@@ -51,6 +51,9 @@ class Listener(ExtendedUser):
     def fio(self):
         return u'%s %s %s' % (self.last_name, self.first_name, self.patronymic)
 
+    def fio_inflated(self):
+        return u'%s %s %s' % (self.last_name_inflated, self.first_name_inflated, self.patronymic_inflated)
+
     def apply_studygroup(self, group):
         if group.status != enums.StudyGroupStatus.Completing:
             group.status = enums.StudyGroupStatus.Completing

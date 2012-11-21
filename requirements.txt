@@ -8,15 +8,21 @@ billiard==2.7.3.18
 boto==2.6.0
 celery==3.0.11
 distribute==0.6.24
+dj-database-url==0.2.0
 django-appconf==0.5
+django-appypod==0.0.1
 django-classy-tags==0.3.4.1
 django-compressor==1.2
+django-debug-toolbar==0.9.4
 django-staticfiles==1.2.1
 django-storages==1.1.5
 django-zenforms==0.1.7
 djangorestframework==0.4.0
+gunicorn==0.14.6
+ipython==0.13.1
 kombu==2.4.8
 librabbitmq==1.0.0
+psycopg2==2.4.5
 pymorphy==0.5.6
 python-dateutil==1.5
 pytz==2012h
@@ -24,6 +30,3 @@ six==1.2.0
 xlrd==0.8.0
 xlutils==1.5.2
 xlwt==0.7.4
-psycopg2 <=2.4.5
-dj-database-url==0.2.0
-gunicorn==0.14.6
