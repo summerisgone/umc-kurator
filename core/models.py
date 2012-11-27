@@ -106,11 +106,7 @@ class StudyGroup(models.Model):
             last_number = 0
         for listener in self.attested_listeners():
             last_number += 1
-            Certificate.objects.create(**{
-                'cert_number': last_number,
-                'listener': listener,
-                'group': self,
-            })
+            listener.issue_certificate(self, last_number)
 
     def can_add_listener(self):
         return self.status in [enums.StudyGroupStatus.Pending, enums.StudyGroupStatus.Completing]
@@ -129,7 +125,6 @@ class StudyGroup(models.Model):
     def __unicode__(self):
         return u'%s-%s' % (self.subject, self.hours)
 
-
 def update_group_numbers():
     """
     Логика автоматической нумерации по запросу
@@ -143,7 +138,6 @@ def update_group_numbers():
         last_number += 1
         group.number = last_number
         group.save()
-
 
 class VizitManager(models.Manager):
 
@@ -167,7 +161,6 @@ class Vizit(models.Model):
 
     objects = VizitManager()
 
-
 class Department(models.Model):
     name = models.CharField(verbose_name=u'Название', max_length=255)
     address = models.CharField(verbose_name=u'Адрес', max_length=255,
@@ -177,7 +170,7 @@ class Department(models.Model):
         return reverse('department:index', args=(self.pk,))
 
     def organizations(self):
-        return Organization.objects.f(listener__group__department=self).distinct()
+        return Organization.objects.filter(listener__group__department=self).distinct()
 
     def listeners(self):
         return Listener.objects.filter(vizit__group__department=self).distinct()
@@ -209,11 +202,10 @@ class Subject(models.Model):
     def __unicode__(self):
         return self.short_name
 
-
 class Certificate(models.Model):
     group = models.ForeignKey('StudyGroup', verbose_name=u'Группа')
     listener = models.ForeignKey('auth.Listener', verbose_name=u'Владелец')
-    cert_number = models.IntegerField(verbose_name=u'Номер', unique=True)
+    cert_number = models.IntegerField(verbose_name=u'Номер')
 
     def __unicode__(self):
         return self.name

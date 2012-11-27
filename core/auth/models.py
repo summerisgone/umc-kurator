@@ -55,16 +55,23 @@ class Listener(ExtendedUser):
         return u'%s %s %s' % (self.last_name_inflated, self.first_name_inflated, self.patronymic_inflated)
 
     def apply_studygroup(self, group):
-        if group.status != enums.StudyGroupStatus.Completing:
-            group.status = enums.StudyGroupStatus.Completing
-            group.save()
         if self.vizit_set.filter(group=group).exists():
             return None
         else:
             return self.vizit_set.create(group=group)
 
+    def attest(self, group, attestation_work_name):
+        return self.vizit_set.filter(group=group).update(attestation_work_name=attestation_work_name)
+
     def complete_course(self, group):
         return self.vizit_set.filter(group=group).update(completed=True)
+
+    def issue_certificate(self, group, cert_number):
+        return self.certificate_set.create(**{
+            'cert_number': cert_number,
+            'group': group,
+        })
+
 
     def __unicode__(self):
         return self.fio()

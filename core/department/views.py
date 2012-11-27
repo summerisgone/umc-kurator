@@ -176,6 +176,10 @@ class ListenerAddBatch(StudyGroupListenersList):
                 'studygroup_pk': studygroup.pk
             }))
 
+        if studygroup.status != enums.StudyGroupStatus.Completing:
+            studygroup.status = enums.StudyGroupStatus.Completing
+            studygroup.save()
+
         for listener in form.cleaned_data['listeners']:
             listener.apply_studygroup(studygroup)
 

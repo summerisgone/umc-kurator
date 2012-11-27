@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+from core import enums
 from django.db.models import Q
 from xlsimport.models import Format
 from xlsimport.parsers import*
 from auth.models import Listener, Employee
-from core.models import Organization, Certificate, Vizit, Subject
+from core.models import Organization, Certificate, Vizit, Subject, Department, StudyGroup
 from utils import get_position_fuzzy, get_organization_type
 import random
 
@@ -33,36 +34,68 @@ class FewNumbersCell(TextCellToStringParser):
 
 class ListenerFileFormat(Format):
     u"""Формат файла слушателей"""
-
+    start_line = 1
     cells = (
+        {'name': u'Предмет', 'parsers': (TextCellToStringParser,)},
+        {'name': u'Кол-во часов', 'parsers': (TextCellToIntParser, NumberCellToIntParser)},
+        {'name': u'Дата начала курса', 'parsers': (DateCellToDateParser, TextCellToDateParser)},
+        {'name': u'Дата завершения курса', 'parsers': (DateCellToDateParser, TextCellToDateParser)},
+        {'name': u'Район', 'parsers': (TextCellToStringParser,)},
         {'name': u'ФИО', 'parsers': (FIOCell,)},
         {'name': u'Организация', 'parsers': (TextCellToStringParser,)},
-        {'name': u'Район', 'parsers': dummy_parsers},
         {'name': u'Должность', 'parsers': (TextCellToStringParser,)},
-        {'name': u'Курсовая работа', 'parsers': dummy_parsers},
-        {'name': u'Документ', 'parsers': (TextCellToStringParser,)},
+        {'name': u'Курсовая работа', 'parsers': (TextCellToStringParser,)},
+        {'name': u'Документ', 'parsers': (TextCellToIntParser, NumberCellToIntParser)},
     )
 
     def to_python(self, data_row):
-        last_name, first_name, patronymic = data_row[0]
-        listener = Listener(
+        studygorup = dict(
+            hours=data_row[1],
+            start=data_row[2],
+            end=data_row[3],
+        )
+        studygroup_query =  studygorup.copy()
+        studygroup_query.update(dict(
+            subject__short_name=data_row[0],
+            department__name=data_row[4],
+        ))
+
+        subject = dict(
+            short_name=data_row[0],
+        )
+
+        department = dict(
+            name=data_row[4],
+        )
+
+        last_name, first_name, patronymic = data_row[5]
+        listener = dict(
             first_name_inflated=first_name,
             last_name_inflated=last_name,
             patronymic_inflated=patronymic,
-            position=get_position_fuzzy(data_row[3]),
+            position=get_position_fuzzy(data_row[7]),
         )
-        match = re.findall(r'\d+', data_row[1])
 
+        organization_name = data_row[6]
+        match = re.findall(r'\d+', organization_name)
         organization = dict(
-            name=data_row[1],
+            name=organization_name,
             number=match[0] if match else None,
-            cast=get_organization_type(data_row[1]),
+            cast=get_organization_type(organization_name),
         )
 
-        document = dict(
-            name=data_row[5]
-        )
-        return listener, organization, document
+        attestation_work_name = data_row[8]
+        cert_number = data_row[9]
+        return {
+            'studygroup': studygorup,
+            'studygroup_query': studygroup_query,
+            'department': department,
+            'subject': subject,
+            'listener': listener,
+            'organization': organization,
+            'attestation_work_name': attestation_work_name,
+            'cert_number': cert_number,
+        }
 
 
 class SubjectFormat(Format):
@@ -88,54 +121,54 @@ class ListenerImportLogic(object):
     u"""Бизнес-логика испортирования слушателей"""
     errors = []
 
-    def __init__(self, format_doc, group):
+    def __init__(self, format_doc):
         self.doc = format_doc
-        self.group = group
 
     def process_row(self, index, parsed_row):
         if any([issubclass(type(cell), Exception) for cell in parsed_row]):
             self.errors.append((parsed_row, index + self.doc.start_line))
         else:
-            listener, organization, document_data = self.doc.to_python(parsed_row)
-            self.save_row(listener, organization, document_data)
+            self.save_row(self.doc.to_python(parsed_row))
 
-    def register_listener(self, document_data, listener):
-        # добавить слушателя к курсу
-        Vizit.objects.create(
-            group=self.group,
-            listener=listener
-        )
+    def save_row(self, row_data):
+        # Найти или создать группу
+        try:
+            studygroup = StudyGroup.objects.get(**row_data['studygroup_query'])
+        except StudyGroup.DoesNotExist:
+            studygroup = self.create_study_group(row_data)
 
-        # создать сертификат
-        Certificate.objects.create(
-            name=document_data['name'],
-            group=self.group,
-            listener=listener
-        )
+        # Найти или создать слушателя
+        try:
+            listener = Listener.objects.get(**row_data['listener'])
+        except Listener.DoesNotExist:
+            listener = self.create_listener(row_data)
 
-    def save_row(self, listener, organization_data, document_data):
-        # check is listener already in db
-        query = Q(
-            last_name_inflated__iexact=listener.last_name_inflated,
-            first_name_inflated__iexact=listener.first_name_inflated,
-            patronymic_inflated__iexact=listener.patronymic_inflated,
-        )
+        # Зарегистрировать слушателя в группе и выдать ему сертификат
+        if listener.apply_studygroup(studygroup):
+            # если уже в этой группе, ничего не обновлять
+            listener.attest(studygroup, row_data['attestation_work_name'])
+            listener.complete_course(studygroup)
+            listener.issue_certificate(studygroup, row_data['cert_number'])
 
-        if Listener.objects.filter(query).exists():
-            listener = Listener.objects.filter(query)[0]
-            self.register_listener(document_data, listener)
-            return listener
-        else:
-            # get or create organization
-            organization, created = Organization.objects.get_or_create(**organization_data)
-            listener.organization = organization
-            listener.username = 'user-%6d' % random.randint(0, 999999),
+    def create_study_group(self, row_data):
+        studygroup = StudyGroup(**row_data['studygroup'])
+        studygroup.department = Department.objects.get(**row_data['department'])
+        studygroup.subject = Subject.objects.get(**row_data['subject'])
+        studygroup.status = enums.StudyGroupStatus.Closed
+        studygroup.save()
+        return studygroup
 
-            # зарегистрировать
-            listener.save()
-            self.register_listener(document_data, listener)
 
-            return listener
+    def create_listener(self, row_data):
+        organization, organization_created = Organization.objects.get_or_create(**row_data['organization'])
+        if organization_created:
+            organization.save()
+
+        listener = Listener(**row_data['listener'])
+        listener.organization = organization
+        listener.username = 'user-%6d' % random.randint(0, 999999)
+        listener.save()
+        return listener
 
 
 class SubjectImportLogic(object):
