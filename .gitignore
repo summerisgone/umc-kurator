@@ -6,5 +6,5 @@
 .pydevproject
 .settings
 .idea/*
-env/*
+.env/*
 static/*
