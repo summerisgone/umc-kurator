@@ -31,6 +31,9 @@ class DepartmentMixin(ExtraContextMixin, DepartmentFromUrl):
 
 class StudyGroupMixin(DepartmentMixin):
 
+    def get_queryset(self):
+        return self.get_department().groups.all()
+
     def get_studygroup(self):
         return get_object_or_404(StudyGroup, pk=self.kwargs['studygroup_pk'])
 
@@ -53,10 +56,10 @@ class StudyGroupList(DepartmentMixin, ListView):
     template_name = 'department/studygroup_list.html'
 
     def get_queryset(self):
-        return self.model.objects.order_by('status', 'start', 'id')
+        return self.get_department().groups.order_by('status', 'start', 'id')
 
 
-class StudyGroupDetail(DepartmentMixin, DetailView):
+class StudyGroupDetail(StudyGroupMixin, DetailView):
     template_name = 'department/studygroup_detail.html'
     context_object_name = 'studygroup'
     pk_url_kwarg = 'studygroup_pk'
@@ -120,7 +123,7 @@ class ListenerList(DepartmentMixin, ListExtras, ListView):
     model = Listener
 
     def get_queryset(self):
-        qs = super(ListenerList, self).get_queryset()
+        qs = Listener.objects.filter(self.build_query())
         return qs.filter(vizit__group__department=self.get_department()).distinct()
 
 
@@ -147,8 +150,7 @@ class StudyGroupListenersList(StudyGroupMixin, ListExtras, ListView):
     search_fields = ['last_name__contains']
 
     def get_queryset(self):
-        queryset = super(StudyGroupListenersList, self).get_queryset()
-        return queryset.filter(group=self.get_studygroup())
+        return Listener.objects.filter(group=self.get_studygroup()).filter(self.build_query())
 
 
 class ListenerAddBatch(StudyGroupListenersList):
