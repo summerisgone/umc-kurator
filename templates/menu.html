@@ -1,14 +1,25 @@
 {#<li><a href="{% url crud:core.department.list %}">Филиалы</a></li>#}
 {#<li><a href="{% url crud:core.subject.list %}">Предметы</a></li>#}
 {#<li><a href="{% url crud:auth.teacher.list %}">Сотрудники</a></li>#}
+{% if request.user.is_superuser %}
 <li><a href="/admin/">Администрирование</a></li>
+{% else %}
+{% if perms.auth.is_admin %}
 <li><a href="{% url manager:index %}">Секретарь</a></li>
+<li><a href="{% url report_index %}">Отчёты</a></li>
+{% endif %}
+
+{% if perms.auth.is_kurator %}
 <li class="dropdown">
-    <a class="dropdown-toggle" data-toggle="dropdown" >Куратор <b class="caret"></b></a>
+    <a class="dropdown-toggle" data-toggle="dropdown">Куратор <b class="caret"></b></a>
     <ul class="dropdown-menu">
-        {% for department in departments %}
+        {% for department in request.user.employee.department.all %}
         <li><a href="{{ department.get_absolute_url }}" >{{ department }}</a></li>
         {% endfor %}
     </ul>
 </li>
+
 <li><a href="{% url report_index %}">Отчёты</a></li>
+{% endif %}
+
+{% endif %}

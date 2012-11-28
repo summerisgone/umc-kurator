@@ -172,3 +172,19 @@ HOURS_CHOICES = (
     (18, 18),
     (36, 36),
 )
+
+
+
+# Pernission settings
+ADMINISTRATOR_PERMISSION = ('is_admin', u'Секретарь')
+OPERATOR_PERMISSION = ('is_kurator', u'Куратор подразделения')
+
+ADMINISTRATOR_GROUP_NAME = u'Секретари'
+OPERATOR_GROUP_NAME= u'Кураторы подразделений'
+
+# Для использования в команде updatepermissions
+ALL_PERMISSIONS = [OPERATOR_PERMISSION, ADMINISTRATOR_PERMISSION]
+GROUPS = (
+    (ADMINISTRATOR_GROUP_NAME, (ADMINISTRATOR_PERMISSION[0],)),
+    (OPERATOR_GROUP_NAME, (OPERATOR_PERMISSION[0],)),
+)

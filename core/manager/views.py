@@ -1,4 +1,5 @@
 # coding=utf-8
+from braces.views import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
@@ -12,7 +13,12 @@ from core.models import StudyGroup, update_group_numbers
 from utils import ExtraContextMixin, get_hours_data
 from djappypod.response import OdtTemplateResponse
 
-class Index(ExtraContextMixin, TemplateView):
+
+class SecurityMixin(LoginRequiredMixin, PermissionRequiredMixin):
+    permission_required = 'auth.' + enums.ADMINISTRATOR_PERMISSION[0]
+
+
+class Index(SecurityMixin, ExtraContextMixin, TemplateView):
     template_name = 'manager/index.html'
 
     def extra_context(self):
@@ -21,20 +27,20 @@ class Index(ExtraContextMixin, TemplateView):
         }
 
 
-class StudyGroupList(ExtraContextMixin, ListView):
+class StudyGroupList(SecurityMixin, ExtraContextMixin, ListView):
     template_name = 'manager/studygroup_list.html'
     context_object_name = 'groups'
     model = StudyGroup
 
 
-class StudyGroupRead(ExtraContextMixin, DetailView):
+class StudyGroupRead(SecurityMixin, ExtraContextMixin, DetailView):
     template_name = 'manager/studygroup_detail.html'
     context_object_name = 'studygroup'
     pk_url_kwarg = 'stugygroup_id'
     model = StudyGroup
 
 
-class StudyGroupDelete(DeleteView):
+class StudyGroupDelete(SecurityMixin, DeleteView):
     template_name = 'manager/studygroup_confirm_delete.html'
     pk_url_kwarg = 'stugygroup_id'
     model = StudyGroup
@@ -43,7 +49,8 @@ class StudyGroupDelete(DeleteView):
         messages.add_message(self.request, messages.WARNING, u'Группа удалена')
         return reverse('manager:group_list')
 
-class StudyGroupCreate(ExtraContextMixin, CreateView):
+
+class StudyGroupCreate(SecurityMixin, ExtraContextMixin, CreateView):
     form_class = StudyGroupCreateForm
     model = StudyGroup
     template_name = 'manager/studygroup_form.html'
@@ -75,7 +82,7 @@ def update_numbers(request):
     return HttpResponseRedirect(reverse('manager:group_list'))
 
 
-class StudyGroupClose(SingleObjectMixin, TemplateView):
+class StudyGroupClose(SecurityMixin, SingleObjectMixin, TemplateView):
     model = StudyGroup
     template_name = 'manager/studygroup_confirm_close.html'
     pk_url_kwarg = 'stugygroup_id'
@@ -100,7 +107,7 @@ class StudyGroupClose(SingleObjectMixin, TemplateView):
             return HttpResponseRedirect(reverse('manager:group_list'))
 
 
-class GenerateCertificateList(ExtraContextMixin, DetailView):
+class GenerateCertificateList(SecurityMixin, ExtraContextMixin, DetailView):
     response_class = OdtTemplateResponse
     template_name = 'manager/certificates.odt'
 

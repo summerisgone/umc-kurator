@@ -41,6 +41,18 @@
                 <ul class="nav">
                     <li><a href="/"><i class="icon-home icon-white"></i></a></li>
                     {% block menu %}{% include "menu.html" %}{% endblock menu %}
+                    {% if request.user.is_authenticated %}
+                    <li class="dropdown pull-right">
+                        <a class="dropdown-toggle" data-toggle="dropdown">Текущий пользователь {{ request.user.first_name }}
+                            {{ request.user.last_name }} <b
+                                class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url logout %}">Выйти</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="pull-right"><a href="{% url login %}">Войти</a></li>
+                    {% endif %}
                 </ul>
 
         </div>

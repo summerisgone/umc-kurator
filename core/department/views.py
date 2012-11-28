@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-from symbol import return_stmt
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import ListView, DetailView, FormView, TemplateView, View
+from django.views.generic import ListView, DetailView, FormView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.forms.models import modelformset_factory
+from braces.views import LoginRequiredMixin, PermissionRequiredMixin
 from core import enums
 from core.auth.models import Listener
 from crud.views import ListExtras
@@ -16,7 +15,11 @@ from core.models import Department, StudyGroup, Organization, Vizit
 from utils import ExtraContextMixin
 
 
-class DepartmentFromUrl(object):
+class SecurityMixin(LoginRequiredMixin, PermissionRequiredMixin):
+    permission_required = 'auth.' + enums.OPERATOR_PERMISSION[0]
+
+
+class DepartmentFromUrlHelper(object):
 
     def get_department(self):
         return get_object_or_404(Department, pk=self.kwargs['department_id'])
@@ -26,10 +29,12 @@ class DepartmentFromUrl(object):
             'department': self.get_department()
         }
 
-class DepartmentMixin(ExtraContextMixin, DepartmentFromUrl):
+
+class DepartmentMixinHelper(ExtraContextMixin, DepartmentFromUrlHelper):
     pass
 
-class StudyGroupMixin(DepartmentMixin):
+
+class StudyGroupMixin(DepartmentMixinHelper):
 
     def get_queryset(self):
         return self.get_department().groups.all()
@@ -45,13 +50,13 @@ class StudyGroupMixin(DepartmentMixin):
         return context
 
 
-class Index(DepartmentMixin, TemplateView):
+class Index(SecurityMixin, DepartmentMixinHelper, TemplateView):
     template_name='department/index.html'
     context_object_name='department'
     model = Department
 
 
-class StudyGroupList(DepartmentMixin, ListView):
+class StudyGroupList(SecurityMixin, DepartmentMixinHelper, ListView):
     model = StudyGroup
     template_name = 'department/studygroup_list.html'
 
@@ -59,14 +64,14 @@ class StudyGroupList(DepartmentMixin, ListView):
         return self.get_department().groups.order_by('status', 'start', 'id')
 
 
-class StudyGroupDetail(StudyGroupMixin, DetailView):
+class StudyGroupDetail(SecurityMixin, StudyGroupMixin, DetailView):
     template_name = 'department/studygroup_detail.html'
     context_object_name = 'studygroup'
     pk_url_kwarg = 'studygroup_pk'
     model = StudyGroup
 
 
-class StudyGroupCompleteEnroll(StudyGroupMixin, SingleObjectMixin, TemplateView):
+class StudyGroupCompleteEnroll(SecurityMixin, StudyGroupMixin, SingleObjectMixin, TemplateView):
     model = StudyGroup
     context_object_name = 'studygroup'
     pk_url_kwarg = 'studygroup_pk'
@@ -88,7 +93,7 @@ class StudyGroupCompleteEnroll(StudyGroupMixin, SingleObjectMixin, TemplateView)
         return HttpResponseRedirect(reverse("department:studygroup_detail", kwargs=kwargs))
 
 
-class StudyGroupClose(StudyGroupMixin, SingleObjectMixin, TemplateView):
+class StudyGroupClose(SecurityMixin, StudyGroupMixin, SingleObjectMixin, TemplateView):
     model = StudyGroup
     context_object_name = 'studygroup'
     pk_url_kwarg = 'studygroup_pk'
@@ -118,7 +123,7 @@ class StudyGroupClose(StudyGroupMixin, SingleObjectMixin, TemplateView):
         return HttpResponseRedirect(reverse("department:studygroup_detail", kwargs=kwargs))
 
 
-class ListenerList(DepartmentMixin, ListExtras, ListView):
+class ListenerList(SecurityMixin, DepartmentMixinHelper, ListExtras, ListView):
     template_name = 'department/listener_list.html'
     model = Listener
     filters = (
@@ -131,7 +136,7 @@ class ListenerList(DepartmentMixin, ListExtras, ListView):
         return qs.filter(vizit__group__department=self.get_department()).distinct()
 
 
-class RegisterListener(StudyGroupMixin, FormView):
+class RegisterListener(SecurityMixin, StudyGroupMixin, FormView):
     template_name = 'department/listener_register.html'
     form_class = ListenerAddForm
 
@@ -146,7 +151,7 @@ class RegisterListener(StudyGroupMixin, FormView):
         return self.get_studygroup().get_absolute_url()
 
 
-class StudyGroupListenersList(StudyGroupMixin, ListExtras, ListView):
+class StudyGroupListenersList(SecurityMixin, StudyGroupMixin, ListExtras, ListView):
 
     model = Vizit
     template_name = 'department/studygroup_listener_list.html'
@@ -154,9 +159,10 @@ class StudyGroupListenersList(StudyGroupMixin, ListExtras, ListView):
         {'request': 'organization', 'query': 'listener__organization__name'},
         {'request': 'position', 'query': 'listener__position'},
     )
-    search_fields = ['last_name__contains']
+    search_fields = ['listener__last_name__contains']
 
     def get_queryset(self):
+        u"""Все слушатели группы"""
         return Vizit.objects.filter(group=self.get_studygroup()).filter(self.build_query())
 
 
@@ -166,8 +172,8 @@ class ListenerAddBatch(StudyGroupListenersList):
     form_class = BatchListenersForm
 
     def get_queryset(self):
-        # все слушатели этого филиала
-        return self.get_studygroup().department.listeners().filter(self.build_query())
+        u"""все слушатели этого филиала"""
+        return Vizit.objects.filter(group__department=self.get_department()).filter(self.build_query())
 
     def post(self, request, *args, **kwds):
         form = self.form_class(request.POST)
@@ -216,7 +222,7 @@ class ListenerAddBatch(StudyGroupListenersList):
         return self.render_to_response(context)
 
 
-class ListenerAttestation(StudyGroupMixin, ListView):
+class ListenerAttestation(SecurityMixin, StudyGroupMixin, ListView):
     template_name = 'department/stugygroup_listener_attestation.html'
     fields = ['attestation_work_name']
     model = Vizit
@@ -270,7 +276,7 @@ class ListenerAttestation(StudyGroupMixin, ListView):
         return modelformset_factory(self.model, fields=self.fields, extra=0)
 
 
-class OrganizationList(DepartmentMixin, ListView):
+class OrganizationList(SecurityMixin, DepartmentMixinHelper, ListView):
     model = Organization
     template_name = 'department/organization_list.html'
 
@@ -278,6 +284,6 @@ class OrganizationList(DepartmentMixin, ListView):
         return self.get_department().organizations()
 
 
-class OrganizationDetail(DepartmentMixin, DetailView):
+class OrganizationDetail(SecurityMixin, DepartmentMixinHelper, DetailView):
     model = Organization
     template_name = 'department/organization_detail.html'
