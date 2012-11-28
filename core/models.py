@@ -50,6 +50,8 @@ class StudyGroup(models.Model):
     objects = query_set_factory(GroupQuerySet)
 
     class Meta:
+        verbose_name = u'Учебная группа'
+        verbose_name_plural = u'Учебные группы'
         ordering = ['status', 'start', 'number', 'id']
 
     def get_absolute_url(self):
@@ -148,10 +150,6 @@ class VizitManager(models.Manager):
         return self.get_query_set().filter(Q(attestation_work_name__isnull=True) | Q(attestation_work_name=''))
 
 class Vizit(models.Model):
-
-    class Meta:
-        ordering = ['registration_date', 'id']
-
     group = models.ForeignKey('StudyGroup', verbose_name=u'Предмет')
     listener = models.ForeignKey('auth.Listener', verbose_name=u'Слушатель')
     registration_date = models.DateTimeField(verbose_name=u'Дата регистрации', auto_now_add=True)
@@ -159,12 +157,20 @@ class Vizit(models.Model):
     attestation_work_name = models.CharField(verbose_name=u'Название курсовой работы', max_length=255,
         null=True, blank=True)
 
+
+    class Meta:
+        ordering = ['registration_date', 'id']
+
     objects = VizitManager()
 
 class Department(models.Model):
     name = models.CharField(verbose_name=u'Название', max_length=255)
     address = models.CharField(verbose_name=u'Адрес', max_length=255,
         null=True, blank=True)
+
+    class Meta:
+        verbose_name = u'Структурное подразделение'
+        verbose_name_plural = u'Структурные подразделения'
 
     def get_absolute_url(self):
         return reverse('department:index', args=(self.pk,))
@@ -186,6 +192,10 @@ class Organization(models.Model):
     cast = models.CharField(verbose_name=u'Тип организации', max_length=50,
         choices=enums.ORGANIZATION_TYPES, null=True, blank=True)
 
+    class Meta:
+        verbose_name = u'Организация'
+        verbose_name_plural = u'Организации'
+
     def save(self, *args, **kwds):
         self.name = self.name.strip()
         return super(Organization, self).save(*args, **kwds)
@@ -199,6 +209,10 @@ class Subject(models.Model):
         max_length=255, blank=True, null=True)
     hours = models.CommaSeparatedIntegerField(verbose_name=u'Количество часов', max_length=64)
 
+    class Meta:
+        verbose_name = u'Предмет'
+        verbose_name_plural = u'Предметы'
+
     def __unicode__(self):
         return self.short_name
 
@@ -206,6 +220,10 @@ class Certificate(models.Model):
     group = models.ForeignKey('StudyGroup', verbose_name=u'Группа')
     listener = models.ForeignKey('auth.Listener', verbose_name=u'Владелец')
     cert_number = models.IntegerField(verbose_name=u'Номер')
+
+    class Meta:
+        verbose_name = u'Сертификат'
+        verbose_name_plural = u'Сертификаты'
 
     def __unicode__(self):
         return self.name

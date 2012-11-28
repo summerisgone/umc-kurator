@@ -15,8 +15,16 @@ class ExtendedUser(User):
 class Employee(ExtendedUser):
     department = models.ManyToManyField('core.Department')
 
+    class Meta:
+        verbose_name = u'Сотрудник'
+        verbose_name_plural = u'Сотрудники'
+
 
 class Listener(ExtendedUser):
+
+    class Meta:
+        verbose_name = u'Слушатель'
+        verbose_name_plural = u'Слушатели'
 
     organization = models.ForeignKey('core.Organization', verbose_name=u'Организация')
     category = models.CharField(verbose_name=u'Категория', max_length=50, choices=enums.LISTENER_CATEGORIES)
