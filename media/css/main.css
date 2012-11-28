@@ -225,7 +225,7 @@ body {
 
 .container-wrapper {
     margin: auto;
-    width: 1200px;
+    /*width: 1200px;*/
 }
 
 .container-wrapper .container {
