@@ -13,7 +13,7 @@ class ExtendedUser(User):
     phone = models.CharField(verbose_name=u'Телефон', max_length=50)
 
 class Employee(ExtendedUser):
-    department = models.ManyToManyField('core.Department')
+    department = models.ManyToManyField('core.Department', verbose_name=u'Подразделения')
 
     class Meta:
         verbose_name = u'Сотрудник'

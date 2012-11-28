@@ -64,8 +64,10 @@
                     <th>Сертификат</th>
                 </tr>
 
-                {% for listener in object_list %}
+                {% for vizit in object_list %}
+                    {% with vizit.listener as listener %}
                     {% include "includes/listener_table_tr_checkbox.html" %}
+                    {% endwith %}
                 {% endfor %}
             </table>
             {% if get_params %}
