@@ -2,7 +2,7 @@
 $(function(){
     // initialize widgets
     $('select[name=position]').select2();
-    $('[name=organization__name]').select2({
+    $('[name=organization]').select2({
         ajax:{
             dataType:'json',
             url:'{% url api:autocomplete_organization %}',
@@ -17,7 +17,7 @@ $(function(){
         }
     });
 
-    var filters = ['position', 'organization__name'];
+    var filters = ['position', 'organization'];
     // set filter values if exists in GET params
     var uri = parseUri(window.location);
     if (uri.query.length) {
@@ -48,7 +48,7 @@ $(function(){
     <div class="control-group">
         <label class="control-label" for="id_organization">Организация</label>
         <div class="controls">
-            <input id="id_organization" type="text" name="organization__name" />
+            <input id="id_organization" type="text" name="organization" />
         </div>
     </div>
     <div class="control-group">

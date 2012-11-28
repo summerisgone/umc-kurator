@@ -121,9 +121,13 @@ class StudyGroupClose(StudyGroupMixin, SingleObjectMixin, TemplateView):
 class ListenerList(DepartmentMixin, ListExtras, ListView):
     template_name = 'department/listener_list.html'
     model = Listener
+    filters = (
+        {'request': 'organization', 'query': 'organization__name'},
+        'position'
+    )
 
     def get_queryset(self):
-        qs = Listener.objects.filter(self.build_query())
+        qs = self.model.objects.filter(self.build_query())
         return qs.filter(vizit__group__department=self.get_department()).distinct()
 
 
@@ -144,13 +148,16 @@ class RegisterListener(StudyGroupMixin, FormView):
 
 class StudyGroupListenersList(StudyGroupMixin, ListExtras, ListView):
 
-    model = Listener
+    model = Vizit
     template_name = 'department/studygroup_listener_list.html'
-    filters = ['organization__name', 'position']
+    filters = (
+        {'request': 'organization', 'query': 'listener__organization__name'},
+        {'request': 'position', 'query': 'listener__position'},
+    )
     search_fields = ['last_name__contains']
 
     def get_queryset(self):
-        return Listener.objects.filter(group=self.get_studygroup()).filter(self.build_query())
+        return Vizit.objects.filter(group=self.get_studygroup()).filter(self.build_query())
 
 
 class ListenerAddBatch(StudyGroupListenersList):

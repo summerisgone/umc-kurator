@@ -24,7 +24,7 @@
                     <th>Курсовая работа</th>
                 </tr>
 
-                {% for vizit in studygroup.vizit_set.all %}
+                {% for vizit in object_list %}
                     {% with vizit.listener as listener %}
                     <tr>
                         <td>

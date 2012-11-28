@@ -60,14 +60,10 @@
                             </span>
                         </td>
                         <td>
-                            <a href="{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}organization={{ listener.organization.name }}">
-                                    {{ listener.organization }}
-                            </a>
+                            {{ listener.organization }}
                         </td>
                         <td>
-                            <a href="{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}position={{ listener.position }}">
                             {{ listener.position }}
-                            </a>
                         </td>
                         <td>
                             {{ vizit.attestation_work_name|default_if_none:"не задано" }}
