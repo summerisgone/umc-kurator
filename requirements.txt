@@ -11,6 +11,7 @@ distribute==0.6.24
 dj-database-url==0.2.0
 django-appconf==0.5
 django-appypod==0.0.1
+django-braces==0.1.9
 django-classy-tags==0.3.4.1
 django-compressor==1.2
 django-debug-toolbar==0.9.4
