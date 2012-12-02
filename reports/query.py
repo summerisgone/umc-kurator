@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from core.models import Organization, Department
+from core.models import Organization, Department, Subject
 from core import enums
+from datetime import date
 
 
 class AbstractParameter(object):
@@ -15,7 +16,7 @@ class AbstractParameter(object):
 class DepartmentParameter(AbstractParameter):
 
     def process_queryset(self, queryset, department):
-        return queryset.filter(course__department=department)
+        return queryset.filter(group__department=department)
 
     def values(self):
         for dep in Department.objects.all():
@@ -28,7 +29,7 @@ class DepartmentParameter(AbstractParameter):
 class OrganizationParameter(AbstractParameter):
 
     def process_queryset(self, queryset, organization):
-        return queryset.filter(organization=organization)
+        return queryset.filter(listener__organization=organization)
 
     def values(self):
         for org in Organization.objects.all():
@@ -41,7 +42,7 @@ class OrganizationParameter(AbstractParameter):
 class PositionParameter(AbstractParameter):
 
     def process_queryset(self, queryset, position):
-        return queryset.filter(position=position)
+        return queryset.filter(listener__position=position)
 
     def values(self):
         return enums.LISTENER_POSITIONS
@@ -53,7 +54,7 @@ class PositionParameter(AbstractParameter):
 class OrganizationCastParameter(AbstractParameter):
 
     def process_queryset(self, queryset, cast):
-        return queryset.filter(organization__cast=cast)
+        return queryset.filter(listener__organization__cast=cast)
 
     def values(self):
         return enums.ORGANIZATION_TYPES
@@ -65,7 +66,7 @@ class OrganizationCastParameter(AbstractParameter):
 class CategoryParameter(AbstractParameter):
 
     def process_queryset(self, queryset, category):
-        return queryset.filter(category=category)
+        return queryset.filter(listener__category=category)
 
     def values(self):
         return enums.LISTENER_CATEGORIES
@@ -73,20 +74,66 @@ class CategoryParameter(AbstractParameter):
     def __unicode__(self):
         return u'Категория слушателя'
 
+
+class TimeRangeParameter(AbstractParameter):
+
+    def process_queryset(self, queryset, value):
+        date_start, date_end = value
+        return queryset.filter(group__start__gte=date_start, group__end__lte=date_end)
+
+    def values(self):
+        current_year = date.today().year
+        values = []
+        # 1 квартал
+        values.append((date(current_year, 1, 1), date(current_year, 4, 1)))
+        # 2 квартал
+        values.append((date(current_year, 4, 1), date(current_year, 7, 1)))
+        # 3 квартал
+        values.append((date(current_year, 7, 1), date(current_year, 10, 1)))
+        # 4 квартал
+        values.append((date(current_year, 10, 1), date(current_year+1, 1, 1)))
+
+        # 1 полугодие
+        values.append((date(current_year, 1, 1), date(current_year, 7, 1)))
+        # 2 полугодие
+        values.append((date(current_year, 7, 1), date(current_year+1, 1, 1)))
+        for value in values:
+            yield (str(value), value)
+
+    def __unicode__(self):
+        return u'Кварталы'
+
+
+class SubjectParameter(AbstractParameter):
+
+    def process_queryset(self, queryset, subject):
+        return queryset.filter(group__subject=subject)
+
+    def values(self):
+        for subject in Subject.objects.all():
+            yield (subject.short_name, subject.id)
+
+    def __unicode__(self):
+        return u'Учебная программа'
+
+
 PARAMETERS = {
     'department': DepartmentParameter,
     'organization': OrganizationParameter,
     'position': PositionParameter,
     'cast': OrganizationCastParameter,
     'category': CategoryParameter,
+    'time_range': TimeRangeParameter,
+    'subject': SubjectParameter,
 }
 
 
 class ResultTable(object):
 
-    def __init__(self, row_param, col_param, queryset):
+    def __init__(self, row_param, col_param, grouping, queryset):
         self.row_param = row_param
         self.col_param = col_param
+        self.grouping_param = grouping
         self.queryset = queryset
 
         row_values = [val for val in row_param.values()]
@@ -100,13 +147,23 @@ class ResultTable(object):
         self.data = []
 
     def process(self):
+        for group_header, group_value in self.grouping_param.values():
+            queryset = self.grouping_param.process_queryset(self.queryset, group_value)
+            group_data = self.process_group(queryset)
+            self.data.append({
+                'group': group_header,
+                'data': group_data,
+            })
+
+    def process_group(self, queryset):
+        group_data = []
         for i, row_value in enumerate(self.row_values):
-            self.data.append([])
+            group_data.append([])
             for j, col_value in enumerate(self.col_values):
-                qs = self.col_param.process_queryset(self.queryset, col_value)
+                qs = self.col_param.process_queryset(queryset, col_value)
                 qs = self.row_param.process_queryset(qs, row_value)
-                self.data[i].append(qs.count())
-        return self.data
+                group_data[i].append(qs.count())
+        return group_data
 
     def to_dict(self):
         if not self.data:
@@ -119,5 +176,5 @@ class ResultTable(object):
             'col_header': self.col_header,
         }
 
-        data['table'] = self.data
+        data['tables'] = self.data
         return data

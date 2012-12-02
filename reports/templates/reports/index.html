@@ -1,8 +1,14 @@
 {% extends "reports/base.html" %}
+{% load zenforms %}
 
-{% block title %}Список отчётов{% endblock %}
+{% block title %}Отчёты{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
 
 {% block content %}
-    <a href="{% url listeners_count %}">Отчёт по количеству обученных
-        специалистов</a>
+    <ul class="nav nav-pills">
+        <li><a href="{% url report_by_subject %}">По программам</a></li>
+        <li><a href="{% url report_by_department %}">По подразделениям</a></li>
+        <li><a href="{% url report_wizard %}">Мастер</a></li>
+    </ul>
 {% endblock content %}

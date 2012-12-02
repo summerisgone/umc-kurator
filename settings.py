@@ -21,8 +21,9 @@ if config:
     DATABASES['default'] = config
 else:
     DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(PROJECT_DIR, 'kurator.sqlite'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#        'NAME': os.path.join(PROJECT_DIR, 'kurator.sqlite'),
+        'NAME': 'kurator',
     }
 
 TIME_ZONE = None
@@ -132,6 +133,7 @@ INSTALLED_APPS = [
     'djangorestframework',
     'south',
     'celery',
+    'djcelery',
     'storages',
     'compressor',
     'gunicorn',

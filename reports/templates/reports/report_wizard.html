@@ -3,14 +3,21 @@
 
 {% block title %}Отчёт по количеству обученных специалистов{% endblock %}
 
+{% block extra_crumb %}
+    <li><a href="{% url report_index %}">Отчёты</a></li><span class="divider">/</span></li>
+    <li class="active">
+        по программам
+    </li>
+{% endblock %}
+
 {% block content %}
     {% if pending %}
         <h3>Запрошеный отчёт уже есть в очереди на выполнение</h3>
         <a href="{{ pending.get_absolute_url }}">Посмотреть</a>
     {% else %}
-        {% if created %}
-            <h3>Запрошеный отчёт поставлен в очередь на выполнение</h3>
-            <a href="{{ created.get_absolute_url }}">Посмотреть</a>
+        {% if error %}
+            <h3>Ошибка обоработки</h3>
+            <span>{{ error }}</span>
         {% endif %}
     {% endif %}
     {% izenform form options submit="Построить" %}

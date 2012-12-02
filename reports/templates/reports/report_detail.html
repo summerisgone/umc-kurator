@@ -3,10 +3,15 @@
 
 {% block title %}Отчёт по количеству обученных специалистов{% endblock %}
 
+{% block extra_crumb %}
+    <li><a href="{% url report_index %}">Отчёты</a></li><span class="divider">/</span></li>
+{% endblock %}
+
 {% block content %}
     {% if object.status == 2 %}
         {{ report_html|safe }}
     {% else %}
-        <h3>Запрошеный отчёт ещё не готов</h3>
+        <h3>Подождите, отчёт создается</h3>
+        <p>Статус обработки: {{ object.get_status_display }}</p>
     {% endif %}
 {% endblock content %}

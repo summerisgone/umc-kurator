@@ -1,37 +1,26 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, date
+from datetime import date
 from django import forms
-from django.db.models import Q
-from random import choice
-from core.models import Department
 from dateutil.relativedelta import relativedelta
-from core import enums
+from core.models import Department, Subject
+from reports.query import PARAMETERS
 
-TIMERANGE_CHOICES = (
-    ('month', u'Текущий месяц'),
-    ('year', u'Год'),
-)
 
-QUERY_CHOICES = (
-    ('organization', u'По организациям'),
-    ('department', u'По филиалам'),
-    ('position', u'По должностям'),
-    ('cast', u'По типам органзаций'),
-    ('category', u'По категории слушателей'),
-)
+QUERY_CHOICES = [(key, unicode(param())) for key, param in PARAMETERS.iteritems()]
 
 
 class ReportQueryForm(forms.Form):
 
-#    time_range = forms.ChoiceField(label=u'Временной интервал', choices=TIMERANGE_CHOICES, required=False)
     vertical = forms.ChoiceField(label=u'По вертикали', choices=QUERY_CHOICES)
     horizontal = forms.ChoiceField(label=u'По горизонтали', choices=QUERY_CHOICES)
+    grouping = forms.ChoiceField(label=u'Группировка', choices=QUERY_CHOICES)
 
-    def get_timerange(self):
-        choice = self.cleaned_data['time_range']
-        today = date.today()
 
-        if choice == 'month':
-            return today.replace(day=25) + relativedelta(months=-1),  today.replace(day=25)
-        if choice == 'year':
-            return today.replace(month=1, day=1), today.replace(month=12, day=31)
+class DepartmentForm(forms.Form):
+
+    department = forms.ModelChoiceField(queryset=Department.objects.all(), label=u'Структурное подразделение')
+
+
+class SubjectForm(forms.Form):
+
+    subject = forms.ModelChoiceField(queryset=Subject.objects.all(), label=u'Программа')
