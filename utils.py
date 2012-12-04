@@ -9,7 +9,11 @@ def get_position_fuzzy(original):
     if matches:
         return matches[0]
     else:
-        return enums.LISTENER_POSITIONS[-1][1]
+        # хак, чтобы отловить учителей
+        if re.match(u'учитель', original, flags=re.UNICODE|re.IGNORECASE):
+            return u'учитель'
+        else:
+            return enums.LISTENER_POSITIONS[-1][1]
 
 def get_organization_type(original):
     for org_type in enums.ORGANIZATION_TYPES:
