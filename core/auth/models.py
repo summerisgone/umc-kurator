@@ -27,13 +27,13 @@ class Listener(ExtendedUser):
         verbose_name_plural = u'Слушатели'
 
     organization = models.ForeignKey('core.Organization', verbose_name=u'Организация')
-    category = models.CharField(verbose_name=u'Категория', max_length=50, choices=enums.LISTENER_CATEGORIES)
-    position = models.CharField(verbose_name=u'Должность', max_length=50, choices=enums.LISTENER_POSITIONS)
-    profile = models.CharField(verbose_name=u'Специфика должности', max_length=50, choices=enums.LISTENER_PROFILES)
+    category = models.CharField(verbose_name=u'Категория', max_length=255, choices=enums.LISTENER_CATEGORIES)
+    position = models.CharField(verbose_name=u'Должность', max_length=255, choices=enums.LISTENER_POSITIONS)
+    profile = models.CharField(verbose_name=u'Специфика должности', max_length=255, choices=enums.LISTENER_PROFILES)
 
-    first_name_inflated = models.CharField(verbose_name=u'Имя (дат. падеж)', max_length=50)
-    last_name_inflated = models.CharField(verbose_name=u'Фамилия (дат. падеж)', max_length=50)
-    patronymic_inflated = models.CharField(verbose_name=u'Отчество (дат. падеж)', max_length=50)
+    first_name_inflated = models.CharField(verbose_name=u'Имя (дат. падеж)', max_length=255)
+    last_name_inflated = models.CharField(verbose_name=u'Фамилия (дат. падеж)', max_length=255)
+    patronymic_inflated = models.CharField(verbose_name=u'Отчество (дат. падеж)', max_length=255)
 
     def normalize_name(self, morph, save=True):
         from pymorphy.contrib import lastnames_ru

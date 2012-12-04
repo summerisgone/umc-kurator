@@ -5,6 +5,7 @@
 
 {% block extra_crumb %}
     <li><a href="{% url report_index %}">Отчёты</a></li><span class="divider">/</span></li>
+    <li>{{ object.report_name|default_if_none:"Безымянный" }}</li>
 {% endblock %}
 
 {% block content %}

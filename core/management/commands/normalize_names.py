@@ -21,7 +21,7 @@ class Command(BaseCommand):
 
         for listener in listeners:
             listener.normalize_name(morph)
-            text = u'%s %s %s' % (listener.last_name, listener.first_name, listener.patronymic)
+            text = u'Склонение: %s %s %s' % (listener.last_name, listener.first_name, listener.patronymic)
             self.dialog.gauge_update(int(float(index)/total*100),
                 text=text.encode('utf-8'),
                 update_text=True)

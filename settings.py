@@ -16,15 +16,15 @@ MANAGERS = ADMINS
 
 DATABASES = {}
 
-config = dj_database_url.config()
-if config:
-    DATABASES['default'] = config
-else:
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#config = dj_database_url.config()
+#if config:
+#    DATABASES['default'] = config
+#else:
+DATABASES['default'] = {
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
 #        'NAME': os.path.join(PROJECT_DIR, 'kurator.sqlite'),
-        'NAME': 'kurator',
-    }
+    'NAME': 'kurator',
+}
 
 TIME_ZONE = None
 
@@ -165,6 +165,10 @@ LOGGING = {
     }
 }
 
+SOUTH_MIGRATION_MODULES = {
+    'auth': 'core.auth.migrations',
+}
+
 # Static S3 settings
 if 'AWS_ACCESS_KEY_ID' in os.environ:
     S3_STORAGE = 'storage.CachedS3BotoStorage'
@@ -197,5 +201,5 @@ if 'MAILGUN_SMTP_SERVER' in os.environ:
 # Setup DEBUG mode
 if DEBUG:
     INSTALLED_APPS += ['debug_toolbar']
-#    MIDDLEWARE_CLASSES += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+    MIDDLEWARE_CLASSES += ['debug_toolbar.middleware.DebugToolbarMiddleware']
     INTERNAL_IPS = ('127.0.0.1',)

@@ -1,11 +1,13 @@
 # coding=utf-8
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.utils import simplejson
-from django.views.generic import TemplateView, FormView, DetailView
+from django.views.generic import TemplateView, FormView, DetailView, ListView
 from django.template.loader import render_to_string
 from librabbitmq import ConnectionError
 from reports.forms import ReportQueryForm, DepartmentForm, SubjectForm
 from reports.models import Report, ReportStatus
+from reports.query import PARAMETERS
 
 
 class BaseReportWizard(object):
@@ -18,6 +20,8 @@ class BaseReportWizard(object):
 
         if reports.filter(status=ReportStatus.Ready).exists():
             report = reports.filter(status=ReportStatus.Ready)[0]
+            messages.add_message(self.request, messages.INFO, u'Отчёт уже построен')
+            return HttpResponseRedirect(report.get_absolute_url())
         elif reports.filter(status=ReportStatus.Pending).exists():
             return self.render_to_response({
                 'form': form,
@@ -45,8 +49,12 @@ class BaseReportWizard(object):
         return report_dict
 
 
-class ReportList(TemplateView):
+class ReportList(ListView):
     template_name = 'reports/index.html'
+    model = Report
+
+    def get_queryset(self):
+        return self.model.objects.filter(status=ReportStatus.Ready).reverse()
 
 
 class ReportByDepartment(BaseReportWizard, FormView):
@@ -58,11 +66,20 @@ class ReportByDepartment(BaseReportWizard, FormView):
             'horizontal': 'subject',
             'vertical': 'category',
             'grouping': 'time_range',
-            'filter_name': 'group__department',
-            'filter_value': form.cleaned_data['department']
+            'filter_name': 'group__department__id',
+            'filter_value': form.cleaned_data['department'].id,
         }
         return report_query
 
+    def get_report_dict(self, form):
+        report_query = self.get_report_query(form)
+        report_dict = report_query.copy()
+        report_dict.update({
+            'report_name': u'Отчёт по территории (%s)' % form.cleaned_data['department'],
+            'status': ReportStatus.Pending,
+            'template_name': 'reports/default.html',
+        })
+        return report_dict
 
 class ReportBySubject(BaseReportWizard, FormView):
     template_name = 'reports/report_by_subject.html'
@@ -73,10 +90,20 @@ class ReportBySubject(BaseReportWizard, FormView):
             'horizontal': 'department',
             'vertical': 'category',
             'grouping': 'time_range',
-            'filter_name': 'group__subject',
-            'filter_value': form.cleaned_data['subject']
+            'filter_name': 'group__subject__id',
+            'filter_value': form.cleaned_data['subject'].id,
         }
         return report_query
+
+    def get_report_dict(self, form):
+        report_query = self.get_report_query(form)
+        report_dict = report_query.copy()
+        report_dict.update({
+            'report_name': u'Отчёт по программе %s' % form.cleaned_data['subject'],
+            'status': ReportStatus.Pending,
+            'template_name': 'reports/default.html',
+        })
+        return report_dict
 
 
 class ReportWizard(BaseReportWizard, FormView):
@@ -84,11 +111,26 @@ class ReportWizard(BaseReportWizard, FormView):
     form_class = ReportQueryForm
 
     def get_report_query(self, form):
+
         return {
             'vertical': form.cleaned_data['vertical'],
             'horizontal': form.cleaned_data['horizontal'],
-            'grouping': form.cleaned_data['grouping']
+            'grouping': form.cleaned_data['grouping'],
         }
+
+    def get_report_dict(self, form):
+        vertical = PARAMETERS[form.cleaned_data['vertical']]()
+        horizontal = PARAMETERS[form.cleaned_data['horizontal']]()
+
+        report_query = self.get_report_query(form)
+        report_dict = report_query.copy()
+        report_dict.update({
+            'status': ReportStatus.Pending,
+            'template_name': 'reports/default.html',
+            'report_name': u'Отчёт по параметрам %s, %s' % (
+                vertical, horizontal),
+        })
+        return report_dict
 
 
 class ReportDetail(DetailView):

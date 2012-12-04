@@ -1,5 +1,6 @@
 {% load core_tags %}
 {% for table in tables %}
+    <h2>{{ table.group_header }}</h2>
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -10,7 +11,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for row in table %}
+            {% for row in table.data %}
                 <tr>
                     <th>{{ meta.row_header|at:forloop.counter0 }}</th>
                 {% for cell in row %}

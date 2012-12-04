@@ -85,20 +85,20 @@ class TimeRangeParameter(AbstractParameter):
         current_year = date.today().year
         values = []
         # 1 квартал
-        values.append((date(current_year, 1, 1), date(current_year, 4, 1)))
+#        values.append((u'1 квартал', (date(current_year, 1, 1), date(current_year, 4, 1))))
         # 2 квартал
-        values.append((date(current_year, 4, 1), date(current_year, 7, 1)))
+#        values.append((u'2 квартал', (date(current_year, 4, 1), date(current_year, 7, 1))))
         # 3 квартал
-        values.append((date(current_year, 7, 1), date(current_year, 10, 1)))
+#        values.append((u'3 квартал', (date(current_year, 7, 1), date(current_year, 10, 1))))
         # 4 квартал
-        values.append((date(current_year, 10, 1), date(current_year+1, 1, 1)))
+#        values.append((u'4 квартал', (date(current_year, 10, 1), date(current_year+1, 1, 1))))
 
         # 1 полугодие
-        values.append((date(current_year, 1, 1), date(current_year, 7, 1)))
+        values.append((u'1 полугодие', (date(current_year, 1, 1), date(current_year, 7, 1))))
         # 2 полугодие
-        values.append((date(current_year, 7, 1), date(current_year+1, 1, 1)))
+        values.append((u'2 полугодие', (date(current_year, 7, 1), date(current_year+1, 1, 1))))
         for value in values:
-            yield (str(value), value)
+            yield value
 
     def __unicode__(self):
         return u'Кварталы'
@@ -151,7 +151,7 @@ class ResultTable(object):
             queryset = self.grouping_param.process_queryset(self.queryset, group_value)
             group_data = self.process_group(queryset)
             self.data.append({
-                'group': group_header,
+                'group_header': group_header,
                 'data': group_data,
             })
 
@@ -160,8 +160,8 @@ class ResultTable(object):
         for i, row_value in enumerate(self.row_values):
             group_data.append([])
             for j, col_value in enumerate(self.col_values):
-                qs = self.col_param.process_queryset(queryset, col_value)
-                qs = self.row_param.process_queryset(qs, row_value)
+                qs = self.row_param.process_queryset(queryset, row_value)
+                qs = self.col_param.process_queryset(qs, col_value)
                 group_data[i].append(qs.count())
         return group_data
 

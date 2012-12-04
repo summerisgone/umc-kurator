@@ -6,7 +6,7 @@
 {% else %}
 {% if perms.auth.is_admin %}
 <li><a href="{% url manager:index %}">Секретарь</a></li>
-<li><a href="{% url report_index %}">Отчёты</a></li>
+<li><a href="{% url report_queue %}">Отчёты</a></li>
 {% endif %}
 
 {% if perms.auth.is_kurator %}

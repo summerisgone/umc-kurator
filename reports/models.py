@@ -23,7 +23,10 @@ REPORT_STATUS = (
 
 
 class Report(models.Model):
+    report_name = models.CharField(verbose_name=u'Название отчёта', max_length=127,
+        blank=True, null=True)
     template_name = models.CharField(max_length=64)
+    created = models.DateTimeField(auto_now_add=True)
     data = models.TextField()  # JSON serialized data
 
     horizontal = models.CharField(max_length=64)
@@ -34,6 +37,11 @@ class Report(models.Model):
     filter_value = models.CharField(max_length=64)
 
     status = models.IntegerField(choices=REPORT_STATUS)
+
+    class Meta:
+        verbose_name = u'Отчёт'
+        verbose_name_plural = u'Отчёты'
+        ordering = ['created', 'id']
 
     def get_absolute_url(self):
         return reverse('report_detail', args=[self.pk])

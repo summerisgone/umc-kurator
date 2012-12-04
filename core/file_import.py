@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-from core import enums
+import random
+
 from django.db.models import Q
+
+from core import enums
 from xlsimport.models import Format
 from xlsimport.parsers import*
-from auth.models import Listener, Employee
-from core.models import Organization, Certificate, Vizit, Subject, Department, StudyGroup
-from utils import get_position_fuzzy, get_organization_type
-import random
+from auth.models import Listener
+from core.models import Organization, Subject, Department, StudyGroup
+from utils import get_position_fuzzy, get_organization_type, get_profile_fuzzy, get_category
 
 
 class FIOCell(TextCellToStringParser):
@@ -68,20 +70,25 @@ class ListenerFileFormat(Format):
             name=data_row[4],
         )
 
+        organization_name = data_row[6]
+        match = re.findall(r'\d+', organization_name)
+        organization_cast = get_organization_type(organization_name)
+        organization = dict(
+            name=organization_name,
+            number=match[0] if match else None,
+            cast=organization_cast,
+        )
+
         last_name, first_name, patronymic = data_row[5]
+
+        listener_position=get_position_fuzzy(data_row[7])
         listener = dict(
             first_name_inflated=first_name,
             last_name_inflated=last_name,
             patronymic_inflated=patronymic,
-            position=get_position_fuzzy(data_row[7]),
-        )
-
-        organization_name = data_row[6]
-        match = re.findall(r'\d+', organization_name)
-        organization = dict(
-            name=organization_name,
-            number=match[0] if match else None,
-            cast=get_organization_type(organization_name),
+            position=listener_position,
+            profile=get_profile_fuzzy(data_row[7]),
+            category=get_category(organization_cast, listener_position),
         )
 
         attestation_work_name = data_row[8]

@@ -15,10 +15,30 @@ def get_position_fuzzy(original):
         else:
             return enums.LISTENER_POSITIONS[-1][1]
 
+def get_profile_fuzzy(original):
+    matches = get_close_matches(original, [item[1] for item in enums.LISTENER_PROFILES])
+    if matches:
+        return matches[0]
+    else:
+        return enums.LISTENER_PROFILES[-1][1]
+
 def get_organization_type(original):
     for org_type in enums.ORGANIZATION_TYPES:
         if re.search('%s' % org_type[1], original):
             return org_type[1]
+
+
+def get_category(organization_cast, position):
+    default_category = u'Другие специалисты'
+    if organization_cast in enums.POSITIONS_DICT:
+        inverted = {}
+        for key, values in enums.POSITIONS_DICT[organization_cast].iteritems():
+            for value in values:
+                inverted[value] = key
+
+        if position in inverted:
+            return inverted[position]
+    return default_category
 
 
 def firstcaps(s):

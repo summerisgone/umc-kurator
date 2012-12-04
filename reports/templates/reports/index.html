@@ -11,4 +11,15 @@
         <li><a href="{% url report_by_department %}">По подразделениям</a></li>
         <li><a href="{% url report_wizard %}">Мастер</a></li>
     </ul>
+
+    {% if object_list %}
+    <h2>Последние отчёты</h2>
+    <ul>
+        {% for object in object_list %}
+            <li><a href="{{ object.get_absolute_url }}">
+                {{ object.report_name|default_if_none:"Безымянный" }} ({{ object.created|date:"j N Y" }})
+            </a></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
 {% endblock content %}
