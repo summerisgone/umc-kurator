@@ -1,13 +1,19 @@
 # coding=utf-8
+from braces.views import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.utils import simplejson
 from django.views.generic import TemplateView, FormView, DetailView, ListView
 from django.template.loader import render_to_string
 from librabbitmq import ConnectionError
+from core import enums
 from reports.forms import ReportQueryForm, DepartmentForm, SubjectForm
 from reports.models import Report, ReportStatus
 from reports.query import PARAMETERS
+
+
+class SecurityMixin(LoginRequiredMixin, PermissionRequiredMixin):
+    permission_required = 'auth.' + enums.ADMINISTRATOR_PERMISSION[0]
 
 
 class BaseReportWizard(object):
@@ -49,7 +55,7 @@ class BaseReportWizard(object):
         return report_dict
 
 
-class ReportList(ListView):
+class ReportList(SecurityMixin, ListView):
     template_name = 'reports/index.html'
     model = Report
 
@@ -57,7 +63,7 @@ class ReportList(ListView):
         return self.model.objects.filter(status=ReportStatus.Ready).reverse()
 
 
-class ReportByDepartment(BaseReportWizard, FormView):
+class ReportByDepartment(SecurityMixin, BaseReportWizard, FormView):
     template_name = 'reports/report_by_department.html'
     form_class = DepartmentForm
 
@@ -81,7 +87,7 @@ class ReportByDepartment(BaseReportWizard, FormView):
         })
         return report_dict
 
-class ReportBySubject(BaseReportWizard, FormView):
+class ReportBySubject(SecurityMixin, BaseReportWizard, FormView):
     template_name = 'reports/report_by_subject.html'
     form_class = SubjectForm
 
@@ -106,7 +112,7 @@ class ReportBySubject(BaseReportWizard, FormView):
         return report_dict
 
 
-class ReportWizard(BaseReportWizard, FormView):
+class ReportWizard(SecurityMixin, BaseReportWizard, FormView):
     template_name = 'reports/report_wizard.html'
     form_class = ReportQueryForm
 
@@ -133,7 +139,7 @@ class ReportWizard(BaseReportWizard, FormView):
         return report_dict
 
 
-class ReportDetail(DetailView):
+class ReportDetail(SecurityMixin, DetailView):
     model = Report
 
     def get_context_data(self, **kwargs):
