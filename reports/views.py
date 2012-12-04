@@ -64,7 +64,7 @@ class ReportByDepartment(BaseReportWizard, FormView):
     def get_report_query(self, form):
         report_query = {
             'horizontal': 'subject',
-            'vertical': 'category',
+            'vertical': 'category_and_cast',
             'grouping': 'time_range',
             'filter_name': 'group__department__id',
             'filter_value': form.cleaned_data['department'].id,
@@ -88,7 +88,7 @@ class ReportBySubject(BaseReportWizard, FormView):
     def get_report_query(self, form):
         report_query = {
             'horizontal': 'department',
-            'vertical': 'category',
+            'vertical': 'category_and_cast',
             'grouping': 'time_range',
             'filter_name': 'group__subject__id',
             'filter_value': form.cleaned_data['subject'].id,

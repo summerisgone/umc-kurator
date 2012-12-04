@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from itertools import product
 from core.models import Organization, Department, Subject
 from core import enums
 from datetime import date
@@ -7,9 +8,15 @@ from datetime import date
 class AbstractParameter(object):
 
     def process_queryset(self, queryset, value):
+        u"""
+        Обработать queryset по значению, сгенерированному в ``values()``
+        """
         return queryset
 
     def values(self):
+        u"""
+        Возвращать генератор пар: (имя столбца, значение)
+        """
         pass
 
 
@@ -75,6 +82,25 @@ class CategoryParameter(AbstractParameter):
         return u'Категория слушателя'
 
 
+class CategoryAndCastParameter(AbstractParameter):
+    u"""
+    Параметр по категориям слушателей и типам организаций
+    """
+
+    def process_queryset(self, queryset, values):
+        listener_category, organization_cast = values
+        return queryset.filter(listener__category=listener_category,
+            listener__organization__cast=organization_cast)
+
+    def values(self):
+        listener_categories = [c[0] for c in enums.LISTENER_CATEGORIES]
+        organization_types = [c[0] for c in enums.ORGANIZATION_TYPES]
+        for category, cast in product(listener_categories, organization_types):
+            yield ('%s %s' % (category, cast), (category, cast))
+
+    def __unicode__(self):
+        return u'Категории слушателей по орагизациям'
+
 class TimeRangeParameter(AbstractParameter):
 
     def process_queryset(self, queryset, value):
@@ -85,13 +111,13 @@ class TimeRangeParameter(AbstractParameter):
         current_year = date.today().year
         values = []
         # 1 квартал
-#        values.append((u'1 квартал', (date(current_year, 1, 1), date(current_year, 4, 1))))
+        values.append((u'1 квартал', (date(current_year, 1, 1), date(current_year, 4, 1))))
         # 2 квартал
-#        values.append((u'2 квартал', (date(current_year, 4, 1), date(current_year, 7, 1))))
+        values.append((u'2 квартал', (date(current_year, 4, 1), date(current_year, 7, 1))))
         # 3 квартал
-#        values.append((u'3 квартал', (date(current_year, 7, 1), date(current_year, 10, 1))))
+        values.append((u'3 квартал', (date(current_year, 7, 1), date(current_year, 10, 1))))
         # 4 квартал
-#        values.append((u'4 квартал', (date(current_year, 10, 1), date(current_year+1, 1, 1))))
+        values.append((u'4 квартал', (date(current_year, 10, 1), date(current_year+1, 1, 1))))
 
         # 1 полугодие
         values.append((u'1 полугодие', (date(current_year, 1, 1), date(current_year, 7, 1))))
@@ -122,6 +148,7 @@ PARAMETERS = {
     'organization': OrganizationParameter,
     'position': PositionParameter,
     'cast': OrganizationCastParameter,
+    'category_and_cast':  CategoryAndCastParameter,
     'category': CategoryParameter,
     'time_range': TimeRangeParameter,
     'subject': SubjectParameter,
