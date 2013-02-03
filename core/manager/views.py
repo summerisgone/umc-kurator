@@ -135,15 +135,12 @@ class OpeningOrder(SecurityMixin, ExtraContextMixin, DetailView):
         group = self.get_object()
         return {
             'group': group,
-            'start': group.start,
-            'end': group.end
         }
 
 
-
-class GenerateCertificateList(SecurityMixin, ExtraContextMixin, DetailView):
+class ClosingOrder(SecurityMixin, ExtraContextMixin, DetailView):
     response_class = OdtTemplateResponse
-    template_name = 'manager/certificates.odt'
+    template_name = 'manager/closing_order.odt'
 
     pk_url_kwarg = 'stugygroup_id'
     model = StudyGroup
@@ -155,4 +152,33 @@ class GenerateCertificateList(SecurityMixin, ExtraContextMixin, DetailView):
             'start': group.start,
             'end': group.end,
             'certificates': group.certificate_set.all(),
+        }
+
+
+class DissmissOrder(SecurityMixin, ExtraContextMixin, DetailView):
+    response_class = OdtTemplateResponse
+    template_name = 'manager/dismiss_order.odt'
+
+    pk_url_kwarg = 'stugygroup_id'
+    model = StudyGroup
+
+    def extra_context(self):
+        group = self.get_object()
+        return {
+            'group': group,
+            'dismissed': group.not_attested_listeners(),
+        }
+
+
+class GroupReport(SecurityMixin, ExtraContextMixin, DetailView):
+    response_class = OdtTemplateResponse
+    template_name = 'manager/group_list.odt'
+
+    pk_url_kwarg = 'stugygroup_id'
+    model = StudyGroup
+
+    def extra_context(self):
+        group = self.get_object()
+        return {
+            'group': group,
         }

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, url
 from views import Index, StudyGroupList, StudyGroupCreate, StudyGroupRead, StudyGroupUpdate, \
-    StudyGroupDelete, AutoNumerate, StudyGroupClose, GenerateCertificateList, OpeningOrder
+    StudyGroupDelete, AutoNumerate, StudyGroupClose, ClosingOrder, OpeningOrder, DissmissOrder, \
+    GroupReport
 
 urlpatterns = patterns('',
     url(r'^$', Index.as_view(), name='index'),
@@ -12,8 +13,8 @@ urlpatterns = patterns('',
     url(r'^sg/(?P<stugygroup_id>\d{1,5})/edit/$', StudyGroupUpdate.as_view(), name='group_edit'),
     url(r'^sg/(?P<stugygroup_id>\d{1,5})/delete/$', StudyGroupDelete.as_view(), name='group_delete'),
     url(r'^sg/(?P<stugygroup_id>\d{1,5})/close/$', StudyGroupClose.as_view(), name='group_close'),
-    url(r'^sg/(?P<stugygroup_id>\d{1,5})/certificates.odt$', GenerateCertificateList.as_view(),
-        name='group_certificates'),
-    url(r'^sg/(?P<stugygroup_id>\d{1,5})/opening.odt$', OpeningOrder.as_view(),
-            name='group_opening'),
+    url(r'^sg/(?P<stugygroup_id>\d{1,5})/opening.odt$', OpeningOrder.as_view(), name='group_opening'),
+    url(r'^sg/(?P<stugygroup_id>\d{1,5})/closing.odt$', ClosingOrder.as_view(), name='group_closing'),
+    url(r'^sg/(?P<stugygroup_id>\d{1,5})/dissmiss.odt$', DissmissOrder.as_view(), name='group_dissmiss'),
+    url(r'^sg/(?P<stugygroup_id>\d{1,5})/report.odt$', GroupReport.as_view(), name='group_report'),
 )
