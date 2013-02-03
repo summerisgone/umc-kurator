@@ -1,24 +1,10 @@
 <script type="text/javascript">
 $(function(){
     // initialize widgets
-    $('select[name=position]').select2();
-    $('[name=organization]').select2({
-        ajax:{
-            width: 'resolve',
-            dataType:'json',
-            url:'{% url api:autocomplete_organization %}',
-            data:function (term, page) {
-                return {term:term};
-            },
-            results:function (data, page) {
-                return {results:$.map(data, function (item, index) {
-                    return {id:item, text:item};
-                })};
-            }
-        }
-    });
+    $('select[name=department]').select2({width: 'resolve'});
+    $('select[name=status]').select2({width: 'resolve'});
 
-    var filters = ['position', 'organization'];
+    var filters = ['department', 'status'];
     // set filter values if exists in GET params
     var uri = parseUri(window.location);
     if (uri.query.length) {
@@ -27,9 +13,10 @@ $(function(){
             var filterValue = decodeURIComponent(uri.queryKey[filterName]).split('+').join(' ');
 
             if (uri.queryKey[filterName] && filterValue.length) {
+                var filterLabel = $("[name=" + filterName + "] option[value=" + filterValue + "]").text();
                 $("[name=" + filterName + "]").select2("data", {
                     id: filterValue,
-                    text: filterValue
+                    text: filterLabel || filterValue
                 });
                 $("#filter-form").addClass("in");
                 $("a.btn.toggle").addClass("active");
@@ -39,33 +26,34 @@ $(function(){
 
 });
 </script>
-<style>
-    .select2-container {width: 30em;}
-</style>
 <a class="btn toggle" data-toggle="collapse" onclick="$(this).toggleClass('active')"
    data-target="#filter-form"><i class="icon-filter"></i> Фильтр
 </a>
 <form action="." method="GET" onreset="window.location='.'" class="collapse" id="filter-form">
-    <div class="control-group">
-        <label class="control-label" for="id_organization">Организация</label>
-        <div class="controls">
-            <input id="id_organization" type="text" name="organization" />
-        </div>
+<div class="control-group">
+    <label class="control-label" for="department_id">Структурное подразделение</label>
+    <div class="controls">
+        <select id="department_id" name="department">
+            <option value="">---</option>
+            {% for department in department_list %}
+            <option value="{{ department.id }}">{{ department.name }}</option>
+            {% endfor %}
+        </select>
     </div>
     <div class="control-group">
-        <label class="control-label" for="id_position">Должность</label>
+        <label class="control-label" for="status_id">Статус</label>
         <div class="controls">
-            <select id="id_position" name="position">
+            <select name="status" id="status_id">
                 <option value="">---</option>
-                {% for position in LISTENER_POSITIONS %}
-                <option value="{{ position.0 }}">{{ position.0 }}</option>
+                {% for status in group_statuses %}
+                    <option value="{{ status.0 }}">{{ status.1 }}</option>
                 {% endfor %}
             </select>
         </div>
     </div>
-
     <div class="form-actions">
         <button type="submit" class="btn btn-primary">Применить</button>
         <button type="reset" class="btn">Сбросить</button>
     </div>
+</div>
 </form>

@@ -1,5 +1,5 @@
 {% extends "manager/base.html" %}
-
+{% load paginate %}
 {% block extra_crumb %}
     <li class="active">Группы</li>
 {% endblock %}
@@ -7,6 +7,7 @@
 {% block title %}Список групп{% endblock %}
 
 {% block content %}
+    {% include "includes/studygroup_filter.html" %}
     <div class="row"><div class="span12">
         <table class="table table-striped">
             <thead>
@@ -56,6 +57,7 @@
             {% endfor %}
             </tbody>
         </table>
+        <div class="pagination-page">{% digg_paginator %}</div>
         <a href="{% url manager:group_add %}" class="btn"><i class="icon-plus"></i>
             Добавить</a>
         <a class="btn" href="{% url manager:update_numers %}">Автонумерация</a>

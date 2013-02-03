@@ -9,7 +9,8 @@ from django.views.generic.detail import SingleObjectMixin
 from core import enums
 from core.enums import StudyGroupStatus
 from core.manager.forms import StudyGroupCreateForm
-from core.models import StudyGroup, update_group_numbers
+from core.models import StudyGroup, update_group_numbers, Department
+from crud.views import ListExtras
 from utils import ExtraContextMixin, get_hours_data
 from djappypod.response import OdtTemplateResponse
 
@@ -27,10 +28,20 @@ class Index(SecurityMixin, ExtraContextMixin, TemplateView):
         }
 
 
-class StudyGroupList(SecurityMixin, ExtraContextMixin, ListView):
+class StudyGroupList(SecurityMixin, ExtraContextMixin, ListExtras, ListView):
     template_name = 'manager/studygroup_list.html'
     context_object_name = 'groups'
     model = StudyGroup
+    filters = (
+        'department',
+        'status'
+    )
+
+    def extra_context(self):
+        return {
+            'department_list': Department.objects.all(),
+            'group_statuses': enums.STUDY_GROUP_STATUSES,
+        }
 
 
 class StudyGroupRead(SecurityMixin, ExtraContextMixin, DetailView):
