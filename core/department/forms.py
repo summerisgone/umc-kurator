@@ -67,7 +67,7 @@ class ListenerAddForm(forms.Form):
             )
 
             listener.organization = Organization.objects.get(
-                id=self.cleaned_data['organization']
+                name=self.cleaned_data['organization']
             )
             listener.save()
 

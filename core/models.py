@@ -194,8 +194,7 @@ class Organization(models.Model):
     number = models.IntegerField(verbose_name=u'Номер', null=True, blank=True)
     address = models.CharField(verbose_name=u'Адрес', max_length=255,
         null=True, blank=True)
-    cast = models.CharField(verbose_name=u'Тип организации', max_length=50,
-        choices=enums.ORGANIZATION_TYPES, null=True, blank=True)
+    cast = models.CharField(verbose_name=u'Тип организации', max_length=50, null=True, blank=True)
 
     class Meta:
         verbose_name = u'Организация'
