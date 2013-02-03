@@ -113,6 +113,8 @@ class StudyGroup(models.Model):
     def can_add_listener(self):
         return self.status in [enums.StudyGroupStatus.Pending, enums.StudyGroupStatus.Completing]
 
+    def name(self):
+        return self.subject.short_name + '-' + self.subject.hours
 
     def save(self, *args, **kwds):
         # логика автоматической нумерации при создании

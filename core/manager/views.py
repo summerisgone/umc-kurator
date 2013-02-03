@@ -124,6 +124,23 @@ class StudyGroupClose(SecurityMixin, SingleObjectMixin, TemplateView):
             return HttpResponseRedirect(reverse('manager:group_list'))
 
 
+class OpeningOrder(SecurityMixin, ExtraContextMixin, DetailView):
+    response_class = OdtTemplateResponse
+    template_name = 'manager/opening_order.odt'
+
+    pk_url_kwarg = 'stugygroup_id'
+    model = StudyGroup
+
+    def extra_context(self):
+        group = self.get_object()
+        return {
+            'group': group,
+            'start': group.start,
+            'end': group.end
+        }
+
+
+
 class GenerateCertificateList(SecurityMixin, ExtraContextMixin, DetailView):
     response_class = OdtTemplateResponse
     template_name = 'manager/certificates.odt'

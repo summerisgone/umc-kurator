@@ -66,7 +66,6 @@ class ListenerAddForm(forms.Form):
                 profile=self.cleaned_data['profile'],
             )
 
-            print self.cleaned_data
             listener.organization = Organization.objects.get(
                 id=self.cleaned_data['organization']
             )
