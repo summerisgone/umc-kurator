@@ -3,20 +3,29 @@
 {% block title %}Главная страница{% endblock %}
 
 {% block content %}
+    {% if request.user.is_authenticated %}
+    {% else %}
+        <a href="{% url login %}">Войти</a>
+    {% endif %}
     <div class="row">
-        {% for department in departments %}
-            <div class="span4">
-            <div class="thumbnail">
-                <a href="{{ department.get_absolute_url }}">
-                    <img src="http://lorempixel.com/400/200/nature/{{ department.id }}/"
-                     alt="http://lorempixel.com">
-                </a>
-                <hr>
-                <div class="centered">
-                    <a href="{{ department.get_absolute_url }}">{{ department }}</a>
+        {% if perms.auth.is_kurator %}
+            {% for department in request.user.employee.department.all %}
+                <div class="span4">
+                    <div class="thumbnail">
+                        <a href="{{ department.get_absolute_url }}">
+                            <img src="http://lorempixel.com/400/200/nature/{{ department.id }}/"
+                                 alt="http://lorempixel.com">
+                        </a>
+                        <hr>
+                        <div class="centered">
+                            <a href="{{ department.get_absolute_url }}">{{ department }}</a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        {% endif %}
+        {% if perms.auth.is_admin %}
+            <a href="{% url manager:index %}">Рабочее место</a>
+        {% endif %}
     </div>
 {% endblock content %}
