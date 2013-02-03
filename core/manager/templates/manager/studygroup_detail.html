@@ -1,7 +1,5 @@
 {% extends "manager/base.html" %}
 
-{% block content_title %}<h1 class="page-header">{% block title %}{% endblock %}</h1>{% endblock %}
-
 {% block extra_crumb %}
     <li><a href="{% url manager:group_list %}">Группы</a></li><span class="divider">/</span></li>
     <li class="active">
@@ -9,9 +7,42 @@
     </li>
 {% endblock %}
 
+{% block title %}Группа {{ studygroup.subject.short_name }}-{{ studygroup.subject.hours }}{% endblock %}
+
 {% block content %}
-    Статус: {{ studygroup.get_status_display }}
+    Статус: <span class="label">{{ studygroup.get_status_display }}</span>
     <br>
+    {% if studygroup.is_pending %}
+        <hr>
+        <table class="table">
+            <tr><th>Направление</th><td>{{ studygroup.subject.name }}</td></tr>
+            <tr><th>Сроки проведения</th><td>с {{ studygroup.start }} по {{ studygroup.end }}</td></tr>
+        </table>
+    {% endif %}
+    {% if studygroup.is_active %}
+        <table class="table">
+            <tr>
+                <th>Слушателей</th>
+                <td>{{ studygroup.students.all.count }}</td>
+            </tr>
+            <tr>
+                <th>Организаций</th>
+                <td>{{ studygroup.organizations.count }}</td>
+            </tr>
+        </table>
+    {% endif %}
+    {% if studygroup.is_certificating %}
+        <table class="table">
+            <tr>
+                <th>Аттестовано слушателей</th>
+                <td>{{ studygroup.attested_listeners.count }}</td>
+            </tr>
+            <tr>
+                <th>Не аттестовано</th>
+                <td>{{ studygroup.not_attested_listeners.count }}</td>
+            </tr>
+        </table>
+    {% endif %}
     {% if studygroup.is_closed %}
         Сертификаты:
         <ul>

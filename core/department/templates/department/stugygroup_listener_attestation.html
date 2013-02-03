@@ -70,7 +70,7 @@
                 <input name="page" type="hidden" value="{{ page_obj.number }}" >
                 {% endif %}
                 {% if page_obj and page_obj.has_next %}
-                    <input name="next_page" type="hidden" value="{{ page_obj.number|add:"1" }}" >
+                    <input name="next_page" type="hidden" value="{{ page_obj.number|add:"1" }}">
                 {% endif %}
                 <input type="submit" class="btn btn-primary pull-right" value="Сохранить {% if page_obj and page_obj.has_next%}и далее{% endif %}">
             </div>
