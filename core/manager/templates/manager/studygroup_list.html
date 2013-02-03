@@ -60,6 +60,17 @@
         <div class="pagination-page">{% digg_paginator %}</div>
         <a href="{% url manager:group_add %}" class="btn"><i class="icon-plus"></i>
             Добавить</a>
-        <a class="btn" href="{% url manager:update_numers %}">Автонумерация</a>
+        <script type="text/javascript">
+            $(function(){
+                $('a#automunerate').click(function(){
+                    if (confirm('Всем неуокмплектованным группам будут даны автоматические номера')) {
+                        $.post("{% url manager:update_numers %}").success(function() {
+                            window.location = "{% url manager:group_list %}";
+                        });
+                    }
+                });
+            });
+        </script>
+        <a class="btn" id="automunerate">Автонумерация</a>
     </div></div>
 {% endblock content %}

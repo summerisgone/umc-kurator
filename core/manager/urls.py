@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, url
 from views import Index, StudyGroupList, StudyGroupCreate, StudyGroupRead, StudyGroupUpdate, \
-    StudyGroupDelete, update_numbers, StudyGroupClose, GenerateCertificateList
+    StudyGroupDelete, AutoNumerate, StudyGroupClose, GenerateCertificateList
 
 urlpatterns = patterns('',
     url(r'^$', Index.as_view(), name='index'),
     url(r'^sg/$', StudyGroupList.as_view(), name='group_list'),
-    url(r'^sg/autonum/$', update_numbers, name='update_numers'),
+    url(r'^sg/autonum/$', AutoNumerate.as_view(), name='update_numers'),
     url(r'^sg/add/$', StudyGroupCreate.as_view(), name='group_add'),
     url(r'^sg/(?P<stugygroup_id>\d{1,5})/$', StudyGroupRead.as_view(), name='group_detail'),
     url(r'^sg/(?P<stugygroup_id>\d{1,5})/edit/$', StudyGroupUpdate.as_view(), name='group_edit'),

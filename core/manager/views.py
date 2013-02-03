@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.utils import simplejson
-from django.views.generic import TemplateView, DetailView, ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import TemplateView, DetailView, ListView, CreateView, UpdateView, DeleteView, View
 from django.views.generic.detail import SingleObjectMixin
 from core import enums
 from core.enums import StudyGroupStatus
@@ -88,9 +88,15 @@ class StudyGroupUpdate(StudyGroupCreate, UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-def update_numbers(request):
-    update_group_numbers()
-    return HttpResponseRedirect(reverse('manager:group_list'))
+class AutoNumerate(SecurityMixin, View):
+
+    def post(self, request, *args, **kwds):
+        groups = update_group_numbers()
+        messages.add_message(self.request, messages.INFO,
+             u'Автонумерация групп: ' + ','.join(
+                 [g.subject.short_name + '-'  + g.subject.hours for g in groups])
+        )
+        return HttpResponseRedirect(reverse('manager:group_list'))
 
 
 class StudyGroupClose(SecurityMixin, SingleObjectMixin, TemplateView):

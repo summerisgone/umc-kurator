@@ -136,10 +136,13 @@ def update_group_numbers():
             '-start', 'number')[0].number
     else:
         last_number = 0
+    groups = []
     for group in StudyGroup.objects.filter(status=StudyGroupStatus.Pending).order_by('start'):
         last_number += 1
         group.number = last_number
         group.save()
+        groups.append(group)
+    return groups
 
 class VizitManager(models.Manager):
 
