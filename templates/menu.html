@@ -1,7 +1,7 @@
 {#<li><a href="{% url crud:core.department.list %}">Филиалы</a></li>#}
 {#<li><a href="{% url crud:core.subject.list %}">Предметы</a></li>#}
 {#<li><a href="{% url crud:auth.teacher.list %}">Сотрудники</a></li>#}
-{% if request.user.is_superuser %}
+{% if request.user.is_staff %}
 <li><a href="/admin/">Администрирование</a></li>
 {% else %}
 {% if perms.auth.is_admin %}

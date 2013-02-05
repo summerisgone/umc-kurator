@@ -8,7 +8,7 @@ class Index(TemplateView):
     template_name = 'core/index.html'
 
     def get(self, request, *args, **kwargs):
-        if request.user.has_perm('auth.is_admin'):
+        if request.user.has_perm('auth.is_admin') and not request.user.is_staff:
             return HttpResponseRedirect(reverse('manager:index'))
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
