@@ -258,7 +258,7 @@ footer {
     padding-bottom: 0.5em;
 }
 
-.bootstrap.inline label {
+.bootstrap.inline label, .bootstrap label.inline {
     display: inline-block;
     margin-top: 0.5em;
 }

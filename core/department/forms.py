@@ -17,8 +17,13 @@ class ListenerAddForm(forms.Form):
     patronymic_inflated = forms.CharField(label=u'Отчество')
 
     user_id = forms.IntegerField(widget=forms.HiddenInput, required=False)
+    organization_id = forms.CharField(label=u'Организация', required=False)
 
-    organization = forms.CharField(label=u'Организация', required=False)
+    organization_name = forms.CharField(label=u'Название', required=False)
+    organization_number = forms.IntegerField(label=u'Номер', required=False)
+    organization_cast = forms.ChoiceField(label=u'Тип', choices=enums.ORGANIZATION_TYPES, required=False)
+    organization_address = forms.CharField(label=u'Адрес', required=False)
+
     category = forms.ChoiceField(label=u'Категория слушателя', choices=enums.LISTENER_CATEGORIES,
         required=False)
     position = forms.ChoiceField(label=u'Должность', choices=enums.LISTENER_POSITIONS,
@@ -35,17 +40,34 @@ class ListenerAddForm(forms.Form):
     def clean(self):
         if not self.studygroup.can_add_listener():
             raise forms.ValidationError(u'В эту группу уже нельзя добавлять слушателей')
+        is_user_set = False
+        is_organization_set = False
 
         if ('user_id' in self.cleaned_data and
             self.cleaned_data['user_id'] and
-            Listener.objects.get(id=self.cleaned_data['user_id']).exists()):
+            Listener.objects.filter(id=self.cleaned_data['user_id']).exists()):
+            is_user_set = True
+
+        if ('organization_id' in self.cleaned_data and
+            self.cleaned_data['organization_id'] and
+            Organization.objects.filter(id=self.cleaned_data['organization_id']).exists()):
+            is_organization_set = True
+
+        if all(map(lambda k: k in self.cleaned_data,
+            ['organization_name', 'organization_number', 'organization_cast', 'organization_address'])):
+            is_organization_set = True
+
+        if all(map(lambda k: k in self.cleaned_data,
+            ['category', 'position', 'profile'])) and is_organization_set:
+            is_user_set = True
+
+        if not is_organization_set:
+            raise forms.ValidationError(u'Заполните сведения об организации')
+
+        if is_user_set:
             return self.cleaned_data
         else:
-            if all(map(lambda k: k in self.cleaned_data,
-                ['organization', 'category', 'position', 'profile'])):
-                return self.cleaned_data
-            else:
-                raise forms.ValidationError(u'Для нового пользователя все поля обязательны к заполнению')
+            raise forms.ValidationError(u'Для нового пользователя все поля обязательны к заполнению')
 
     def save(self):
         if 'user_id' in self.cleaned_data and self.cleaned_data['user_id']:
@@ -66,9 +88,19 @@ class ListenerAddForm(forms.Form):
                 profile=self.cleaned_data['profile'],
             )
 
-            listener.organization = Organization.objects.get(
-                name=self.cleaned_data['organization']
-            )
+            if self.cleaned_data['organization_id']:
+                organization = Organization.objects.get(
+                    id=self.cleaned_data['organization_id']
+                )
+            else:
+                organization = Organization.objects.create(
+                    name=self.cleaned_data['organization_name'],
+                    number=self.cleaned_data['organization_number'],
+                    cast=self.cleaned_data['organization_cast'],
+                    address=self.cleaned_data['organization_address'],
+                )
+
+            listener.organization = organization
             listener.save()
 
         Vizit.objects.create(group=self.studygroup, listener=listener)

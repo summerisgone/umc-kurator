@@ -52,6 +52,9 @@
             {% if studygroup.is_pending or studygroup.is_completing %}
             <a class="btn" href="{% url department:studygroup_listener_add studygroup.department.pk studygroup.pk %}">
                 <i class="icon-list"></i> Добавить из списка</a>
+            <a href="{% url department:studygroup_listener_register department.pk studygroup.pk %}">
+                Зарегистрировать нового слушателя
+            </a>
             {% endif %}
             <a class="pull-right" href="{% url department:studygroup_listeners_list studygroup.department.pk studygroup.pk %}">
                 Полный список слушателей этой группы</a>

@@ -15,49 +15,21 @@
     {{ block.super }}
     <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/knockout-2.1.0.js"></script>
     <script type="text/javascript">
-    var Modal = function(options){
-        var settings = options || {},
-            $el = settings.el || $(".modal");
-
-        this.onSubmit = function(e) {
-            e.preventDefault();
-            var $form = $(e.target).parents('.modal').find('form');
-            $.post($form.attr('action'), $form.serializeObject())
-            .success(function(data, status){
-                $('[name=organization]').select2('data', {
-                    id: data.name,
-                    text: data.name
-                });
-                $el.modal('hide');
-            });
-            return false;
-        };
-
-        $el.find('[name=name]').on('keyup', function(){
-            $el.find('[name=number]').val(/\d+/.exec($(this).val()));
-        });
-
-        $el.find('.submit').on('click', $.proxy(this.onSubmit, this));
-        $el.find('.cancel').on('click', function(){
-            $el.modal('hide');
-        });
-
-        if (options && options.name) {
-            $el.find('[name=name]').val(options.name);
-        }
-
-        $el.modal('show');
-
-        return this;
-    };
     $(function(){
         $('form.uniForm').uniform();
         $('select').select2();
 
-        window.addOrganization = function(name) {
-            $('.select2-container').select2('close');
-            var modal = new Modal({name: name});
+        window.addOrganization = function() {
+            $('[name=organization_id]').select2('close');
+            $(".organization-select").hide();
+            $(".organization-new").show();
         };
+
+        window.selectOrganization = function() {
+            $(".organization-select").show();
+            $(".organization-new").hide();
+        };
+        window.selectOrganization();
 
         $('[name=last_name]').autocompleteNames({
             url: '{% url api:autocomplete_last_name %}'
@@ -68,7 +40,7 @@
         $('[name=patronymic]').autocompleteNames({
             url: '{% url api:autocomplete_patronymic %}'
         });
-        $('[name=organization]').select2({
+        $('[name=organization_id]').select2({
             ajax: {
                 dataType: 'json',
                 url: '{% url api:autocomplete_organization %}',
@@ -76,15 +48,27 @@
                     return {term: term};
                 },
                 results: function(data, page) {
-                    return {results: $.map(data, function(item, index){
-                        return {id: item, text: item};
+                    return {results: $.map(data, function(item){
+                        return {id: item[1], text: item[0]};
                     })};
                 }
             },
             formatNoMatches: function(term) {
-                return '<span onclick="return addOrganization(\'' + term + '\');" ' +
+                return '<span onclick="return addOrganization();" ' +
                         'class="btn" >'+
-                        "<i class=\"icon-plus\"></i>Добавить</span> организацию " + term + " в список";
+                        "<i class=\"icon-plus\"></i>Добавить</span> организацию в список";
+            }
+        });
+
+        $('[name=organization_name]').on('keyup', function(){
+            $('[name=organization_number]').val(/\d+/.exec($(this).val()));
+        });
+
+        $('[name=user_id]').on('change', function() {
+            if ($(this).attr('checked')) {
+                $('.organization-info,.new-user-info').hide();
+            } else {
+                $('.organization-info,.new-user-info').show();
             }
         });
 
@@ -121,8 +105,7 @@
                             ko.applyBindings(data.user, userinfo_div.get(0));
                             userinfo_div.show().effect('highlight', 300);
                         } else {
-                            userinfo_div.html('Новый пользователь').show();
-                            $('.new-user-info').show();
+                            userinfo_div.hide();
                         }
                     }
                 });
@@ -148,8 +131,8 @@
 {% block content %}
     {% zenform form %}
         <fieldset class="span6 bootstrap inline">
-            <legend>ФИО слушателя</legend>
-            <label>Фамилия<br>
+            <h3>ФИО слушателя</h3>
+            <div class="ctrlHolder"><label>Фамилия<br>
                 {{ form.last_name|attrs:'class="input-medium"' }}
                 {{ form.last_name.errors }}
             </label>
@@ -160,11 +143,11 @@
             <label>Отчество<br>
                 {{ form.patronymic|attrs:'class="input-medium"' }}
                 {{ form.patronymic.errors }}
-            </label>
+            </label></div>
         </fieldset>
         <fieldset class="span6 bootstrap inline">
-            <legend>ФИО слушателя в дательном падеже</legend>
-            <label>Фамилия<br>
+            <h3>ФИО слушателя в дательном падеже</h3>
+            <div class="ctrlHolder"><label>Фамилия<br>
                 {{ form.last_name_inflated|attrs:'class="input-medium"' }}
                 {{ form.last_name_inflated.errors }}
             </label>
@@ -175,11 +158,12 @@
             <label>Отчество<br>
                 {{ form.patronymic_inflated|attrs:'class="input-medium"' }}
                 {{ form.patronymic_inflated.errors }}
-            </label>
+            </label></div>
         </fieldset>
         <div class="user-info" style="display: none;">
+            <h3>Найден зарегистрированный пользователь</h3>
             <div class="ctlGroup">
-                Огранизация: <span data-bind="text: organization"></span>
+                Огранизация: <span data-bind="text: organization_name"></span>
             </div>
             <div class="ctlGroup">
                 Должность: <span data-bind="text: position"></span>
@@ -187,58 +171,44 @@
             <div class="ctlGroup" data-bind="if: profile">
                 Профиль: <span data-bind="text: profile"></span>
             </div>
-            <input type="hidden" data-bind="value: id" id="user_id">
-            <input type="hidden" data-bind="value: organization_cast" id="organization_cast">
+            <label>
+                <input type="checkbox" data-bind="value: id" name="user_id">
+                Выбрать этого пользователя
+            </label>
         </div>
-        <div class="new-user-info" {% if form.errors and form.user_is_new %}{% else %}
-             style="display: none;"{% endif %}>
-            {% fieldset 'organization' 'category' 'position' 'profile' %}
+        <div class="user-info-new hidden">Новый пользователь</div>
+        <fieldset class="organization-info bootstrap">
+            <h3>Организация</h3>
+            <div class="ctrlHolder organization-select"><label>Выберите организацию <br>
+                {{ form.organization_id }}
+                {{ form.organization_id.errors }}
+            </label></div>
+            <div class="organization-new">
+                <div class="ctrlHolder">
+                    <label class="inline">Название <br>
+                        {{ form.organization_name|attrs:"class='inpu-large'" }}
+                        {{ form.organization_name.errors }}
+                    </label>
+                    <label class="inline">Номер <br>
+                        {{ form.organization_number|attrs:"class='input-mini'" }}
+                        {{ form.organization_number.errors }}
+                    </label>
+                </div>
+            <div class="ctrlHolder"><label>Адрес <br>
+                {{ form.organization_address }}
+                {{ form.organization_address.errors }}
+            </label></div>
+            <div class="ctrlHolder"><label>Тип <br>
+                {{ form.organization_cast }}
+                {{ form.organization_cast.errors }}
+            </label></div>
+                <a href="#" onclick="return selectOrganization();">Выбрать из существующих</a>
+            </div>
+
+        </fieldset>
+        <div class="new-user-info">
+            {% fieldset 'category' 'position' 'profile' title "Дополнительно" %}
         </div>
         {% submit "Добавить" %}
     {% endzenform %}
-
-<div class="modal hide fade">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      <h3>Добавление новой организации</h3>
-    </div>
-    <div class="modal-body">
-        <form id="organization_form" class="uniForm" action="{% url api:organization %}"
-              method="POST">
-            <fieldset>
-                <div class="ctrlHolder">
-                    <label for="orgName">
-                        Название
-                    </label>
-                    <input name="name" class="input" id="orgName">
-                    <label for="orgNumber">
-                        Номер
-                    </label>
-                    <input name="number" id="orgNumber" class="input input-mini">
-                </div>
-                <div class="ctrlHolder">
-                    <label for="orgAddress">
-                        Адрес
-                    </label>
-                    <input name="address" id="orgAddress">
-                </div>
-                <div class="ctrlHolder">
-                    <label for="orgCast">
-                        Тип
-                    </label>
-                    <select id="orgCast" name="cast">
-                        <option value="МОУ">МОУ</option>
-                        <option value="МДОУ">МДОУ</option>
-                        <option value="МУДОД">МУДОД</option>
-                    </select>
-                </div>
-            </fieldset>
-            {% csrf_token %}
-        </form>
-    </div>
-    <div class="modal-footer">
-      <a href="#" class="btn cancel">Отмена</a>
-      <a href="#" class="btn btn-primary submit">Сохранить</a>
-    </div>
-</div>
 {% endblock content %}

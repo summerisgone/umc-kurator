@@ -32,7 +32,7 @@ class AutoCompleteOrganization(View):
     def get(self, request):
         return Organization.objects.filter(
             name__icontains=self.PARAMS.get('term','')
-            ).values_list('name', flat=True).distinct()[:20]
+            ).values_list('name', 'id').distinct()[:20]
 
 class AutoCompletePatronymic(View):
 
@@ -61,7 +61,7 @@ class AutoCompeteUser(View):
             sex = morph.get_graminfo(first_name.upper())[0]['info'].split(',', 1)[0]
         except IndexError:
             # get_graminfo() вернул []
-            print 'get_graminfo failed on ', first_name
+            # print 'get_graminfo failed on ', first_name
             sex = u'жр'
         # фамилия
         last_name_inflated = firstcaps(lastnames_ru.inflect(morph,
@@ -78,11 +78,12 @@ class AutoCompeteUser(View):
         }
 
     def get_user(self):
-        if Listener.objects.filter(**self.CONTENT).count() == 1:
-            listener = Listener.objects.get(**self.CONTENT)
+        if Listener.objects.filter(**self.CONTENT).exists():
+            listener = Listener.objects.filter(**self.CONTENT)[0]
             return {
                 'id': listener.id,
-                'organization': listener.organization.name,
+                'organization_id': listener.organization.pk,
+                'organization_name': listener.organization.name,
                 'organization_cast': listener.organization.cast,
                 'category': listener.category,
                 'position': listener.position,
