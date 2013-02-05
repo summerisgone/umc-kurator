@@ -29,7 +29,7 @@ LISTENER_PROFILES = make_choices(
     u'Другое',
 )
 
-LISTENER_CATEGORIES = make_choices(u'Руководящий работник', u'Педагогический работник', u'Другие специалисты')
+LISTENER_CATEGORIES = make_choices(u'Педагогический работник', u'Руководящий работник', u'Другие специалисты')
 LISTENER_POSITIONS = make_choices(
     u'директор',
     u'заместитель директора',

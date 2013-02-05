@@ -145,6 +145,10 @@ class RegisterListener(SecurityMixin, StudyGroupMixin, FormView):
 
     def form_valid(self, form):
         form.save()
+        studygroup = self.get_studygroup()
+        if studygroup.status != enums.StudyGroupStatus.Completing:
+            studygroup.status = enums.StudyGroupStatus.Completing
+            studygroup.save()
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
@@ -159,7 +163,7 @@ class RemoveListener(SecurityMixin, StudyGroupMixin, DeleteView):
         return self.get_studygroup().vizit_set.get(id=self.kwargs['vizit_id'])
 
     def delete(self, request, *args, **kwargs):
-        if not self.get_studygroup().is_active():
+        if not self.get_studygroup().is_completing():
             return super(RemoveListener, self).delete(request, *args, **kwargs)
         else:
             messages.add_message(self.request, messages.ERROR, u'Удалить слушателей можно только из '
@@ -172,6 +176,7 @@ class RemoveListener(SecurityMixin, StudyGroupMixin, DeleteView):
         messages.add_message(self.request, messages.WARNING, u'Слушатель удален')
         return reverse('department:studygroup_detail', args=[self.kwargs['department_id'],
                                                              self.kwargs['studygroup_pk']])
+
 
 class StudyGroupListenersList(SecurityMixin, StudyGroupMixin, ListExtras, ListView):
 

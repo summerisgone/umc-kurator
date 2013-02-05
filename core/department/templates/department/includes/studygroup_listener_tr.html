@@ -27,12 +27,14 @@
             {{ listener.position }}
         </a>
     </td>
+
     <td>
-        {% if studygroup.is_active %}
+        {% if studygroup.is_certificating or studygroup.is_certificated or studygroup.is_closed %}
             {{ vizit.attestation_work_name|default_if_none:"не задано" }}
-        {% else %}
+        {% endif %}
+        {% if studygroup.is_complecting %}
             <a class="btn"
                href="{% url department:studygroup_listener_remove department.pk studygroup.pk vizit.pk %}">Удалить</a>
-        {% endif %}
+    {% endif %}
     </td>
 </tr>

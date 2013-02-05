@@ -251,6 +251,10 @@ footer {
     font-size:80%;
 }
 
+[class^="icon-"], [class*=" icon-"] {
+    background-image: none;
+}
+
 /** Custom forms **/
 
 .bootstrap.inline legend {

@@ -18,7 +18,7 @@
                     <th>Организация</th>
                     <th>Должность</th>
                     <th>
-                        {% if studygroup.is_active %}
+                        {% if studygroup.is_certificating or studygroup.is_certificated or studygroup.is_closed %}
                             Курсовая работа
                         {% else %}
                             Действия

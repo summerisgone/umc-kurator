@@ -10,8 +10,8 @@
 {% block title %}Группа {{ studygroup.subject.short_name }}-{{ studygroup.subject.hours }}{% endblock %}
 
 {% block content %}
-    Статус: <span class="label">{{ studygroup.get_status_display }}</span>
-    <br>
+    <div class="hero-unit">Статус: <span class="label">{{ studygroup.get_status_display }}</span></div>
+    
     {% if studygroup.is_pending %}
         <hr>
         <table class="table">
@@ -19,8 +19,8 @@
             <tr><th>Сроки проведения</th><td>с {{ studygroup.start }} по {{ studygroup.end }}</td></tr>
         </table>
     {% endif %}
-    {% if studygroup.is_active %}
-        <table class="table">
+    {% if studygroup.is_completing %}
+        <div class="span4"><table class="table">
             <tr>
                 <th>Слушателей</th>
                 <td>{{ studygroup.students.all.count }}</td>
@@ -29,21 +29,83 @@
                 <th>Организаций</th>
                 <td>{{ studygroup.organizations.count }}</td>
             </tr>
-        </table>
-        <a href="opening.odt"><i class="icon-print"></i> Приказ об открытии</a>
-        <a href="report.odt"><i class="icon-print"></i> Реестр группы</a>
+        </table></div>
+        <div class="span5">
+            <ul>
+            {% for listener in studygroup.students.all %}
+                <li>{{ listener.fio }} ({{ listener.organization }})</li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    {% if studygroup.is_active %}
+        <div class="span4"><table class="table">
+            <tr>
+                <th>Слушателей</th>
+                <td>{{ studygroup.students.all.count }}</td>
+            </tr>
+            <tr>
+                <th>Организаций</th>
+                <td>{{ studygroup.organizations.count }}</td>
+            </tr>
+        </table></div>
+        <div class="span5">
+            <ul>
+            {% for listener in studygroup.students.all %}
+                <li>{{ listener.fio }} ({{ listener.organization }})</li>
+            {% endfor %}
+            </ul>
+            <a href="opening.odt"><i class="icon-print"></i> Приказ об открытии</a>
+            <a href="report.odt"><i class="icon-print"></i> Реестр группы</a>
+        </div>
     {% endif %}
     {% if studygroup.is_certificating %}
         <table class="table">
             <tr>
                 <th>Аттестовано слушателей</th>
-                <td>{{ studygroup.attested_listeners.count }}</td>
+                <td>
+                    <ul>
+                        {% for listener in studygroup.attested_listeners.all %}
+                            <li>{{ listener.fio }} ({{ listener.organization }})</li>
+                        {% endfor %}
+                    </ul>
+                    Всего: {{ studygroup.attested_listeners.count }}
+                </td>
             </tr>
             <tr>
                 <th>Не аттестовано</th>
-                <td>{{ studygroup.not_attested_listeners.count }}</td>
+                <td>
+                    <ul>{% for listener in studygroup.not_attested_listeners.all %}
+                        <li>{{ listener.fio }} ({{ listener.organization }})</li>
+                    {% endfor %}</ul>
+                    Всего: {{ studygroup.not_attested_listeners.count }}
+                </td>
             </tr>
         </table>
+    {% endif %}
+    {% if studygroup.is_certificated %}
+        <table class="table">
+                    <tr>
+                        <th>Аттестовано слушателей</th>
+                        <td>
+                            <ul>
+                                {% for listener in studygroup.attested_listeners.all %}
+                                    <li>{{ listener.fio }} ({{ listener.organization }})</li>
+                                {% endfor %}
+                            </ul>
+                            Всего: {{ studygroup.attested_listeners.count }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Не аттестовано</th>
+                        <td>
+                            <ul>{% for listener in studygroup.not_attested_listeners.all %}
+                                <li>{{ listener.fio }} ({{ listener.organization }})</li>
+                            {% endfor %}</ul>
+                            Всего: {{ studygroup.not_attested_listeners.count }}
+                        </td>
+                    </tr>
+                </table>
     {% endif %}
     {% if studygroup.is_closed %}
         Сертификаты:

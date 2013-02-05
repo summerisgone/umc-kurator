@@ -38,7 +38,13 @@
                     <th>ФИО</th>
                     <th>Организация</th>
                     <th>Должность</th>
-                    <th>Курсовая работа</th>
+                    <th>
+                        {% if studygroup.is_certificating or studygroup.is_certificated or studygroup.is_closed %}
+                            Курсовая работа
+                        {% else %}
+                            Действия
+                        {% endif %}
+                    </th>
                 </tr>
 
                 {% for vizit in studygroup.vizit_set.all %}
