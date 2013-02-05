@@ -1,0 +1,38 @@
+<tr>
+    <td>
+        {% if page_obj %}
+            {{ forloop.counter0|add:page_obj.start_index }}
+        {% else %}
+            {{ forloop.counter }}
+        {% endif %}
+    </td>
+    <td>
+        {{ listener.last_name }}
+        {{ listener.first_name }}
+        {{ listener.patronymic }}
+        <br>
+        <span class="muted">
+            {{ listener.last_name_inflated }}
+            {{ listener.first_name_inflated }}
+            {{ listener.patronymic_inflated }}
+        </span>
+    </td>
+    <td>
+        <a href="{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}organization={{ listener.organization.name }}">
+            {{ listener.organization }}
+        </a>
+    </td>
+    <td>
+        <a href="{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}position={{ listener.position }}">
+            {{ listener.position }}
+        </a>
+    </td>
+    <td>
+        {% if studygroup.is_active %}
+            {{ vizit.attestation_work_name|default_if_none:"не задано" }}
+        {% else %}
+            <a class="btn"
+               href="{% url department:studygroup_listener_remove department.pk studygroup.pk vizit.pk %}">Удалить</a>
+        {% endif %}
+    </td>
+</tr>

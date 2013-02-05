@@ -2,7 +2,7 @@
 from django.conf.urls import patterns, include, url
 from views import RegisterListener, StudyGroupList, StudyGroupDetail,\
     OrganizationList, StudyGroupListenersList, ListenerAddBatch,\
-    ListenerList, OrganizationDetail, Index, StudyGroupClose, ListenerAttestation, StudyGroupCompleteEnroll
+    ListenerList, OrganizationDetail, Index, StudyGroupClose, ListenerAttestation, StudyGroupCompleteEnroll, RemoveListener
 
 
 urlpatterns = patterns('',
@@ -25,6 +25,8 @@ urlpatterns = patterns('',
         StudyGroupListenersList.as_view(), name='studygroup_listeners_list'),
     url(r'^d(?P<department_id>\d{1,5})/group/(?P<studygroup_pk>\d{1,5})/listeners/add/$',
         ListenerAddBatch.as_view(), name='studygroup_listener_add'),
+    url(r'^d(?P<department_id>\d{1,5})/group/(?P<studygroup_pk>\d{1,5})/listeners/remove/(?P<vizit_id>\d{1,5})/$',
+        RemoveListener.as_view(), name='studygroup_listener_remove'),
     url(r'^d(?P<department_id>\d{1,5})/group/(?P<studygroup_pk>\d{1,5})/listeners/attestation/$',
         ListenerAttestation.as_view(),
         name='studygroup_listener_attestation'),

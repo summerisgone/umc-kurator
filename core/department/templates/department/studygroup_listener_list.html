@@ -2,10 +2,6 @@
 {% load paginate %}
 
 {% block extra_crumb %}
-    <li><a href="{% url department:studygroup_list department.pk %}">
-        Cписок групп</a></li><span class="divider">/</span></li>
-    <li><a href="{% url department:studygroup_detail department.pk studygroup.pk %}">
-            {{ studygroup|truncatewords:3 }}</a></li><span class="divider">/</span></li>
     <li class="active">Список слушателей</li>
 {% endblock %}
 
@@ -21,44 +17,18 @@
                     <th>ФИО</th>
                     <th>Организация</th>
                     <th>Должность</th>
-                    <th>Курсовая работа</th>
+                    <th>
+                        {% if studygroup.is_active %}
+                            Курсовая работа
+                        {% else %}
+                            Действия
+                        {% endif %}
+                    </th>
                 </tr>
 
                 {% for vizit in object_list %}
                     {% with vizit.listener as listener %}
-                    <tr>
-                        <td>
-                            {% if page_obj %}
-                            {{ forloop.counter0|add:page_obj.start_index }}
-                            {% else %}
-                            {{ forloop.counter }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            {{ listener.last_name }}
-                                {{ listener.first_name }}
-                                {{ listener.patronymic }}
-                            <br>
-                            <span class="muted">
-                                {{ listener.last_name_inflated }}
-                                {{ listener.first_name_inflated }}
-                                {{ listener.patronymic_inflated }}
-                            </span>
-                        </td>
-                        <td>
-                            <a href="{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}organization={{ listener.organization.name }}">
-                                    {{ listener.organization }}
-                            </a>
-                        </td>
-                        <td>
-                            <a href="{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}position={{ listener.position }}">
-                            {{ listener.position }}
-                            </a>
-                        </td>
-                        <td>
-                            {{ vizit.attestation_work_name|default_if_none:"не задано" }}
-                        </td>
-                    </tr>
+                    {% include "department/includes/studygroup_listener_tr.html" %}
                     {% endwith %}
                 {% endfor %}
             </table>

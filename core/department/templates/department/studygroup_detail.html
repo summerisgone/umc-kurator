@@ -18,6 +18,9 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>Сроки проведения занятий</th><td>с {{ studygroup.start }} по {{ studygroup.end }}</td>
+                </tr>
+                <tr>
                     <th>Слушателей</th>
                     <td>{{ studygroup.students.all.count }}</td>
                 </tr>
@@ -40,35 +43,7 @@
 
                 {% for vizit in studygroup.vizit_set.all %}
                     {% with vizit.listener as listener %}
-                    <tr>
-                        <td>
-                            {% if page_obj %}
-                            {{ forloop.counter0|add:page_obj.start_index }}
-                            {% else %}
-                            {{ forloop.counter }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            {{ listener.last_name }}
-                                {{ listener.first_name }}
-                                {{ listener.patronymic }}
-                            <br>
-                            <span class="muted">
-                                {{ listener.last_name_inflated }}
-                                {{ listener.first_name_inflated }}
-                                {{ listener.patronymic_inflated }}
-                            </span>
-                        </td>
-                        <td>
-                            {{ listener.organization }}
-                        </td>
-                        <td>
-                            {{ listener.position }}
-                        </td>
-                        <td>
-                            {{ vizit.attestation_work_name|default_if_none:"не задано" }}
-                        </td>
-                    </tr>
+                    {% include "department/includes/studygroup_listener_tr.html" %}
                     {% endwith %}
                 {% endfor %}
             </table>

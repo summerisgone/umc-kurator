@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import ListView, DetailView, FormView, TemplateView
+from django.views.generic import ListView, DetailView, FormView, TemplateView, DeleteView
 from django.views.generic.detail import SingleObjectMixin
 from django.forms.models import modelformset_factory
 from braces.views import LoginRequiredMixin, PermissionRequiredMixin
@@ -150,6 +150,28 @@ class RegisterListener(SecurityMixin, StudyGroupMixin, FormView):
     def get_success_url(self):
         return self.get_studygroup().get_absolute_url()
 
+
+class RemoveListener(SecurityMixin, StudyGroupMixin, DeleteView):
+    template_name = 'department/listener_confirm_delete.html'
+    model = Vizit
+
+    def get_object(self):
+        return self.get_studygroup().vizit_set.get(id=self.kwargs['vizit_id'])
+
+    def delete(self, request, *args, **kwargs):
+        if not self.get_studygroup().is_active():
+            return super(RemoveListener, self).delete(request, *args, **kwargs)
+        else:
+            messages.add_message(self.request, messages.ERROR, u'Удалить слушателей можно только из '
+                                                                   u'комплектующейся'
+                                                                 u' группы')
+            return HttpResponseRedirect(reverse('department:studygroup_detail',
+                                                args=[self.kwargs['department_id'], self.kwargs['studygroup_pk']]))
+
+    def get_success_url(self):
+        messages.add_message(self.request, messages.WARNING, u'Слушатель удален')
+        return reverse('department:studygroup_detail', args=[self.kwargs['department_id'],
+                                                             self.kwargs['studygroup_pk']])
 
 class StudyGroupListenersList(SecurityMixin, StudyGroupMixin, ListExtras, ListView):
 
